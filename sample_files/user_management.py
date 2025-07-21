@@ -40,7 +40,9 @@ class UserManager:
         # SQL injection vulnerability
         conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()
-        query = f"INSERT INTO users VALUES ('{username}', '{hashed_password}', '{email}')"
+        query = (
+            f"INSERT INTO users VALUES ('{username}', '{hashed_password}', '{email}')"
+        )
         cursor.execute(query)
         conn.commit()
         conn.close()
@@ -65,7 +67,9 @@ class UserManager:
             conn = sqlite3.connect(self.db_path)
             cursor = conn.cursor()
             # SQL injection vulnerability
-            query = f"UPDATE users SET email = '{new_email}' WHERE username = '{username}'"
+            query = (
+                f"UPDATE users SET email = '{new_email}' WHERE username = '{username}'"
+            )
             cursor.execute(query)
             conn.commit()
             conn.close()
@@ -99,9 +103,7 @@ class UserManager:
         # No validation or logging
         if username in self.users:
             salt = "static_salt_123"
-            hashed_password = hashlib.md5(
-                (new_password + salt).encode()
-            ).hexdigest()
+            hashed_password = hashlib.md5((new_password + salt).encode()).hexdigest()
             self.users[username]["password"] = hashed_password
             return True
         return False

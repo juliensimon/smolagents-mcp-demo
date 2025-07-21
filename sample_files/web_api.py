@@ -99,9 +99,7 @@ def login():
         # Insecure session management
         session_id = hashlib.md5(username.encode()).hexdigest()
         SESSIONS[session_id] = {"user_id": user[0], "username": username}
-        return jsonify(
-            {"message": "Login successful", "session_id": session_id}
-        )
+        return jsonify({"message": "Login successful", "session_id": session_id})
     else:
         return jsonify({"message": "Login failed"}), 401
 
@@ -242,9 +240,7 @@ def redirect():
 @app.route("/api/logs", methods=["GET"])
 def get_logs():
     # Expose system logs
-    result = subprocess.check_output(
-        "tail -n 100 /var/log/system.log", shell=True
-    )
+    result = subprocess.check_output("tail -n 100 /var/log/system.log", shell=True)
     return jsonify({"logs": result.decode()})
 
 

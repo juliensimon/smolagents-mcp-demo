@@ -11,9 +11,7 @@ def monitor_logs(log_file="mcp_servers.log"):
     """Monitor log file and filter out ListToolsRequest messages."""
 
     if not os.path.exists(log_file):
-        print(
-            f"Log file {log_file} not found. Waiting for it to be created..."
-        )
+        print(f"Log file {log_file} not found. Waiting for it to be created...")
         while not os.path.exists(log_file):
             time.sleep(1)
 
@@ -47,10 +45,7 @@ def monitor_logs(log_file="mcp_servers.log"):
                         print(f"🔧 {line.strip()}")
                     elif "ERROR" in line or "WARNING" in line:
                         print(f"⚠️  {line.strip()}")
-                    elif (
-                        "INFO" in line
-                        and "mcp.server.lowlevel.server" not in line
-                    ):
+                    elif "INFO" in line and "mcp.server.lowlevel.server" not in line:
                         print(f"ℹ️  {line.strip()}")
 
             time.sleep(0.5)  # Check every 500ms

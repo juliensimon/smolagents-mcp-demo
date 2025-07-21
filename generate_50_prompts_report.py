@@ -47,9 +47,7 @@ class MultiAgentPromptGenerator:
         except Exception as e:
             return {"error": f"Request failed: {str(e)}"}
 
-    def analyze_response_for_tools(
-        self, response: str
-    ) -> Dict[str, List[str]]:
+    def analyze_response_for_tools(self, response: str) -> Dict[str, List[str]]:
         """Analyze response to identify which tools were likely used."""
         tools_used = {
             "Code Analysis Agent": [],
@@ -63,71 +61,45 @@ class MultiAgentPromptGenerator:
         if "sentiment" in response_lower or "polarity" in response_lower:
             tools_used["Code Analysis Agent"].append("sentiment_analysis")
         if "complexity" in response_lower or "cyclomatic" in response_lower:
-            tools_used["Code Analysis Agent"].append(
-                "calculate_code_complexity"
-            )
+            tools_used["Code Analysis Agent"].append("calculate_code_complexity")
         if "style" in response_lower or "pep" in response_lower:
             tools_used["Code Analysis Agent"].append("analyze_code_style")
         if "coverage" in response_lower:
-            tools_used["Code Analysis Agent"].append(
-                "measure_code_coverage_metrics"
-            )
+            tools_used["Code Analysis Agent"].append("measure_code_coverage_metrics")
         if "naming" in response_lower or "convention" in response_lower:
-            tools_used["Code Analysis Agent"].append(
-                "analyze_naming_conventions"
-            )
+            tools_used["Code Analysis Agent"].append("analyze_naming_conventions")
         if "maintainability" in response_lower:
-            tools_used["Code Analysis Agent"].append(
-                "calculate_maintainability_index"
-            )
+            tools_used["Code Analysis Agent"].append("calculate_maintainability_index")
         if "security" in response_lower and (
             "pattern" in response_lower or "vulnerability" in response_lower
         ):
-            tools_used["Code Analysis Agent"].append(
-                "analyze_security_patterns"
-            )
+            tools_used["Code Analysis Agent"].append("analyze_security_patterns")
         if "performance" in response_lower:
-            tools_used["Code Analysis Agent"].append(
-                "calculate_performance_metrics"
-            )
+            tools_used["Code Analysis Agent"].append("calculate_performance_metrics")
         if "documentation" in response_lower:
-            tools_used["Code Analysis Agent"].append(
-                "analyze_documentation_quality"
-            )
+            tools_used["Code Analysis Agent"].append("analyze_documentation_quality")
         if "duplication" in response_lower:
-            tools_used["Code Analysis Agent"].append(
-                "calculate_code_duplication"
-            )
+            tools_used["Code Analysis Agent"].append("calculate_code_duplication")
         if "error handling" in response_lower:
             tools_used["Code Analysis Agent"].append("analyze_error_handling")
         if "sql injection" in response_lower:
             tools_used["Code Analysis Agent"].append("analyze_sql_injection")
         if "command injection" in response_lower:
-            tools_used["Code Analysis Agent"].append(
-                "analyze_command_injection"
-            )
+            tools_used["Code Analysis Agent"].append("analyze_command_injection")
         if (
             "secret" in response_lower
             or "password" in response_lower
             or "api_key" in response_lower
         ):
-            tools_used["Code Analysis Agent"].append(
-                "analyze_hardcoded_secrets"
-            )
+            tools_used["Code Analysis Agent"].append("analyze_hardcoded_secrets")
         if "path traversal" in response_lower:
             tools_used["Code Analysis Agent"].append("analyze_path_traversal")
         if "deserialization" in response_lower:
-            tools_used["Code Analysis Agent"].append(
-                "analyze_unsafe_deserialization"
-            )
+            tools_used["Code Analysis Agent"].append("analyze_unsafe_deserialization")
         if "xss" in response_lower or "cross-site" in response_lower:
-            tools_used["Code Analysis Agent"].append(
-                "analyze_xss_vulnerabilities"
-            )
+            tools_used["Code Analysis Agent"].append("analyze_xss_vulnerabilities")
         if "input validation" in response_lower:
-            tools_used["Code Analysis Agent"].append(
-                "analyze_input_validation"
-            )
+            tools_used["Code Analysis Agent"].append("analyze_input_validation")
 
         # Research Agent tools
         if (
@@ -188,9 +160,7 @@ class MultiAgentPromptGenerator:
 
         # Analyze which tools were actually used
         tools_used = self.analyze_response_for_tools(response_content)
-        actual_agents_used = [
-            agent for agent, tools in tools_used.items() if tools
-        ]
+        actual_agents_used = [agent for agent, tools in tools_used.items() if tools]
         actual_functions_used = [
             tool for tools in tools_used.values() for tool in tools
         ]
@@ -272,9 +242,7 @@ class MultiAgentPromptGenerator:
     def run_all_prompts(self):
         """Run all 50 prompts and generate comprehensive report."""
         print("🚀 Starting 50 Multi-Agent Prompts Test")
-        print(
-            "Testing prompts designed to trigger multiple agents simultaneously"
-        )
+        print("Testing prompts designed to trigger multiple agents simultaneously")
 
         prompts = self.generate_50_prompts()
         results = []
@@ -305,9 +273,7 @@ class MultiAgentPromptGenerator:
         successful_tests = sum(1 for r in results if r.success)
         total_agents_used = sum(len(r.agents_used) for r in results)
         total_functions_used = sum(len(r.functions_used) for r in results)
-        avg_response_time = sum(r.response_time for r in results) / len(
-            results
-        )
+        avg_response_time = sum(r.response_time for r in results) / len(results)
 
         print(f"📈 STATISTICS:")
         print(f"✅ Successful prompts: {successful_tests}/50")
@@ -344,13 +310,9 @@ class MultiAgentPromptGenerator:
         print(f"\n📋 DETAILED RESULTS:")
         for result in results:
             status = "✅" if result.success else "❌"
-            agents_str = (
-                ", ".join(result.agents_used) if result.agents_used else "None"
-            )
+            agents_str = ", ".join(result.agents_used) if result.agents_used else "None"
             functions_str = (
-                ", ".join(result.functions_used)
-                if result.functions_used
-                else "None"
+                ", ".join(result.functions_used) if result.functions_used else "None"
             )
 
             print(f"\n{status} Prompt {result.prompt_id}:")
@@ -370,12 +332,8 @@ class MultiAgentPromptGenerator:
                 "total_prompts": len(results),
                 "successful_prompts": sum(1 for r in results if r.success),
                 "failed_prompts": sum(1 for r in results if not r.success),
-                "total_agents_triggered": sum(
-                    len(r.agents_used) for r in results
-                ),
-                "total_functions_called": sum(
-                    len(r.functions_used) for r in results
-                ),
+                "total_agents_triggered": sum(len(r.agents_used) for r in results),
+                "total_functions_called": sum(len(r.functions_used) for r in results),
                 "average_response_time": sum(r.response_time for r in results)
                 / len(results),
             },

@@ -227,9 +227,7 @@ class FileManager:
     def download_file(self, url, destination):
         # No URL validation
         try:
-            result = subprocess.check_output(
-                f"curl -o {destination} {url}", shell=True
-            )
+            result = subprocess.check_output(f"curl -o {destination} {url}", shell=True)
             return True
         except:
             return False
@@ -237,9 +235,7 @@ class FileManager:
     def upload_file(self, filepath, url):
         # No URL validation
         try:
-            result = subprocess.check_output(
-                f"curl -T {filepath} {url}", shell=True
-            )
+            result = subprocess.check_output(f"curl -T {filepath} {url}", shell=True)
             return True
         except:
             return False
@@ -374,18 +370,10 @@ def main():
                 print("File deleted" if success else "Error deleting file")
             elif command[0] == "mkdir" and len(command) > 1:
                 success = fm.create_directory(command[1])
-                print(
-                    "Directory created"
-                    if success
-                    else "Error creating directory"
-                )
+                print("Directory created" if success else "Error creating directory")
             elif command[0] == "rmdir" and len(command) > 1:
                 success = fm.delete_directory(command[1])
-                print(
-                    "Directory deleted"
-                    if success
-                    else "Error deleting directory"
-                )
+                print("Directory deleted" if success else "Error deleting directory")
             elif command[0] == "info" and len(command) > 1:
                 info = fm.get_file_info(command[1])
                 if info:
@@ -400,16 +388,10 @@ def main():
                     print(result)
             elif command[0] == "compress" and len(command) > 2:
                 success = fm.compress_file(command[1], command[2])
-                print(
-                    "File compressed" if success else "Error compressing file"
-                )
+                print("File compressed" if success else "Error compressing file")
             elif command[0] == "extract" and len(command) > 2:
                 success = fm.extract_archive(command[1], command[2])
-                print(
-                    "Archive extracted"
-                    if success
-                    else "Error extracting archive"
-                )
+                print("Archive extracted" if success else "Error extracting archive")
             elif command[0] == "hash" and len(command) > 1:
                 file_hash = fm.calculate_hash(command[1])
                 if file_hash:
@@ -428,9 +410,7 @@ def main():
             elif command[0] == "chmod" and len(command) > 2:
                 success = fm.change_permissions(command[1], command[2])
                 print(
-                    "Permissions changed"
-                    if success
-                    else "Error changing permissions"
+                    "Permissions changed" if success else "Error changing permissions"
                 )
             elif command[0] == "duplicates":
                 duplicates = fm.find_duplicates()
@@ -438,11 +418,7 @@ def main():
                     print(f"Duplicate: {dup[0]} and {dup[1]}")
             elif command[0] == "sync" and len(command) > 2:
                 success = fm.sync_directories(command[1], command[2])
-                print(
-                    "Directories synced"
-                    if success
-                    else "Error syncing directories"
-                )
+                print("Directories synced" if success else "Error syncing directories")
             elif command[0] == "cmd" and len(command) > 1:
                 cmd = " ".join(command[1:])
                 output = fm.execute_command(cmd)
@@ -452,9 +428,7 @@ def main():
                     print("Error executing command")
             elif command[0] == "download" and len(command) > 2:
                 success = fm.download_file(command[1], command[2])
-                print(
-                    "File downloaded" if success else "Error downloading file"
-                )
+                print("File downloaded" if success else "Error downloading file")
             elif command[0] == "upload" and len(command) > 2:
                 success = fm.upload_file(command[1], command[2])
                 print("File uploaded" if success else "Error uploading file")
@@ -467,9 +441,7 @@ def main():
             elif command[0] == "serialize" and len(command) > 2:
                 data = {"test": "data"}
                 success = fm.serialize_data(data, command[1])
-                print(
-                    "Data serialized" if success else "Error serializing data"
-                )
+                print("Data serialized" if success else "Error serializing data")
             elif command[0] == "deserialize" and len(command) > 1:
                 data = fm.deserialize_data(command[1])
                 if data:
@@ -478,21 +450,13 @@ def main():
                     print("Error deserializing data")
             elif command[0] == "symlink" and len(command) > 2:
                 success = fm.create_symlink(command[1], command[2])
-                print(
-                    "Symlink created" if success else "Error creating symlink"
-                )
+                print("Symlink created" if success else "Error creating symlink")
             elif command[0] == "mount" and len(command) > 2:
                 success = fm.mount_filesystem(command[1], command[2])
-                print(
-                    "Filesystem mounted"
-                    if success
-                    else "Error mounting filesystem"
-                )
+                print("Filesystem mounted" if success else "Error mounting filesystem")
             elif command[0] == "format" and len(command) > 1:
                 success = fm.format_drive(command[1])
-                print(
-                    "Drive formatted" if success else "Error formatting drive"
-                )
+                print("Drive formatted" if success else "Error formatting drive")
             elif command[0] == "chown" and len(command) > 3:
                 success = fm.change_owner(command[1], command[2], command[3])
                 print("Owner changed" if success else "Error changing owner")

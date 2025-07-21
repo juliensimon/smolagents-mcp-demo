@@ -59,9 +59,7 @@ class TestMCPIntegrationOnline(unittest.TestCase):
                 agent = ToolCallingAgent(tools=tools, model=model)
                 cls.tool_agents[server_key] = agent
 
-                print(
-                    f"✅ Connected to {server_config['name']} ({len(tools)} tools)"
-                )
+                print(f"✅ Connected to {server_config['name']} ({len(tools)} tools)")
 
             except Exception as e:
                 print(f"❌ Failed to connect to {server_config['name']}: {e}")
@@ -131,9 +129,7 @@ class TestServerHealthOnline(unittest.TestCase):
                 try:
                     client = MCPClient({"url": server_config["url"]})
                     tools = client.get_tools()
-                    self.assertGreater(
-                        len(tools), 0, f"No tools from {server_key}"
-                    )
+                    self.assertGreater(len(tools), 0, f"No tools from {server_key}")
                     client.disconnect()
                 except Exception as e:
                     self.fail(f"MCP endpoint {server_key} not accessible: {e}")
@@ -160,9 +156,7 @@ class TestServerHealthOnline(unittest.TestCase):
                     )
                     client.disconnect()
                 except Exception as e:
-                    self.fail(
-                        f"Server {server_key} response time test failed: {e}"
-                    )
+                    self.fail(f"Server {server_key} response time test failed: {e}")
 
 
 class TestBasicServerFunctionalityOnline(unittest.TestCase):
@@ -210,9 +204,7 @@ class TestBasicServerFunctionalityOnline(unittest.TestCase):
 
         for text in test_cases:
             with self.subTest(text=text[:30] + "..."):
-                response = self.agent.run(
-                    f"Analyze the sentiment of this text: {text}"
-                )
+                response = self.agent.run(f"Analyze the sentiment of this text: {text}")
                 self.assertIsNotNone(response)
                 self.assertIn("sentiment", str(response).lower())
 
@@ -231,9 +223,7 @@ class TestBasicServerFunctionalityOnline(unittest.TestCase):
 
         for text in test_cases:
             with self.subTest(text=text[:30] + "..."):
-                response = self.agent.run(
-                    f"Analyze the sentiment of this text: {text}"
-                )
+                response = self.agent.run(f"Analyze the sentiment of this text: {text}")
                 self.assertIsNotNone(response)
                 self.assertIn("sentiment", str(response).lower())
 
@@ -277,9 +267,7 @@ class TestCodeMetricsServerFunctionalityOnline(unittest.TestCase):
 def add(a, b):
     return a + b
 """
-        response = self.agent.run(
-            f"Calculate the complexity of this code: {test_code}"
-        )
+        response = self.agent.run(f"Calculate the complexity of this code: {test_code}")
         self.assertIsNotNone(response)
         self.assertIn("complexity", str(response).lower())
 
@@ -293,9 +281,7 @@ def bad_style_function( x,y ):
     z=x+y
     return z
 """
-        response = self.agent.run(
-            f"Analyze the style of this code: {test_code}"
-        )
+        response = self.agent.run(f"Analyze the style of this code: {test_code}")
         self.assertIsNotNone(response)
         self.assertIn("style", str(response).lower())
 
@@ -307,9 +293,7 @@ class TestCodeSecurityServerFunctionalityOnline(unittest.TestCase):
     def setUpClass(cls):
         """Set up test environment."""
         cls.config_loader = get_config_loader()
-        cls.server_config = cls.config_loader.get_server_config(
-            "code_security"
-        )
+        cls.server_config = cls.config_loader.get_server_config("code_security")
         cls.model_config = cls.config_loader.get_model_config()
 
         try:
@@ -376,9 +360,7 @@ class TestCodeRetrievalServerFunctionalityOnline(unittest.TestCase):
     def setUpClass(cls):
         """Set up test environment."""
         cls.config_loader = get_config_loader()
-        cls.server_config = cls.config_loader.get_server_config(
-            "code_retrieval"
-        )
+        cls.server_config = cls.config_loader.get_server_config("code_retrieval")
         cls.model_config = cls.config_loader.get_model_config()
 
         try:
@@ -424,9 +406,7 @@ class TestCodeRetrievalServerFunctionalityOnline(unittest.TestCase):
             self.skipTest("Code retrieval server not available")
 
         test_url = "https://httpbin.org/json"
-        response = self.agent.run(
-            f"Retrieve content from this URL: {test_url}"
-        )
+        response = self.agent.run(f"Retrieve content from this URL: {test_url}")
         self.assertIsNotNone(response)
         # Check that we got a response (the actual content is JSON data)
         self.assertGreater(len(str(response)), 0)
@@ -439,9 +419,7 @@ class TestGitServerFunctionalityOnline(unittest.TestCase):
     def setUpClass(cls):
         """Set up test environment."""
         cls.config_loader = get_config_loader()
-        cls.server_config = cls.config_loader.get_server_config(
-            "git_repo_analysis"
-        )
+        cls.server_config = cls.config_loader.get_server_config("git_repo_analysis")
         cls.model_config = cls.config_loader.get_model_config()
 
         try:
@@ -470,9 +448,7 @@ class TestGitServerFunctionalityOnline(unittest.TestCase):
             self.skipTest("Git server not available")
 
         # Get the project root directory (parent of tests directory)
-        project_root = os.path.dirname(
-            os.path.dirname(os.path.abspath(__file__))
-        )
+        project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
         response = self.agent.run(
             f"Get the git status of the repository at {project_root}"
@@ -493,9 +469,7 @@ class TestGitServerFunctionalityOnline(unittest.TestCase):
             self.skipTest("Git server not available")
 
         # Get the project root directory (parent of tests directory)
-        project_root = os.path.dirname(
-            os.path.dirname(os.path.abspath(__file__))
-        )
+        project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
         response = self.agent.run(
             f"Get the recent git log for the repository at {project_root}"
@@ -504,9 +478,7 @@ class TestGitServerFunctionalityOnline(unittest.TestCase):
         # Check that we got a response about git log
         response_str = str(response).lower()
         self.assertTrue(
-            "log" in response_str
-            or "git" in response_str
-            or "commit" in response_str,
+            "log" in response_str or "git" in response_str or "commit" in response_str,
             f"Expected git log information, got: {response_str}",
         )
 

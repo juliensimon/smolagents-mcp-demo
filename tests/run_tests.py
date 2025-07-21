@@ -132,9 +132,7 @@ class UnifiedTestRunner:
             try:
                 scenario = create_test_scenario(scenario_name)
                 print(f"{scenario_name:15} - {scenario.get_description()}")
-                print(
-                    f"{'':15}   Categories: {', '.join(scenario.get_categories())}"
-                )
+                print(f"{'':15}   Categories: {', '.join(scenario.get_categories())}")
                 print(f"{'':15}   Timeout: {scenario.get_timeout()}s")
                 print()
             except Exception as e:
@@ -158,9 +156,7 @@ class UnifiedTestRunner:
                 all_passed = False
 
         if validation.get("missing_packages"):
-            print(
-                f"\nMissing packages: {', '.join(validation['missing_packages'])}"
-            )
+            print(f"\nMissing packages: {', '.join(validation['missing_packages'])}")
             all_passed = False
 
         print(
@@ -275,8 +271,7 @@ class UnifiedTestRunner:
 
         # Combine results
         combined_results = {
-            "success": offline_results["success"]
-            and online_results["success"],
+            "success": offline_results["success"] and online_results["success"],
             "offline": offline_results,
             "online": online_results,
             "total_tests": offline_results["total_tests"]
@@ -378,9 +373,7 @@ class UnifiedTestRunner:
             if "total_tests" in results:
                 report.append("📈 Summary")
                 report.append(f"   Total Tests: {results['total_tests']}")
-                report.append(
-                    f"   Total Failures: {results['total_failures']}"
-                )
+                report.append(f"   Total Failures: {results['total_failures']}")
                 report.append(f"   Total Errors: {results['total_errors']}")
                 report.append(f"   Total Skipped: {results['total_skipped']}")
                 report.append("")
@@ -424,9 +417,7 @@ def main():
         default="all",
         help="Test suite or scenario to run",
     )
-    parser.add_argument(
-        "--verbose", "-v", action="store_true", help="Verbose output"
-    )
+    parser.add_argument("--verbose", "-v", action="store_true", help="Verbose output")
     parser.add_argument(
         "--report", action="store_true", help="Generate detailed report"
     )

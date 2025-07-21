@@ -179,9 +179,7 @@ def main():
                 print("❌ Cannot run online tests with current environment.")
                 print("   Please:")
                 print("   1. Set TOGETHER_API_KEY environment variable")
-                print(
-                    "   2. Start all MCP servers: python start_all_servers.py"
-                )
+                print("   2. Start all MCP servers: python start_all_servers.py")
                 print(
                     "   3. Try running offline tests first: python run_test_suite.py offline"
                 )

@@ -44,18 +44,12 @@ class TestConfigurationOffline(unittest.TestCase):
         for server_key, server_config in servers.items():
             required_server_keys = ["name", "url", "port"]
             for key in required_server_keys:
-                self.assertIn(
-                    key, server_config, f"Server {server_key} missing {key}"
-                )
+                self.assertIn(key, server_config, f"Server {server_key} missing {key}")
 
         # Check model configuration
         model_config = config["model"]
-        self.assertIn(
-            "default", model_config, "Model config missing default model"
-        )
-        self.assertIn(
-            "api_base", model_config, "Model config missing api_base"
-        )
+        self.assertIn("default", model_config, "Model config missing default model")
+        self.assertIn("api_base", model_config, "Model config missing api_base")
         self.assertIn("configs", model_config, "Model config missing configs")
 
     def test_server_urls_valid(self):

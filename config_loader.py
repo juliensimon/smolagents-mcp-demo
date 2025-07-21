@@ -33,9 +33,7 @@ class ConfigLoader:
     def _load_config(self):
         """Load the configuration from the JSON file."""
         if not self.config_path.exists():
-            raise FileNotFoundError(
-                f"Configuration file not found: {self.config_path}"
-            )
+            raise FileNotFoundError(f"Configuration file not found: {self.config_path}")
 
         with open(self.config_path, "r") as f:
             self._config = json.load(f)
@@ -110,9 +108,7 @@ class ConfigLoader:
         model_config = self.get_model_config()
         return model_config.get("configs", {})
 
-    def get_model_params(
-        self, model_name: Optional[str] = None
-    ) -> Dict[str, Any]:
+    def get_model_params(self, model_name: Optional[str] = None) -> Dict[str, Any]:
         """Get parameters for a specific model."""
         if model_name is None:
             model_name = self.get_model_default()
@@ -194,19 +190,12 @@ class ConfigLoader:
 
                 # Validate port is a number
                 if not isinstance(server_config["port"], int):
-                    raise ValueError(
-                        f"Server '{server_key}' port must be an integer"
-                    )
+                    raise ValueError(f"Server '{server_key}' port must be an integer")
 
                 # Validate URL format
                 url = server_config["url"]
-                if (
-                    not url.startswith("http://")
-                    or "gradio_api/mcp/sse" not in url
-                ):
-                    raise ValueError(
-                        f"Server '{server_key}' URL format is invalid"
-                    )
+                if not url.startswith("http://") or "gradio_api/mcp/sse" not in url:
+                    raise ValueError(f"Server '{server_key}' URL format is invalid")
 
             # Check model configuration
             model_config = self.get_model_config()
@@ -276,9 +265,7 @@ if __name__ == "__main__":
         config_loader = ConfigLoader()
         if config_loader.validate_config():
             print("✅ Configuration is valid")
-            print(
-                f"Available servers: {list(config_loader.get_servers().keys())}"
-            )
+            print(f"Available servers: {list(config_loader.get_servers().keys())}")
             print(f"Default model: {config_loader.get_model_default()}")
         else:
             print("❌ Configuration validation failed")
