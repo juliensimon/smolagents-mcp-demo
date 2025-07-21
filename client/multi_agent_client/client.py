@@ -250,27 +250,16 @@ def respond(message, chat_history):
             response = "❌ No specialized agents available. Please check server connections."
         else:
             print(f"🎯 Running analysis: {message[:100]}...")
-
-            # Validate input length to prevent model input errors
-            if len(message) > 4000:  # Reduced limit to prevent 400 errors
-                response = "❌ **Input Too Long**: Your request is too long. Please break it down into smaller, more specific requests."
-            else:
-                # Clean the message to prevent malformed input
-                cleaned_message = message.strip()
-                if not cleaned_message:
-                    response = (
-                        "❌ **Empty Input**: Please provide a valid request."
-                    )
-                else:
-                    # Additional sanitization to prevent problematic characters
-                    cleaned_message = cleaned_message.replace(
-                        "\x00", ""
-                    ).replace("\r", "\n")
-                    if len(cleaned_message) > 4000:
-                        cleaned_message = cleaned_message[:4000]
-
-                    result = manager.run(cleaned_message)
-                    response = str(result)
+            # Actually call the manager to get a response
+            try:
+                result = manager.run(message)
+                response = (
+                    result.content
+                    if hasattr(result, "content")
+                    else str(result)
+                )
+            except Exception as e:
+                response = f"❌ Error during analysis: {str(e)}"
 
         if not response or response.strip() == "":
             response = (
@@ -397,7 +386,7 @@ def create_interface():
                     )
 
                     chatbot = gr.Chatbot(
-                        height=400, label="Analysis Results", type="messages"
+                        label="Analysis Results", type="messages"
                     )
 
                     with gr.Row():
@@ -405,18 +394,18 @@ def create_interface():
                         clear = gr.Button("Clear", variant="secondary")
 
                     # Event handlers
-                    msg.submit(
+                    msg.submit(  # type: ignore[attr-defined]
                         respond, inputs=[msg, chatbot], outputs=[msg, chatbot]
                     )
-                    submit_btn.click(
+                    submit_btn.click(  # type: ignore[attr-defined]
                         respond, inputs=[msg, chatbot], outputs=[msg, chatbot]
                     )
-                    clear.click(clear_chat, outputs=[chatbot])
+                    clear.click(clear_chat, outputs=[chatbot])  # type: ignore[attr-defined]
 
                 with gr.Tab("Status"):
                     status_display = gr.Markdown(get_status())
                     refresh_btn = gr.Button("Refresh Status")
-                    refresh_btn.click(refresh_status, outputs=status_display)
+                    refresh_btn.click(refresh_status, outputs=[status_display])  # type: ignore[attr-defined]
 
         return demo
 

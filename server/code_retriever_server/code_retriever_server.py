@@ -1,11 +1,8 @@
 import hashlib
 import json
 import logging
-import mimetypes
 import os
 import sys
-import time
-from typing import Any, Dict
 from urllib.parse import urlparse
 
 # Add the project root to the path to import config_loader
@@ -16,10 +13,10 @@ sys.path.insert(
     ),
 )
 
-import gradio as gr
-import requests
+import gradio as gr  # noqa: E402
+import requests  # noqa: E402
 
-from config_loader import get_config_loader
+from config_loader import get_config_loader  # noqa: E402
 
 # Load configuration
 config_loader = get_config_loader()
@@ -45,149 +42,85 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
-def validate_url(url: str) -> str:
+def retrieve_url(url: str) -> str:
     """
-    Validate if the provided URL is accessible and returns file information.
+    Retrieve content from a URL and return it with metadata.
+
+    This function fetches the content of a web resource from the provided URL.
+    It handles various HTTP scenarios including redirects, timeouts, and errors.
+    The function is designed to work with text-based content (HTML, JSON, XML,
+    plain text, code files, etc.) and automatically handles encoding.
 
     Args:
-        url (str): The URL to validate
+        url (str): The complete URL to retrieve content from. Must include the
+                  protocol (http:// or https://) and be a valid URL format.
+                  Examples: "https://api.github.com/users/octocat",
+                           "https://raw.githubusercontent.com/user/repo/main/README.md"
 
     Returns:
-        dict: JSON string with validation results
+        str: A JSON string containing the retrieval result with the following structure:
+
+        On success:
+        {
+            "success": true,
+            "url": "original_url",
+            "content": "retrieved_content_as_string",
+            "content_length": 1234,
+            "content_hash": "md5_hash_of_content",
+            "content_type": "text/html",
+            "encoding": "utf-8",
+            "status_code": 200
+        }
+
+        On failure:
+        {
+            "success": false,
+            "error": "description_of_error",
+            "url": "original_url",
+            "status_code": 404  // if applicable
+        }
+
+    Raises:
+        No exceptions are raised - all errors are returned in the JSON response.
+
+    Examples:
+        >>> result = retrieve_url("https://httpbin.org/json")
+        >>> data = json.loads(result)
+        >>> if data["success"]:
+        ...     print(f"Retrieved {data['content_length']} characters")
+        ...     print(f"Content type: {data['content_type']}")
+        ... else:
+        ...     print(f"Error: {data['error']}")
+
+    Notes:
+        - Uses a 30-second timeout for requests
+        - Follows HTTP redirects automatically
+        - Includes a user-agent header to avoid blocking
+        - Calculates MD5 hash of content for integrity verification
+        - Handles common HTTP status codes and network errors
     """
-    logger.info("Starting validate_url function")
-    logger.info(f"Input url: {url}")
+    logger.info(f"Retrieving content from URL: {url}")
 
     try:
         # Parse URL
         parsed_url = urlparse(url)
         if not parsed_url.scheme or not parsed_url.netloc:
             return json.dumps(
-                {"valid": False, "error": "Invalid URL format", "url": url}
+                {"success": False, "error": "Invalid URL format", "url": url}
             )
 
-        # Check if URL is accessible
+        # Retrieve the content
         headers = {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
         }
 
-        response = requests.head(
-            url, headers=headers, timeout=10, allow_redirects=True
-        )
-
-        if response.status_code == 200:
-            content_type = response.headers.get("content-type", "unknown")
-            content_length = response.headers.get("content-length", "unknown")
-            last_modified = response.headers.get("last-modified", "unknown")
-
-            # Try to determine file extension
-            file_extension = None
-            if "content-type" in response.headers:
-                file_extension = mimetypes.guess_extension(
-                    content_type.split(";")[0]
-                )
-
-            result = {
-                "valid": True,
-                "url": url,
-                "content_type": content_type,
-                "content_length": content_length,
-                "last_modified": last_modified,
-                "file_extension": file_extension,
-                "status_code": response.status_code,
-            }
-            logger.info(
-                f"URL validation completed - Valid: True, Status: {response.status_code}"
-            )
-            logger.info("validate_url function completed successfully")
-            return json.dumps(result)
-        else:
-            result = {
-                "valid": False,
-                "error": f"HTTP {response.status_code}: {response.reason}",
-                "url": url,
-                "status_code": response.status_code,
-            }
-            logger.info(
-                f"URL validation completed - Valid: False, Status: {response.status_code}"
-            )
-            logger.info("validate_url function completed successfully")
-            return json.dumps(result)
-
-    except requests.exceptions.Timeout:
-        logger.error(f"Timeout error in validate_url: {url}")
-        logger.info("validate_url function completed with error")
-        return json.dumps(
-            {"valid": False, "error": "Request timeout", "url": url}
-        )
-    except requests.exceptions.ConnectionError:
-        logger.error(f"Connection error in validate_url: {url}")
-        logger.info("validate_url function completed with error")
-        return json.dumps(
-            {"valid": False, "error": "Connection error", "url": url}
-        )
-    except requests.exceptions.RequestException as e:
-        logger.error(f"Request exception in validate_url: {str(e)}")
-        logger.info("validate_url function completed with error")
-        return json.dumps(
-            {"valid": False, "error": f"Request failed: {str(e)}", "url": url}
-        )
-    except Exception as e:
-        logger.error(f"Unexpected error in validate_url: {str(e)}")
-        logger.info("validate_url function completed with error")
-        return json.dumps(
-            {
-                "valid": False,
-                "error": f"Unexpected error: {str(e)}",
-                "url": url,
-            }
-        )
-
-
-def retrieve_file_content(url: str, include_metadata: bool = True) -> str:
-    """
-    Retrieve the content of a file from an HTTP server.
-
-    Args:
-        url (str): The URL of the file to retrieve
-        include_metadata (bool): Whether to include metadata in the response
-
-    Returns:
-        str: JSON string with file content and metadata
-    """
-    logger.info("Starting retrieve_file_content function")
-    logger.info(f"Input url: {url}, include_metadata: {include_metadata}")
-
-    try:
-        # Validate URL first
-        validation_result = json.loads(validate_url(url))
-        if not validation_result.get("valid", False):
-            return json.dumps(
-                {
-                    "success": False,
-                    "error": validation_result.get(
-                        "error", "URL validation failed"
-                    ),
-                    "url": url,
-                }
-            )
-
-        # Retrieve the file
-        headers = {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
-        }
-
-        start_time = time.time()
         response = requests.get(
             url, headers=headers, timeout=30, allow_redirects=True
         )
-        download_time = time.time() - start_time
 
         if response.status_code == 200:
             content = response.text
             content_length = len(content)
-
-            # Calculate content hash
             content_hash = hashlib.md5(content.encode("utf-8")).hexdigest()
 
             result = {
@@ -196,36 +129,19 @@ def retrieve_file_content(url: str, include_metadata: bool = True) -> str:
                 "content": content,
                 "content_length": content_length,
                 "content_hash": content_hash,
-                "download_time": round(download_time, 3),
+                "content_type": response.headers.get(
+                    "content-type", "unknown"
+                ),
                 "encoding": response.encoding,
+                "status_code": response.status_code,
             }
 
-            if include_metadata:
-                result.update(
-                    {
-                        "content_type": response.headers.get(
-                            "content-type", "unknown"
-                        ),
-                        "last_modified": response.headers.get(
-                            "last-modified", "unknown"
-                        ),
-                        "etag": response.headers.get("etag", "unknown"),
-                        "status_code": response.status_code,
-                    }
-                )
-
             logger.info(
-                f"File retrieval completed - Content length: {content_length}, Download time: {download_time:.3f}s"
-            )
-            logger.info(
-                "retrieve_file_content function completed successfully"
+                f"Successfully retrieved content from {url} - {content_length} characters"
             )
             return json.dumps(result, indent=2)
         else:
-            logger.error(
-                f"HTTP error in retrieve_file_content: {response.status_code}"
-            )
-            logger.info("retrieve_file_content function completed with error")
+            logger.error(f"HTTP error {response.status_code} for URL: {url}")
             return json.dumps(
                 {
                     "success": False,
@@ -236,20 +152,17 @@ def retrieve_file_content(url: str, include_metadata: bool = True) -> str:
             )
 
     except requests.exceptions.Timeout:
-        logger.error(f"Timeout error in retrieve_file_content: {url}")
-        logger.info("retrieve_file_content function completed with error")
+        logger.error(f"Timeout error for URL: {url}")
         return json.dumps(
             {"success": False, "error": "Request timeout", "url": url}
         )
     except requests.exceptions.ConnectionError:
-        logger.error(f"Connection error in retrieve_file_content: {url}")
-        logger.info("retrieve_file_content function completed with error")
+        logger.error(f"Connection error for URL: {url}")
         return json.dumps(
             {"success": False, "error": "Connection error", "url": url}
         )
-    except requests.exceptions.RequestException as e:
-        logger.error(f"Request exception in retrieve_file_content: {str(e)}")
-        logger.info("retrieve_file_content function completed with error")
+    except Exception as e:
+        logger.error(f"Error retrieving URL {url}: {str(e)}")
         return json.dumps(
             {
                 "success": False,
@@ -257,463 +170,185 @@ def retrieve_file_content(url: str, include_metadata: bool = True) -> str:
                 "url": url,
             }
         )
-    except Exception as e:
-        logger.error(f"Unexpected error in retrieve_file_content: {str(e)}")
-        logger.info("retrieve_file_content function completed with error")
-        return json.dumps(
-            {
-                "success": False,
-                "error": f"Unexpected error: {str(e)}",
-                "url": url,
-            }
-        )
 
 
-def analyze_file_content(content: str, file_type: str = "auto") -> str:
+def load_local_file(file_path: str) -> str:
     """
-    Analyze the content of a retrieved file.
+    Load content from a local file on the server filesystem.
+
+    This function reads the contents of a file from the local filesystem and returns
+    it along with metadata about the file. It's designed to work with text-based files
+    and handles various file system scenarios including missing files, permission issues,
+    and encoding problems.
 
     Args:
-        content (str): The file content to analyze
-        file_type (str): The type of file (auto, text, code, json, xml, etc.)
+        file_path (str): The absolute or relative path to the file on the server's
+                        filesystem. Can be a relative path from the current working
+                        directory or an absolute path.
+                        Examples: "/etc/hosts", "./config.json", "data/input.txt"
 
     Returns:
-        str: JSON string with analysis results
-    """
-    logger.info("Starting analyze_file_content function")
-    logger.info(
-        f"Input content length: {len(content)} characters, file_type: {file_type}"
-    )
+        str: A JSON string containing the file loading result with the following structure:
 
-    try:
-        analysis: Dict[str, Any] = {
-            "file_size": len(content),
-            "line_count": len(content.splitlines()),
-            "word_count": len(content.split()),
-            "character_count": len(content),
-            "non_whitespace_count": len(
-                content.replace(" ", "").replace("\n", "").replace("\t", "")
-            ),
-            "file_type_detected": "unknown",
+        On success:
+        {
+            "success": true,
+            "file_path": "original_file_path",
+            "content": "file_content_as_string",
+            "content_length": 1234,
+            "content_hash": "md5_hash_of_content",
+            "file_size_bytes": 1234,
+            "last_modified": 1640995200.0,
+            "file_extension": ".txt"
         }
 
-        # Auto-detect file type if not specified
-        if file_type == "auto":
-            lines = content.splitlines()
-            first_line = lines[0] if lines else ""
-
-            # Detect common file types
-            if content.strip().startswith("{") and content.strip().endswith(
-                "}"
-            ):
-                analysis["file_type_detected"] = "json"
-            elif content.strip().startswith("<") and "<?xml" in first_line:
-                analysis["file_type_detected"] = "xml"
-            elif content.strip().startswith(
-                "<!DOCTYPE"
-            ) or content.strip().startswith("<html"):
-                analysis["file_type_detected"] = "html"
-            elif any(
-                keyword in first_line.lower()
-                for keyword in ["#!/", "python", "import ", "def ", "class "]
-            ):
-                analysis["file_type_detected"] = "python"
-            elif any(
-                keyword in first_line.lower()
-                for keyword in ["function", "var ", "const ", "let ", "//"]
-            ):
-                analysis["file_type_detected"] = "javascript"
-            elif any(
-                keyword in first_line.lower()
-                for keyword in ["package ", "import ", "public class"]
-            ):
-                analysis["file_type_detected"] = "java"
-            elif any(
-                keyword in first_line.lower()
-                for keyword in ["#include", "int main", "void main"]
-            ):
-                analysis["file_type_detected"] = "c"
-            elif any(
-                keyword in first_line.lower()
-                for keyword in ["using ", "namespace ", "class "]
-            ):
-                analysis["file_type_detected"] = "cpp"
-            elif any(
-                keyword in first_line.lower()
-                for keyword in ["require", "module.exports", "function"]
-            ):
-                analysis["file_type_detected"] = "nodejs"
-            else:
-                analysis["file_type_detected"] = "text"
-        else:
-            analysis["file_type_detected"] = file_type
-
-        # Additional analysis based on detected type
-        if analysis["file_type_detected"] == "json":
-            try:
-                json.loads(content)
-                analysis["json_valid"] = True
-            except json.JSONDecodeError as e:
-                analysis["json_valid"] = False
-                analysis["json_error"] = str(e)
-
-        elif analysis["file_type_detected"] in [
-            "python",
-            "javascript",
-            "java",
-            "c",
-            "cpp",
-        ]:
-            # Code analysis
-            lines = content.splitlines()
-            analysis["code_lines"] = len(
-                [
-                    line
-                    for line in lines
-                    if line.strip()
-                    and not line.strip().startswith("//")
-                    and not line.strip().startswith("#")
-                ]
-            )
-            analysis["comment_lines"] = len(
-                [
-                    line
-                    for line in lines
-                    if line.strip().startswith("//")
-                    or line.strip().startswith("#")
-                ]
-            )
-            analysis["blank_lines"] = len(
-                [line for line in lines if not line.strip()]
-            )
-
-            # Count functions/classes (simple detection)
-            function_count = (
-                content.count("def ")
-                + content.count("function ")
-                + content.count("public ")
-                + content.count("private ")
-            )
-            class_count = content.count("class ")
-            analysis["function_count"] = function_count
-            analysis["class_count"] = class_count
-
-        # Calculate readability metrics
-        if analysis["word_count"] > 0:
-            analysis["avg_words_per_line"] = round(
-                analysis["word_count"] / analysis["line_count"], 2
-            )
-            analysis["avg_chars_per_word"] = round(
-                analysis["character_count"] / analysis["word_count"], 2
-            )
-
-        logger.info(
-            f"File content analysis completed - File type: {analysis['file_type_detected']}, Lines: {analysis['line_count']}"
-        )
-        logger.info("analyze_file_content function completed successfully")
-        return json.dumps(analysis, indent=2)
-
-    except Exception as e:
-        logger.error(f"Error in analyze_file_content: {str(e)}")
-        logger.info("analyze_file_content function completed with error")
-        return json.dumps(
-            {
-                "error": f"Analysis failed: {str(e)}",
-                "content_length": len(content) if content else 0,
-            }
-        )
-
-
-def batch_retrieve_files(urls: str, include_metadata: bool = True) -> str:
-    """
-    Retrieve multiple files from a list of URLs.
-
-    Args:
-        urls (str): Comma-separated list of URLs
-        include_metadata (bool): Whether to include metadata in responses
-
-    Returns:
-        str: JSON string with results for all URLs
-    """
-    try:
-        url_list = [url.strip() for url in urls.split(",") if url.strip()]
-
-        if not url_list:
-            return json.dumps(
-                {"success": False, "error": "No valid URLs provided"}
-            )
-
-        results = []
-        total_start_time = time.time()
-
-        for url in url_list:
-            start_time = time.time()
-            result = json.loads(retrieve_file_content(url, include_metadata))
-            download_time = time.time() - start_time
-
-            result["individual_download_time"] = round(download_time, 3)
-            results.append(result)
-
-        total_time = time.time() - total_start_time
-
-        summary = {
-            "total_urls": len(url_list),
-            "successful_retrievals": len(
-                [r for r in results if r.get("success", False)]
-            ),
-            "failed_retrievals": len(
-                [r for r in results if not r.get("success", False)]
-            ),
-            "total_time": round(total_time, 3),
-            "results": results,
+        On failure:
+        {
+            "success": false,
+            "error": "description_of_error",
+            "file_path": "original_file_path"
         }
 
-        return json.dumps(summary, indent=2)
+    Raises:
+        No exceptions are raised - all errors are returned in the JSON response.
 
-    except Exception as e:
-        return json.dumps(
-            {"success": False, "error": f"Batch retrieval failed: {str(e)}"}
-        )
+    Examples:
+        >>> result = load_local_file("/etc/hosts")
+        >>> data = json.loads(result)
+        >>> if data["success"]:
+        ...     print(f"Loaded {data['content_length']} characters from {data['file_path']}")
+        ...     print(f"File size: {data['file_size_bytes']} bytes")
+        ... else:
+        ...     print(f"Error: {data['error']}")
 
-
-def search_file_content(
-    content: str, search_term: str, case_sensitive: bool = False
-) -> str:
+    Notes:
+        - Attempts to read files as UTF-8 encoded text
+        - Calculates MD5 hash of content for integrity verification
+        - Returns file system metadata (size, modification time)
+        - Handles common file system errors (missing files, permissions, etc.)
+        - File extension is extracted from the path if present
+        - Modification time is returned as Unix timestamp
     """
-    Search for specific terms within file content.
+    logger.info(f"Loading local file: {file_path}")
 
-    Args:
-        content (str): The file content to search
-        search_term (str): The term to search for
-        case_sensitive (bool): Whether the search should be case sensitive
-
-    Returns:
-        str: JSON string with search results
-    """
     try:
-        if not search_term:
+        # Check if file exists
+        if not os.path.exists(file_path):
             return json.dumps(
-                {"success": False, "error": "Search term is required"}
+                {
+                    "success": False,
+                    "error": "File does not exist",
+                    "file_path": file_path,
+                }
             )
 
-        lines = content.splitlines()
-        matches = []
+        # Check if it's a file (not a directory)
+        if not os.path.isfile(file_path):
+            return json.dumps(
+                {
+                    "success": False,
+                    "error": "Path is not a file",
+                    "file_path": file_path,
+                }
+            )
 
-        for line_num, line in enumerate(lines, 1):
-            if case_sensitive:
-                if search_term in line:
-                    matches.append(
-                        {
-                            "line_number": line_num,
-                            "line_content": line.strip(),
-                            "match_position": line.find(search_term),
-                        }
-                    )
-            else:
-                if search_term.lower() in line.lower():
-                    matches.append(
-                        {
-                            "line_number": line_num,
-                            "line_content": line.strip(),
-                            "match_position": line.lower().find(
-                                search_term.lower()
-                            ),
-                        }
-                    )
+        # Read file content
+        with open(file_path, "r", encoding="utf-8") as file:
+            content = file.read()
+
+        content_length = len(content)
+        content_hash = hashlib.md5(content.encode("utf-8")).hexdigest()
+
+        # Get file stats
+        file_stats = os.stat(file_path)
 
         result = {
             "success": True,
-            "search_term": search_term,
-            "case_sensitive": case_sensitive,
-            "total_matches": len(matches),
-            "total_lines": len(lines),
-            "matches": matches,
+            "file_path": file_path,
+            "content": content,
+            "content_length": content_length,
+            "content_hash": content_hash,
+            "file_size_bytes": file_stats.st_size,
+            "last_modified": file_stats.st_mtime,
+            "file_extension": os.path.splitext(file_path)[1]
+            if "." in file_path
+            else None,
         }
 
+        logger.info(
+            f"Successfully loaded local file {file_path} - {content_length} characters"
+        )
         return json.dumps(result, indent=2)
 
-    except Exception as e:
+    except PermissionError:
+        logger.error(f"Permission denied for file: {file_path}")
         return json.dumps(
-            {"success": False, "error": f"Search failed: {str(e)}"}
+            {
+                "success": False,
+                "error": "Permission denied",
+                "file_path": file_path,
+            }
+        )
+    except UnicodeDecodeError:
+        logger.error(f"Unicode decode error for file: {file_path}")
+        return json.dumps(
+            {
+                "success": False,
+                "error": "File encoding not supported (try binary file)",
+                "file_path": file_path,
+            }
+        )
+    except Exception as e:
+        logger.error(f"Error loading local file {file_path}: {str(e)}")
+        return json.dumps(
+            {
+                "success": False,
+                "error": f"Failed to load file: {str(e)}",
+                "file_path": file_path,
+            }
         )
 
 
-# Create individual interfaces for each function
-url_validation_demo = gr.Interface(
-    fn=validate_url,
+# Create Gradio interfaces
+url_retrieval_demo = gr.Interface(
+    fn=retrieve_url,
     inputs=gr.Textbox(
-        placeholder="Enter URL to validate (e.g., https://example.com/file.txt)",
+        placeholder="Enter URL to retrieve content from (e.g., https://example.com/file.txt)",
         label="URL",
         lines=2,
     ),
-    outputs=gr.JSON(label="URL Validation Result"),
-    title="URL Validation",
-    description="Validate if a URL is accessible and extract file information.",
+    outputs=gr.JSON(label="URL Retrieval Result"),
+    title="URL Content Retrieval",
+    description="Retrieve content from any accessible URL.",
     examples=[
         ["https://raw.githubusercontent.com/gradio-app/gradio/main/README.md"],
         ["https://httpbin.org/json"],
-        ["https://httpbin.org/xml"],
         ["https://raw.githubusercontent.com/python/cpython/main/README.md"],
     ],
 )
 
-file_retrieval_demo = gr.Interface(
-    fn=retrieve_file_content,
-    inputs=[
-        gr.Textbox(
-            placeholder="Enter URL of the file to retrieve",
-            label="File URL",
-            lines=2,
-        ),
-        gr.Checkbox(label="Include Metadata", value=True),
-    ],
-    outputs=gr.JSON(label="File Retrieval Result"),
-    title="File Content Retrieval",
-    description="Retrieve file content from HTTP servers with optional metadata.",
+local_file_demo = gr.Interface(
+    fn=load_local_file,
+    inputs=gr.Textbox(
+        placeholder="Enter local file path (e.g., /path/to/file.txt)",
+        label="File Path",
+        lines=2,
+    ),
+    outputs=gr.JSON(label="Local File Result"),
+    title="Local File Loading",
+    description="Load content from a local file on the server.",
     examples=[
-        [
-            "https://raw.githubusercontent.com/gradio-app/gradio/main/README.md",
-            True,
-        ],
-        ["https://httpbin.org/json", False],
-        [
-            "https://raw.githubusercontent.com/python/cpython/main/README.md",
-            True,
-        ],
-    ],
-)
-
-content_analysis_demo = gr.Interface(
-    fn=analyze_file_content,
-    inputs=[
-        gr.Textbox(
-            placeholder="Enter file content to analyze",
-            label="File Content",
-            lines=10,
-        ),
-        gr.Dropdown(
-            choices=[
-                "auto",
-                "text",
-                "code",
-                "json",
-                "xml",
-                "html",
-                "python",
-                "javascript",
-                "java",
-                "c",
-            ],
-            value="auto",
-            label="File Type",
-        ),
-    ],
-    outputs=gr.JSON(label="Content Analysis Result"),
-    title="Content Analysis",
-    description="Analyze file content for structure, metrics, and type detection.",
-    examples=[
-        [
-            """def hello_world():
-    print("Hello, World!")
-
-class Example:
-    def __init__(self):
-        self.name = "example"
-""",
-            "auto",
-        ],
-        [
-            """{
-  "name": "example",
-  "value": 42,
-  "items": ["a", "b", "c"]
-}""",
-            "json",
-        ],
-    ],
-)
-
-content_search_demo = gr.Interface(
-    fn=search_file_content,
-    inputs=[
-        gr.Textbox(
-            placeholder="Enter file content to search",
-            label="File Content",
-            lines=10,
-        ),
-        gr.Textbox(
-            placeholder="Enter search term", label="Search Term", lines=1
-        ),
-        gr.Checkbox(label="Case Sensitive", value=False),
-    ],
-    outputs=gr.JSON(label="Search Result"),
-    title="Content Search",
-    description="Search for specific terms within file content with line-by-line matching.",
-    examples=[
-        [
-            """def function1():
-    print("Hello")
-
-def function2():
-    print("World")
-""",
-            "def",
-            False,
-        ],
-        [
-            """import os
-import sys
-import json
-
-def main():
-    pass
-""",
-            "import",
-            True,
-        ],
-    ],
-)
-
-batch_retrieval_demo = gr.Interface(
-    fn=batch_retrieve_files,
-    inputs=[
-        gr.Textbox(
-            placeholder="Enter URLs, one per line",
-            label="URLs (one per line)",
-            lines=5,
-        ),
-        gr.Checkbox(label="Include Metadata", value=True),
-    ],
-    outputs=gr.JSON(label="Batch Retrieval Result"),
-    title="Batch File Retrieval",
-    description="Retrieve multiple files from different URLs with summary statistics.",
-    examples=[
-        [
-            """https://raw.githubusercontent.com/gradio-app/gradio/main/README.md
-https://httpbin.org/json
-https://raw.githubusercontent.com/python/cpython/main/README.md""",
-            True,
-        ]
+        ["/etc/hosts"],
+        ["./README.md"],
+        ["/tmp/test.txt"],
     ],
 )
 
 # Create tabbed interface
 demo = gr.TabbedInterface(
-    [
-        url_validation_demo,
-        file_retrieval_demo,
-        content_analysis_demo,
-        content_search_demo,
-        batch_retrieval_demo,
-    ],
-    [
-        "URL Validation",
-        "File Retrieval",
-        "Content Analysis",
-        "Content Search",
-        "Batch Retrieval",
-    ],
-    title="HTTP File Retriever Server",
+    [url_retrieval_demo, local_file_demo],
+    ["URL Retrieval", "Local File"],
+    title="Simple File Retriever Server",
 )
 
 # Launch the interface and MCP server

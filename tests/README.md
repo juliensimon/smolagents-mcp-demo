@@ -1,303 +1,323 @@
 # MCP Server Test Suite
 
-This directory contains a comprehensive test suite for the MCP (Model Context Protocol) servers. The test suite is designed to validate server functionality, integration, performance, and security.
+This directory contains the comprehensive test suite for the MCP (Model Context Protocol) servers. The tests are organized into two categories: **offline tests** and **online tests**.
 
-## Overview
+## Test Organization
 
-The test suite consists of multiple test categories and scenarios:
+### 📁 Offline Tests (`test_offline.py`)
+Tests that can run without live MCP servers or endpoints. These are safe to run in CI/CD environments.
 
-- **Integration Tests**: Real MCP server integration using actual MCP clients
-- **Functionality Tests**: Detailed tests for each server's specific capabilities
-- **Health Tests**: Server connectivity and responsiveness checks
-- **Configuration Tests**: Configuration validation and loading
-- **Environment Tests**: Environment setup and dependency checks
-- **Scenario Tests**: Complex integration workflows and use cases
+**Categories:**
+- **Configuration Tests** - Configuration structure and validation
+- **Environment Tests** - Environment setup and dependencies
+- **Config Validation Tests** - Configuration file validation
+- **File Structure Tests** - File structure and import validation
 
-## Test Categories
+### 🌐 Online Tests (`test_online.py`)
+Tests that require live MCP servers and external endpoints. These should NOT be run in CI environments.
 
-### Core Test Categories
+**Categories:**
+- **Integration Tests** - Real MCP server integration
+- **Health Tests** - Server health and connectivity
+- **Basic Server Functionality** - Sentiment analysis and text processing
+- **Code Metrics Functionality** - Complexity and style analysis
+- **Code Security Functionality** - Vulnerability detection
+- **Code Retrieval Functionality** - URL validation and content retrieval
+- **Git Server Functionality** - Git operations and repository analysis
+- **Integration Scenarios** - Complex workflows and scenarios
 
-1. **integration** - Real MCP server integration tests
-2. **configuration** - Configuration validation tests
-3. **environment** - Environment setup tests
-4. **health** - Server health and connectivity tests
-5. **scenarios** - Complex integration scenarios and workflows
+## Test Runners
 
-### Functionality Test Categories
+### Main Test Runner (`run_tests.py`)
+Unified test runner that can execute both offline and online tests.
 
-6. **basic_functionality** - Detailed basic server functionality tests
-7. **code_metrics_functionality** - Detailed code metrics server functionality tests
-8. **code_security_functionality** - Detailed code security server functionality tests
-9. **code_retrieval_functionality** - Detailed code retrieval server functionality tests
-10. **git_functionality** - Detailed git server functionality tests
+```bash
+# Run all tests (offline + online)
+python tests/run_tests.py all
+
+# Run only offline tests
+python tests/run_tests.py offline
+
+# Run only online tests
+python tests/run_tests.py online
+
+# Run quick tests (configuration + environment)
+python tests/run_tests.py quick
+
+# Run health tests
+python tests/run_tests.py health
+
+# Run functionality tests
+python tests/run_tests.py functionality
+
+# Run integration tests
+python tests/run_tests.py integration
+
+# List available test suites
+python tests/run_tests.py list
+
+# List all test categories
+python tests/run_tests.py list-categories
+
+# List test scenarios
+python tests/run_tests.py list-scenarios
+
+# Validate environment
+python tests/run_tests.py validate
+
+# Run with verbose output
+python tests/run_tests.py all --verbose
+
+# Generate detailed report
+python tests/run_tests.py all --report
+
+# Force offline-only mode (safe for CI)
+python tests/run_tests.py all --offline-only
+
+# Force online-only mode (requires servers)
+python tests/run_tests.py all --online-only
+```
+
+### Offline Test Runner (`run_offline_tests.py`)
+Dedicated runner for offline tests only.
+
+```bash
+# Run all offline tests
+python tests/run_offline_tests.py all
+
+# Run specific category
+python tests/run_offline_tests.py configuration
+python tests/run_offline_tests.py environment
+python tests/run_offline_tests.py config_validation
+python tests/run_offline_tests.py file_structure
+
+# List categories
+python tests/run_offline_tests.py list
+
+# Verbose output
+python tests/run_offline_tests.py all --verbose
+
+# Generate report
+python tests/run_offline_tests.py all --report
+```
+
+### Online Test Runner (`run_online_tests.py`)
+Dedicated runner for online tests only.
+
+```bash
+# Set API key first
+export TOGETHER_API_KEY="your-api-key"
+
+# Start all servers
+python start_all_servers.py
+
+# Run all online tests
+python tests/run_online_tests.py all
+
+# Run specific category
+python tests/run_online_tests.py health
+python tests/run_online_tests.py functionality
+python tests/run_online_tests.py integration
+
+# List categories
+python tests/run_online_tests.py list
+
+# Verbose output
+python tests/run_online_tests.py all --verbose
+
+# Generate report
+python tests/run_online_tests.py all --report
+```
 
 ## Test Scenarios
 
-The test suite includes predefined scenarios for different testing purposes:
+The test suite includes predefined scenarios that test complex workflows:
 
-- **smoke** - Basic functionality tests to ensure servers are working
-- **integration** - Full integration tests with all servers
-- **functionality** - Detailed functionality tests for each server
-- **performance** - Performance and stress tests
-- **security** - Security-focused tests
-- **full** - Complete test suite with all categories
+```bash
+# List available scenarios
+python tests/run_tests.py list-scenarios
+
+# Run a specific scenario
+python tests/run_tests.py code_review_workflow
+python tests/run_tests.py ci_cd_workflow
+python tests/run_tests.py multi_language_support
+```
+
+## CI/CD Integration
+
+### GitHub Actions
+The CI pipeline runs only offline tests to ensure reliability:
+
+```yaml
+- name: Run offline tests
+  run: |
+    python tests/run_tests.py offline --verbose
+```
+
+### Local Development
+For local development, you can run the full test suite:
+
+```bash
+# Quick validation (offline only)
+python tests/run_tests.py quick
+
+# Full offline validation
+python tests/run_tests.py offline
+
+# Full online validation (requires servers)
+python tests/run_tests.py online
+
+# Complete test suite
+python tests/run_tests.py all
+```
 
 ## Prerequisites
 
-Before running the tests, ensure:
+### For Offline Tests
+- Python 3.8+
+- Required Python packages (see `requirements.txt`)
+- Valid configuration file (`config.json`)
 
-1. **Environment Variables**:
-   ```bash
-   export TOGETHER_API_KEY="your_together_api_key_here"
-   ```
+### For Online Tests
+- All prerequisites for offline tests
+- `TOGETHER_API_KEY` environment variable set
+- All MCP servers running
+- Network connectivity to external endpoints
 
-2. **Python Dependencies**:
-   ```bash
-   pip install smolagents requests gradio textblob psutil
-   ```
+## Test Categories Details
 
-3. **Server Status**: All MCP servers should be running and accessible
+### Offline Test Categories
 
-## Running Tests
+#### Configuration Tests
+- Config structure validation
+- Server URL format validation
+- Port uniqueness validation
+- Model configuration validation
 
-### Basic Usage
+#### Environment Tests
+- Environment variable access
+- Dependency availability
+- Configuration validation
+- Python version compatibility
 
-```bash
-# Run all tests
-python tests/run_tests.py
+#### Config Validation Tests
+- Config file existence
+- JSON validity
+- Server config completeness
+- Model parameters structure
 
-# Run with verbose output
-python tests/run_tests.py --verbose
+#### File Structure Tests
+- Server module imports
+- Client module imports
+- Required file existence
+- Directory structure validation
 
-# Generate detailed report
-python tests/run_tests.py --report
-```
+### Online Test Categories
 
-### Test Categories
+#### Integration Tests
+- Server connectivity
+- Tools availability
+- MCP client integration
 
-```bash
-# Run specific test category
-python tests/run_tests.py integration
-python tests/run_tests.py health
-python tests/run_tests.py functionality
+#### Health Tests
+- Server health checks
+- MCP endpoint accessibility
+- Response time validation
 
-# Run quick tests (environment and configuration only)
-python tests/run_tests.py quick
+#### Basic Server Functionality
+- Sentiment analysis (positive/negative/neutral)
+- Text processing capabilities
 
-# Run core tests (integration and scenarios)
-python tests/run_tests.py core
-```
-
-### Test Scenarios
-
-```bash
-# Run specific scenario
-python tests/run_tests.py smoke
-python tests/run_tests.py integration
-python tests/run_tests.py functionality
-python tests/run_tests.py performance
-python tests/run_tests.py security
-python tests/run_tests.py full
-```
-
-### Utility Commands
-
-```bash
-# List all available test categories
-python tests/run_tests.py list
-
-# List all available test scenarios
-python tests/run_tests.py list-scenarios
-
-# Validate environment setup
-python tests/run_tests.py validate
-```
-
-## Test Files
-
-### Main Test Files
-
-- **`test_mcp_integration.py`** - Main integration tests and core functionality
-- **`test_server_functionality.py`** - Detailed server-specific functionality tests
-- **`test_config.py`** - Test configuration and scenario definitions
-- **`run_tests.py`** - Test runner and orchestration
-
-### Test Structure
-
-```
-tests/
-├── __init__.py
-├── README.md
-├── run_tests.py                 # Main test runner
-├── test_mcp_integration.py      # Integration tests
-├── test_server_functionality.py # Server-specific tests
-└── test_config.py              # Test configuration
-```
-
-## Test Coverage
-
-### Basic Server Tests
-- Sentiment analysis with various text types
-- Edge cases and error handling
-- Performance benchmarks
-
-### Code Metrics Server Tests
-- Code complexity analysis
+#### Code Metrics Functionality
+- Complexity analysis
 - Style analysis
 - Naming conventions
-- Error handling patterns
-- Documentation quality
+- Error handling analysis
 
-### Code Security Server Tests
-- Command injection detection
+#### Code Security Functionality
 - SQL injection detection
+- Command injection detection
 - Code injection detection
-- Safe code analysis
+- Hardcoded secrets detection
 
-### Code Retrieval Server Tests
-- URL validation (valid and invalid)
-- Content retrieval from various sources
-- Error handling for network issues
+#### Code Retrieval Functionality
+- URL validation
+- Content retrieval
+- File content analysis
+- Batch file retrieval
 
-### Git Server Tests
-- Repository status analysis
-- Git log analysis
-- Branch operations
-- Commit history analysis
+#### Git Server Functionality
+- Git status operations
+- Git log retrieval
+- Git branch operations
+- Git add/commit operations
 
-### Integration Tests
-- End-to-end workflows
-- Multi-server interactions
-- Performance testing
-- Concurrent request handling
-- Memory usage monitoring
-
-## Test Data
-
-The test suite includes comprehensive test data for various scenarios:
-
-### Sentiment Analysis Data
-- Positive, negative, neutral, and mixed sentiment texts
-- Edge cases (empty strings, special characters, unicode)
-
-### Code Analysis Data
-- Simple and complex code examples
-- Vulnerable and safe code patterns
-- Various programming language constructs
-
-### URL Test Data
-- Valid and invalid URLs
-- Different protocols and formats
-
-## Performance Testing
-
-The test suite includes performance benchmarks:
-
-- Response time measurements
-- Memory usage monitoring
-- Concurrent request handling
-- Load testing capabilities
-
-## Error Handling
-
-Tests include comprehensive error handling:
-
-- Invalid inputs
-- Network failures
-- Server unavailability
-- Timeout scenarios
-- Resource exhaustion
-
-## Configuration
-
-Test configuration is managed through `test_config.py`:
-
-- Test scenarios and categories
-- Performance thresholds
-- Environment requirements
-- Test data definitions
-
-## Reporting
-
-The test suite provides detailed reporting:
-
-- Test execution summaries
-- Performance metrics
-- Error details
-- Environment validation results
-
-## Continuous Integration
-
-The test suite is designed for CI/CD integration:
-
-- Exit codes for automation
-- Structured output
-- Configurable timeouts
-- Environment validation
+#### Integration Scenarios
+- Code review workflows
+- CI/CD workflows
+- Multi-language support
+- Large codebase analysis
 
 ## Troubleshooting
 
+### Offline Tests Failing
+- Check configuration file structure
+- Verify all required files exist
+- Ensure Python version compatibility
+- Check import dependencies
+
+### Online Tests Failing
+- Verify all servers are running
+- Check `TOGETHER_API_KEY` is set
+- Ensure network connectivity
+- Verify server URLs are correct
+
 ### Common Issues
+- **Import errors**: Make sure you're running from the project root
+- **Configuration errors**: Validate your `config.json` file
+- **Server connection errors**: Ensure all MCP servers are running
+- **API key errors**: Set the `TOGETHER_API_KEY` environment variable
 
-1. **Server Connection Failures**:
-   - Ensure all servers are running
-   - Check server ports and URLs
-   - Verify network connectivity
+## Test Reports
 
-2. **Environment Issues**:
-   - Run `python tests/run_tests.py validate` to check setup
-   - Verify API keys are set
-   - Check Python version (3.8+ required)
-
-3. **Test Failures**:
-   - Check server logs for errors
-   - Verify test data is accessible
-   - Review timeout settings
-
-### Debug Mode
-
-Run tests with verbose output for detailed debugging:
+All test runners support detailed reporting:
 
 ```bash
-python tests/run_tests.py --verbose
+# Generate detailed report
+python tests/run_tests.py all --report
+
+# Save report to file
+python tests/run_tests.py all --report > test_report.txt
 ```
 
-### Individual Test Execution
-
-Run specific test classes directly:
-
-```bash
-# Run integration tests only
-python -m unittest tests.test_mcp_integration.TestMCPIntegration
-
-# Run specific test method
-python -m unittest tests.test_mcp_integration.TestMCPIntegration.test_server_connectivity
-```
-
-## Contributing
-
-When adding new tests:
-
-1. Follow the existing test structure
-2. Add appropriate test data to `test_config.py`
-3. Update test categories if needed
-4. Include both positive and negative test cases
-5. Add performance considerations for new functionality
+Reports include:
+- Test execution summary
+- Pass/fail statistics
+- Detailed results by category
+- Performance metrics
+- Error details
 
 ## Best Practices
 
-1. **Test Isolation**: Each test should be independent
-2. **Resource Cleanup**: Clean up temporary files and connections
-3. **Error Handling**: Test both success and failure scenarios
-4. **Performance**: Monitor response times and resource usage
-5. **Documentation**: Document complex test scenarios
+1. **Always run offline tests** in CI/CD pipelines
+2. **Run online tests locally** before deploying
+3. **Use quick tests** for fast validation during development
+4. **Run full test suite** before major releases
+5. **Check test reports** for detailed analysis
+6. **Validate environment** before running online tests
 
-## Support
+## Migration Notes
 
-For issues with the test suite:
+The test suite has been reorganized from the original structure:
 
-1. Check the troubleshooting section
-2. Review server logs
-3. Validate environment setup
-4. Check test configuration
-5. Review recent changes to server implementations
+**Original Files → New Organization:**
+- `test_config.py` → `test_offline.py` (configuration tests)
+- `test_mcp_integration.py` → Split between `test_offline.py` and `test_online.py`
+- `test_server_functionality.py` → `test_online.py` (functionality tests)
+
+**Benefits of Reorganization:**
+- Clear separation between offline and online tests
+- CI/CD compatibility with offline tests
+- Better organization and maintainability
+- Unified test runner interface
+- Comprehensive reporting capabilities

@@ -14,48 +14,56 @@ from smolagents import MCPClient, OpenAIServerModel, ToolCallingAgent
 
 from config_loader import get_config_loader
 
-try:
-    # Load unified configuration
-    config_loader = get_config_loader()
-    server_config = config_loader.get_server_config("basic_server")
-    model_config = config_loader.get_model_config()
 
-    # Get server URL
-    server_url = server_config["url"]
-    mcp_client = MCPClient({"url": server_url})
-    tools = mcp_client.get_tools()
+def main():
+    """Main function to run the basic client."""
+    try:
+        # Load unified configuration
+        config_loader = get_config_loader()
+        server_config = config_loader.get_server_config("basic_server")
+        model_config = config_loader.get_model_config()
 
-    # Get model configuration (can be changed via environment variable)
-    model_name = os.getenv("TOGETHER_MODEL", model_config["default"])
-    model_params = config_loader.get_model_params(model_name)
-    api_base = model_config["api_base"]
+        # Get server URL
+        server_url = server_config["url"]
+        mcp_client = MCPClient({"url": server_url})
+        tools = mcp_client.get_tools()
 
-    # Create model with OpenAIServerModel
-    model = OpenAIServerModel(
-        model_id=model_name,
-        api_base=api_base,
-        api_key=os.getenv("TOGETHER_API_KEY"),
-        **model_params,
-    )
+        # Get model configuration (can be changed via environment variable)
+        model_name = os.getenv("TOGETHER_MODEL", model_config["default"])
+        model_params = config_loader.get_model_params(model_name)
+        api_base = model_config["api_base"]
 
-    agent = ToolCallingAgent(
-        tools=[*tools],
-        model=model,
-    )
+        # Create model with OpenAIServerModel
+        model = OpenAIServerModel(
+            model_id=model_name,
+            api_base=api_base,
+            api_key=os.getenv("TOGETHER_API_KEY"),
+            **model_params,
+        )
 
-    demo = gr.ChatInterface(
-        fn=lambda message, history: str(agent.run(message)),
-        type="messages",
-        examples=[
-            "Analyze the sentiment of the following text 'This is awesome'"
-        ],
-        title=f"Agent with MCP Tools ({model_name})",
-        description=(
-            f"This is a simple agent that uses MCP tools to answer questions. "
-            f"Using model: {model_name}"
-        ),
-    )
+        agent = ToolCallingAgent(
+            tools=[*tools],
+            model=model,
+        )
 
-    demo.launch()
-finally:
-    mcp_client.disconnect()
+        demo = gr.ChatInterface(
+            fn=lambda message, history: str(agent.run(message)),
+            type="messages",
+            examples=[
+                "Analyze the sentiment of the following text 'This is awesome'"
+            ],
+            title=f"Agent with MCP Tools ({model_name})",
+            description=(
+                f"This is a simple agent that uses MCP tools to answer questions. "
+                f"Using model: {model_name}"
+            ),
+        )
+
+        demo.launch()
+    finally:
+        if "mcp_client" in locals():
+            mcp_client.disconnect()
+
+
+if __name__ == "__main__":
+    main()

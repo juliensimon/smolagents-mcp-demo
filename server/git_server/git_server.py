@@ -42,13 +42,73 @@ logger = logging.getLogger(__name__)
 
 def git_status(file_path: str) -> str:
     """
-    Get the git status of a specific file.
+    Get the git status and version control information for a specific file.
+
+    This function analyzes the git status of a file within a git repository, providing
+    detailed information about its current state in version control. It determines
+    whether the file is tracked, modified, staged, untracked, or has other git status.
+    The function also retrieves information about the last commit that affected the file.
 
     Args:
-        file_path (str): Path to the file to check git status
+        file_path (str): The absolute or relative path to the file to check git status.
+                        The file must exist and be within a git repository.
+                        Examples: "/path/to/project/src/main.py",
+                                 "./config.json",
+                                 "README.md"
 
     Returns:
-        str: JSON string with git status information
+        str: A JSON string containing git status information with the following structure:
+
+        On success:
+        {
+            "file_path": "original_file_path",
+            "status": "modified",              // String: git status of the file
+            "message": "File has been modified", // String: human-readable status description
+            "relative_path": "src/main.py",    // String: path relative to git root
+            "git_root": "/path/to/repo",       // String: absolute path to git repository root
+            "last_commit": {                   // Object: information about last commit (if available)
+                "hash": "a1b2c3d4",           // String: first 8 characters of commit hash
+                "author": "John Doe",         // String: commit author name
+                "date": "2024-01-15",         // String: commit date (YYYY-MM-DD)
+                "message": "Update main function" // String: commit message
+            }
+        }
+
+        On failure:
+        {
+            "error": "description_of_error"
+        }
+
+        Possible status values:
+        - "tracked": File is tracked and up to date
+        - "modified": File has been modified (staged or unstaged)
+        - "added": File has been added to staging area
+        - "untracked": File is not tracked by git
+        - "deleted": File has been deleted
+        - "unknown": Unknown git status
+
+    Raises:
+        No exceptions are raised - all errors are returned in the JSON response.
+
+    Examples:
+        >>> result = git_status("/path/to/project/src/main.py")
+        >>> data = json.loads(result)
+        >>> if "error" not in data:
+        ...     print(f"Status: {data['status']}")  # e.g., "modified"
+        ...     print(f"Message: {data['message']}")  # e.g., "File has been modified"
+        ...     if data['last_commit']:
+        ...         print(f"Last commit: {data['last_commit']['message']}")
+        ... else:
+        ...     print(f"Error: {data['error']}")
+
+    Notes:
+        - Requires the file to exist and be within a git repository
+        - Uses git command-line tools for status checking
+        - Provides both machine-readable status and human-readable messages
+        - Includes information about the last commit that affected the file
+        - Handles various git status scenarios (modified, staged, untracked, etc.)
+        - Returns relative path from git repository root
+        - Results are logged for monitoring and debugging purposes
     """
     logger.info("Starting git_status function")
     logger.info(f"Input file_path: {file_path}")
@@ -148,35 +208,80 @@ def git_status(file_path: str) -> str:
 
         status_result_dict = {
             "file_path": file_path,
-            "relative_path": relative_path,
             "status": status,
             "message": message,
-            "status_code": status_output[:2] if status_output else None,
-            "last_commit": last_commit,
+            "relative_path": relative_path,
             "git_root": git_root,
+            "last_commit": last_commit,
         }
 
         logger.info(
-            f"Git status completed - Status: {status}, Message: {message}"
+            f"Git status completed - File: {file_path}, Status: {status}"
         )
         logger.info("git_status function completed successfully")
-        return json.dumps(status_result_dict, indent=2)
-
+        return json.dumps(status_result_dict)
     except Exception as e:
         logger.error(f"Error in git_status: {str(e)}")
         logger.info("git_status function completed with error")
-        return json.dumps({"error": f"Failed to get git status: {str(e)}"})
+        return json.dumps({"error": f"Git status failed: {str(e)}"})
 
 
 def git_add(file_path: str) -> str:
     """
-    Add a file to git staging area.
+    Add a file to the git staging area for the next commit.
+
+    This function stages a file in the git repository, preparing it for the next
+    commit. It adds the specified file to the git index, which means the changes
+    to that file will be included in the next commit operation. This is equivalent
+    to running `git add <file_path>` from the command line.
 
     Args:
-        file_path (str): Path to the file to add
+        file_path (str): The absolute or relative path to the file to add to git staging.
+                        The file must exist and be within a git repository.
+                        Examples: "/path/to/project/src/main.py",
+                                 "./config.json",
+                                 "README.md"
 
     Returns:
-        str: JSON string with add operation result
+        str: A JSON string containing the result of the git add operation with the following structure:
+
+        On success:
+        {
+            "success": true,
+            "file_path": "original_file_path",
+            "message": "File successfully added to staging area",
+            "relative_path": "src/main.py",    // String: path relative to git root
+            "git_root": "/path/to/repo"        // String: absolute path to git repository root
+        }
+
+        On failure:
+        {
+            "success": false,
+            "error": "description_of_error",
+            "file_path": "original_file_path"
+        }
+
+    Raises:
+        No exceptions are raised - all errors are returned in the JSON response.
+
+    Examples:
+        >>> result = git_add("/path/to/project/src/main.py")
+        >>> data = json.loads(result)
+        >>> if data["success"]:
+        ...     print(f"Success: {data['message']}")
+        ...     print(f"File staged: {data['relative_path']}")
+        ... else:
+        ...     print(f"Error: {data['error']}")
+
+    Notes:
+        - Requires the file to exist and be within a git repository
+        - Uses git command-line tools for staging operations
+        - The file will be staged for the next commit
+        - If the file is already staged, this operation is idempotent
+        - New files will be tracked and staged
+        - Modified files will have their changes staged
+        - Results are logged for monitoring and debugging purposes
+        - This operation does not create a commit - use git_commit() for that
     """
     logger.info("Starting git_add function")
     logger.info(f"Input file_path: {file_path}")
@@ -477,19 +582,22 @@ def git_diff(file_path: str, staged: bool = False) -> str:
         return json.dumps({"error": f"Failed to get diff: {str(e)}"})
 
 
-def git_log(file_path: str, limit: int = 5) -> str:
+def git_log(file_path: str, limit: float = 5) -> str:
     """
     Get git log for a specific file.
 
     Args:
         file_path (str): Path to the file to get log for
-        limit (int): Maximum number of commits to show
+        limit (float): Maximum number of commits to show
 
     Returns:
         str: JSON string with log information
     """
     logger.info("Starting git_log function")
     logger.info(f"Input file_path: {file_path}, limit: {limit}")
+
+    # Convert limit to int for git command
+    limit = int(limit)
 
     try:
         # Check if file exists

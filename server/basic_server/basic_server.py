@@ -11,11 +11,15 @@ sys.path.insert(
     ),
 )
 
-import gradio as gr
-from textblob import TextBlob
+import gradio as gr  # noqa: E402
+from textblob import TextBlob  # noqa: E402
 
-from config_loader import get_config_loader
-from logging_utils import log_tool_call, log_tool_result, setup_logging
+from config_loader import get_config_loader  # noqa: E402
+from logging_utils import (  # noqa: E402
+    log_tool_call,
+    log_tool_result,
+    setup_logging,
+)
 
 # Set MCP logging to ERROR before any imports (will be overridden by config)
 logging.getLogger("mcp").setLevel(logging.ERROR)
@@ -33,13 +37,59 @@ logger = setup_logging(logging_config)
 
 def sentiment_analysis(text: str) -> str:
     """
-    Analyze the sentiment of the given text.
+    Analyze the sentiment of the given text using natural language processing.
+
+    This function performs sentiment analysis on text input using the TextBlob library.
+    It evaluates the emotional tone and subjectivity of the text, providing both
+    numerical scores and categorical assessments. The analysis is based on machine
+    learning models trained on large text corpora.
 
     Args:
-        text (str): The text to analyze
+        text (str): The text to analyze for sentiment. Can be any length from a
+                   single word to multiple paragraphs. The function works best with
+                   complete sentences and natural language text.
+                   Examples: "I love this product!", "This service is terrible",
+                            "The weather is nice today"
 
     Returns:
-        str: A JSON string containing polarity, subjectivity, and assessment
+        str: A JSON string containing the sentiment analysis results with the following structure:
+        {
+            "polarity": 0.8,           // Float between -1.0 (negative) and 1.0 (positive)
+            "subjectivity": 0.6,       // Float between 0.0 (objective) and 1.0 (subjective)
+            "assessment": "positive"   // String: "positive", "negative", or "neutral"
+        }
+
+        The polarity score indicates:
+        - Positive values (0.1 to 1.0): Positive sentiment
+        - Negative values (-1.0 to -0.1): Negative sentiment
+        - Zero (0.0): Neutral sentiment
+
+        The subjectivity score indicates:
+        - High values (0.5 to 1.0): Subjective/opinionated text
+        - Low values (0.0 to 0.5): Objective/factual text
+
+    Raises:
+        No exceptions are raised - all errors are returned in the JSON response.
+
+    Examples:
+        >>> result = sentiment_analysis("I absolutely love this amazing product!")
+        >>> data = json.loads(result)
+        >>> print(f"Polarity: {data['polarity']}")  # Likely around 0.8-1.0
+        >>> print(f"Assessment: {data['assessment']}")  # "positive"
+
+        >>> result = sentiment_analysis("This is terrible and I hate it.")
+        >>> data = json.loads(result)
+        >>> print(f"Polarity: {data['polarity']}")  # Likely around -0.8 to -1.0
+        >>> print(f"Assessment: {data['assessment']}")  # "negative"
+
+    Notes:
+        - Uses TextBlob library for sentiment analysis
+        - Polarity scores are rounded to 2 decimal places
+        - Subjectivity scores are rounded to 2 decimal places
+        - Assessment is automatically determined based on polarity threshold
+        - Works with English text (TextBlob's primary language)
+        - Performance may vary with very short text or non-English content
+        - Results are logged for monitoring and debugging purposes
     """
     log_tool_call(logger, "sentiment_analysis", {"text_length": len(text)})
 

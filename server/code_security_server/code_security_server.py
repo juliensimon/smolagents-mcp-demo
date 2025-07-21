@@ -43,13 +43,82 @@ logger = logging.getLogger(__name__)
 
 def analyze_sql_injection(code: str) -> str:
     """
-    Analyze code for SQL injection vulnerabilities.
+    Analyze Python source code for SQL injection vulnerabilities and security risks.
+
+    This function performs static code analysis to detect potential SQL injection
+    vulnerabilities in Python code. It scans for common patterns that could lead
+    to SQL injection attacks, such as dynamic SQL query construction with user input,
+    string concatenation in SQL statements, and unsafe formatting methods. The analysis
+    helps identify security weaknesses before they can be exploited.
 
     Args:
-        code (str): The source code to analyze
+        code (str): The Python source code to analyze for SQL injection vulnerabilities.
+                   Can be a single function, class, module, or complete script.
+                   Examples: "query = f'SELECT * FROM users WHERE id = {user_id}'",
+                            "sql = 'SELECT * FROM users WHERE name = ' + user_input",
+                            "cursor.execute('SELECT * FROM users WHERE id = %s' % user_id)"
 
     Returns:
-        str: JSON string with SQL injection analysis
+        str: A JSON string containing SQL injection analysis results with the following structure:
+        {
+            "vulnerabilities": [                    // List of detected vulnerabilities
+                {
+                    "type": "SQL Injection",       // String: vulnerability type
+                    "description": "F-string SQL query with variable interpolation", // String: detailed description
+                    "line": 15,                    // Integer: line number where vulnerability was found
+                    "code": "f'SELECT * FROM users WHERE id = {user_id}'", // String: vulnerable code snippet
+                    "severity": "high"             // String: "high", "medium", or "low"
+                }
+            ],
+            "risk_level": "high",                  // String: overall risk assessment
+            "vulnerability_count": 3,              // Integer: total number of vulnerabilities found
+            "recommendations": [                   // List of security improvement suggestions
+                "Use parameterized queries with placeholders",
+                "Use ORM libraries like SQLAlchemy",
+                "Validate and sanitize all user inputs",
+                "Use database connection libraries with built-in protection"
+            ]
+        }
+
+        Risk levels are determined as follows:
+        - Low: 0 vulnerabilities found
+        - Medium: 1-3 vulnerabilities found
+        - High: 4+ vulnerabilities found
+
+    Raises:
+        No exceptions are raised - all errors are returned in the JSON response.
+
+    Examples:
+        >>> code = '''
+        ... def get_user(user_id):
+        ...     query = f"SELECT * FROM users WHERE id = {user_id}"
+        ...     return execute_query(query)
+        ... '''
+        >>> result = analyze_sql_injection(code)
+        >>> data = json.loads(result)
+        >>> print(f"Risk level: {data['risk_level']}")  # "high"
+        >>> print(f"Vulnerabilities found: {data['vulnerability_count']}")  # 1
+        >>> for vuln in data['vulnerabilities']:
+        ...     print(f"Line {vuln['line']}: {vuln['description']}")
+
+        >>> code = '''
+        ... def get_user(user_id):
+        ...     query = "SELECT * FROM users WHERE id = %s"
+        ...     return execute_query(query, (user_id,))
+        ... '''
+        >>> result = analyze_sql_injection(code)
+        >>> data = json.loads(result)
+        >>> print(f"Risk level: {data['risk_level']}")  # "low"
+
+    Notes:
+        - Detects multiple SQL injection patterns including f-strings, string concatenation, and formatting
+        - Covers common SQL operations: SELECT, INSERT, UPDATE, DELETE, DROP, CREATE
+        - Provides line numbers for easy vulnerability location
+        - Includes severity assessment for each vulnerability
+        - Offers actionable security recommendations
+        - Uses regex patterns for pattern matching (case-insensitive)
+        - Results are logged for monitoring and debugging purposes
+        - This is static analysis - runtime behavior may differ
     """
     logger.info("Starting analyze_sql_injection function")
     logger.info(f"Input code length: {len(code)} characters")
@@ -135,13 +204,79 @@ def analyze_sql_injection(code: str) -> str:
 
 def analyze_command_injection(code: str) -> str:
     """
-    Analyze code for command injection vulnerabilities.
+    Analyze Python source code for command injection vulnerabilities and security risks.
+
+    This function performs static code analysis to detect potential command injection
+    vulnerabilities in Python code. It scans for dangerous patterns that could allow
+    arbitrary command execution, such as using user input directly in system commands,
+    shell execution functions, or subprocess calls without proper sanitization. The
+    analysis helps identify security weaknesses that could lead to remote code execution.
 
     Args:
-        code (str): The source code to analyze
+        code (str): The Python source code to analyze for command injection vulnerabilities.
+                   Can be a single function, class, module, or complete script.
+                   Examples: "os.system('ping ' + user_input)",
+                            "subprocess.run(['ls', '-la', user_input])",
+                            "subprocess.Popen(f'echo {user_data}', shell=True)"
 
     Returns:
-        str: JSON string with command injection analysis
+        str: A JSON string containing command injection analysis results with the following structure:
+        {
+            "vulnerabilities": [                    // List of detected vulnerabilities
+                {
+                    "type": "Command Injection",   // String: vulnerability type
+                    "description": "os.system with user input", // String: detailed description
+                    "line": 25,                    // Integer: line number where vulnerability was found
+                    "code": "os.system('ping ' + user_input)", // String: vulnerable code snippet
+                    "severity": "high"             // String: "high", "medium", or "low"
+                }
+            ],
+            "risk_level": "high",                  // String: overall risk assessment
+            "vulnerability_count": 2,              // Integer: total number of vulnerabilities found
+            "recommendations": [                   // List of security improvement suggestions
+                "Use subprocess with shell=False and proper argument lists",
+                "Validate and sanitize all user inputs",
+                "Use specific command libraries instead of shell commands",
+                "Implement proper input validation and whitelisting"
+            ]
+        }
+
+        Risk levels are determined as follows:
+        - Low: 0 vulnerabilities found
+        - Medium: 1-2 vulnerabilities found
+        - High: 3+ vulnerabilities found
+
+    Raises:
+        No exceptions are raised - all errors are returned in the JSON response.
+
+    Examples:
+        >>> code = '''
+        ... def ping_host(host):
+        ...     os.system(f"ping {host}")
+        ... '''
+        >>> result = analyze_command_injection(code)
+        >>> data = json.loads(result)
+        >>> print(f"Risk level: {data['risk_level']}")  # "high"
+        >>> print(f"Vulnerabilities found: {data['vulnerability_count']}")  # 1
+
+        >>> code = '''
+        ... def list_directory(path):
+        ...     subprocess.run(['ls', '-la', path], shell=False)
+        ... '''
+        >>> result = analyze_command_injection(code)
+        >>> data = json.loads(result)
+        >>> print(f"Risk level: {data['risk_level']}")  # "low"
+
+    Notes:
+        - Detects multiple command injection patterns including os.system, subprocess, and shell=True
+        - Covers various dangerous functions: os.system, os.popen, subprocess.run, subprocess.Popen
+        - Identifies shell=True usage which is particularly dangerous
+        - Provides line numbers for easy vulnerability location
+        - Includes severity assessment for each vulnerability
+        - Offers actionable security recommendations
+        - Uses regex patterns for pattern matching (case-insensitive)
+        - Results are logged for monitoring and debugging purposes
+        - This is static analysis - runtime behavior may differ
     """
     logger.info("Starting analyze_command_injection function")
     logger.info(f"Input code length: {len(code)} characters")
