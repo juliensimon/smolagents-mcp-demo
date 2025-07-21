@@ -270,9 +270,9 @@ def load_local_file(file_path: str) -> str:
             "content_hash": content_hash,
             "file_size_bytes": file_stats.st_size,
             "last_modified": file_stats.st_mtime,
-            "file_extension": os.path.splitext(file_path)[1]
-            if "." in file_path
-            else None,
+            "file_extension": (
+                os.path.splitext(file_path)[1] if "." in file_path else None
+            ),
         }
 
         logger.info(

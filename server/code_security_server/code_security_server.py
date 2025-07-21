@@ -173,9 +173,11 @@ def analyze_sql_injection(code: str) -> str:
                     "type": "SQL Injection",
                     "description": description,
                     "line": line_num,
-                    "code": match.group(0)[:100] + "..."
-                    if len(match.group(0)) > 100
-                    else match.group(0),
+                    "code": (
+                        match.group(0)[:100] + "..."
+                        if len(match.group(0)) > 100
+                        else match.group(0)
+                    ),
                     "severity": "high",
                 }
             )
@@ -318,9 +320,11 @@ def analyze_command_injection(code: str) -> str:
                     "type": "Command Injection",
                     "description": description,
                     "line": line_num,
-                    "code": match.group(0)[:100] + "..."
-                    if len(match.group(0)) > 100
-                    else match.group(0),
+                    "code": (
+                        match.group(0)[:100] + "..."
+                        if len(match.group(0)) > 100
+                        else match.group(0)
+                    ),
                     "severity": "high",
                 }
             )
@@ -490,9 +494,11 @@ def analyze_path_traversal(code: str) -> str:
                     "type": "Path Traversal",
                     "description": description,
                     "line": line_num,
-                    "code": match.group(0)[:100] + "..."
-                    if len(match.group(0)) > 100
-                    else match.group(0),
+                    "code": (
+                        match.group(0)[:100] + "..."
+                        if len(match.group(0)) > 100
+                        else match.group(0)
+                    ),
                     "severity": "medium",
                 }
             )
@@ -558,9 +564,11 @@ def analyze_unsafe_deserialization(code: str) -> str:
                     "type": "Unsafe Deserialization",
                     "description": description,
                     "line": line_num,
-                    "code": match.group(0)[:100] + "..."
-                    if len(match.group(0)) > 100
-                    else match.group(0),
+                    "code": (
+                        match.group(0)[:100] + "..."
+                        if len(match.group(0)) > 100
+                        else match.group(0)
+                    ),
                     "severity": "high",
                 }
             )
@@ -638,9 +646,11 @@ def analyze_xss_vulnerabilities(code: str) -> str:
                     "type": "Cross-Site Scripting (XSS)",
                     "description": description,
                     "line": line_num,
-                    "code": match.group(0)[:100] + "..."
-                    if len(match.group(0)) > 100
-                    else match.group(0),
+                    "code": (
+                        match.group(0)[:100] + "..."
+                        if len(match.group(0)) > 100
+                        else match.group(0)
+                    ),
                     "severity": "high",
                 }
             )
@@ -708,9 +718,11 @@ def analyze_input_validation(code: str) -> str:
                     "type": "Input Validation",
                     "description": description,
                     "line": line_num,
-                    "code": match.group(0)[:100] + "..."
-                    if len(match.group(0)) > 100
-                    else match.group(0),
+                    "code": (
+                        match.group(0)[:100] + "..."
+                        if len(match.group(0)) > 100
+                        else match.group(0)
+                    ),
                     "severity": "medium",
                 }
             )

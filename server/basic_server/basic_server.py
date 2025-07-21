@@ -104,11 +104,13 @@ def sentiment_analysis(text: str) -> str:
             "subjectivity": round(
                 sentiment.subjectivity, 2
             ),  # 0 (objective) to 1 (subjective)
-            "assessment": "positive"
-            if sentiment.polarity > 0
-            else "negative"
-            if sentiment.polarity < 0
-            else "neutral",
+            "assessment": (
+                "positive"
+                if sentiment.polarity > 0
+                else "negative"
+                if sentiment.polarity < 0
+                else "neutral"
+            ),
         }
 
         log_tool_result(logger, "sentiment_analysis", result)

@@ -488,59 +488,64 @@ def measure_code_coverage_metrics(code: str) -> str:
         str: JSON string with coverage-related metrics
     """
     logger.info("Starting measure_code_coverage_metrics function")
-    
+
     # Input validation and sanitization
     if not isinstance(code, str):
         logger.error("Input is not a string")
         error_result = {
             "error": "Invalid input type",
-            "details": "Input must be a string containing Python code"
+            "details": "Input must be a string containing Python code",
         }
         return json.dumps(error_result)
-    
+
     if not code.strip():
         logger.error("Empty or whitespace-only input")
         error_result = {
             "error": "Empty input",
-            "details": "Input code cannot be empty or contain only whitespace"
+            "details": "Input code cannot be empty or contain only whitespace",
         }
         return json.dumps(error_result)
-    
+
     # Check for potentially dangerous patterns before parsing
     dangerous_patterns = [
-        r'__import__\s*\(',
-        r'eval\s*\(',
-        r'exec\s*\(',
-        r'compile\s*\(',
-        r'input\s*\(',
-        r'open\s*\(',
-        r'file\s*\(',
-        r'raw_input\s*\(',
+        r"__import__\s*\(",
+        r"eval\s*\(",
+        r"exec\s*\(",
+        r"compile\s*\(",
+        r"input\s*\(",
+        r"open\s*\(",
+        r"file\s*\(",
+        r"raw_input\s*\(",
     ]
-    
+
     import re
+
     for pattern in dangerous_patterns:
         if re.search(pattern, code, re.IGNORECASE):
-            logger.warning(f"Potentially dangerous pattern detected: {pattern}")
-    
+            logger.warning(
+                f"Potentially dangerous pattern detected: {pattern}"
+            )
+
     # Check for common syntax issues
     syntax_issues = []
-    
+
     # Check for leading zeros in integer literals
-    leading_zero_pattern = r'\b0[0-9]+\b'
+    leading_zero_pattern = r"\b0[0-9]+\b"
     leading_zero_matches = re.findall(leading_zero_pattern, code)
     if leading_zero_matches:
-        syntax_issues.append(f"Leading zeros in integer literals: {leading_zero_matches}")
-    
+        syntax_issues.append(
+            f"Leading zeros in integer literals: {leading_zero_matches}"
+        )
+
     # Check for unterminated strings
-    lines = code.split('\n')
+    lines = code.split("\n")
     for i, line in enumerate(lines, 1):
         # Simple check for unmatched quotes
         single_quotes = line.count("'") % 2
         double_quotes = line.count('"') % 2
         if single_quotes != 0 or double_quotes != 0:
             syntax_issues.append(f"Potential unmatched quotes at line {i}")
-    
+
     logger.info(f"Input code length: {len(code)} characters")
     if syntax_issues:
         logger.warning(f"Syntax issues detected: {syntax_issues}")
@@ -602,12 +607,14 @@ def measure_code_coverage_metrics(code: str) -> str:
             "loop_statements": statements["for"] + statements["while"],
             "exception_handling": statements["try"] + statements["except"],
             "testability_score": max(0, testability_score),
-            "coverage_risk": "high"
-            if branch_complexity > 15
-            else "medium"
-            if branch_complexity > 8
-            else "low",
-            "warnings": syntax_issues if syntax_issues else None
+            "coverage_risk": (
+                "high"
+                if branch_complexity > 15
+                else "medium"
+                if branch_complexity > 8
+                else "low"
+            ),
+            "warnings": syntax_issues if syntax_issues else None,
         }
 
         logger.info(
@@ -617,7 +624,7 @@ def measure_code_coverage_metrics(code: str) -> str:
             "measure_code_coverage_metrics function completed successfully"
         )
         return json.dumps(result)
-        
+
     except SyntaxError as e:
         logger.error(
             f"Syntax error in measure_code_coverage_metrics: {str(e)}"
@@ -625,27 +632,31 @@ def measure_code_coverage_metrics(code: str) -> str:
         error_result = {
             "error": "Invalid Python syntax",
             "details": str(e),
-            "line": getattr(e, 'lineno', 'unknown'),
-            "offset": getattr(e, 'offset', 'unknown'),
-            "text": getattr(e, 'text', 'unknown')
+            "line": getattr(e, "lineno", "unknown"),
+            "offset": getattr(e, "offset", "unknown"),
+            "text": getattr(e, "text", "unknown"),
         }
         logger.info(
             "measure_code_coverage_metrics function completed with error"
         )
         return json.dumps(error_result)
-        
+
     except IndentationError as e:
-        logger.error(f"Indentation error in measure_code_coverage_metrics: {str(e)}")
+        logger.error(
+            f"Indentation error in measure_code_coverage_metrics: {str(e)}"
+        )
         error_result = {
             "error": "Indentation error",
             "details": str(e),
-            "line": getattr(e, 'lineno', 'unknown'),
-            "offset": getattr(e, 'offset', 'unknown'),
-            "text": getattr(e, 'text', 'unknown')
+            "line": getattr(e, "lineno", "unknown"),
+            "offset": getattr(e, "offset", "unknown"),
+            "text": getattr(e, "text", "unknown"),
         }
-        logger.info("measure_code_coverage_metrics function completed with error")
+        logger.info(
+            "measure_code_coverage_metrics function completed with error"
+        )
         return json.dumps(error_result)
-        
+
     except Exception as e:
         logger.error(
             f"Unexpected error in measure_code_coverage_metrics: {str(e)}"
@@ -653,7 +664,7 @@ def measure_code_coverage_metrics(code: str) -> str:
         error_result = {
             "error": "Coverage analysis failed",
             "details": str(e),
-            "error_type": type(e).__name__
+            "error_type": type(e).__name__,
         }
         logger.info(
             "measure_code_coverage_metrics function completed with error"
@@ -672,59 +683,64 @@ def analyze_naming_conventions(code: str) -> str:
         str: JSON string with naming metrics
     """
     logger.info("Starting analyze_naming_conventions function")
-    
+
     # Input validation and sanitization
     if not isinstance(code, str):
         logger.error("Input is not a string")
         error_result = {
             "error": "Invalid input type",
-            "details": "Input must be a string containing Python code"
+            "details": "Input must be a string containing Python code",
         }
         return json.dumps(error_result)
-    
+
     if not code.strip():
         logger.error("Empty or whitespace-only input")
         error_result = {
             "error": "Empty input",
-            "details": "Input code cannot be empty or contain only whitespace"
+            "details": "Input code cannot be empty or contain only whitespace",
         }
         return json.dumps(error_result)
-    
+
     # Check for potentially dangerous patterns before parsing
     dangerous_patterns = [
-        r'__import__\s*\(',
-        r'eval\s*\(',
-        r'exec\s*\(',
-        r'compile\s*\(',
-        r'input\s*\(',
-        r'open\s*\(',
-        r'file\s*\(',
-        r'raw_input\s*\(',
+        r"__import__\s*\(",
+        r"eval\s*\(",
+        r"exec\s*\(",
+        r"compile\s*\(",
+        r"input\s*\(",
+        r"open\s*\(",
+        r"file\s*\(",
+        r"raw_input\s*\(",
     ]
-    
+
     import re
+
     for pattern in dangerous_patterns:
         if re.search(pattern, code, re.IGNORECASE):
-            logger.warning(f"Potentially dangerous pattern detected: {pattern}")
-    
+            logger.warning(
+                f"Potentially dangerous pattern detected: {pattern}"
+            )
+
     # Check for common syntax issues
     syntax_issues = []
-    
+
     # Check for leading zeros in integer literals
-    leading_zero_pattern = r'\b0[0-9]+\b'
+    leading_zero_pattern = r"\b0[0-9]+\b"
     leading_zero_matches = re.findall(leading_zero_pattern, code)
     if leading_zero_matches:
-        syntax_issues.append(f"Leading zeros in integer literals: {leading_zero_matches}")
-    
+        syntax_issues.append(
+            f"Leading zeros in integer literals: {leading_zero_matches}"
+        )
+
     # Check for unterminated strings
-    lines = code.split('\n')
+    lines = code.split("\n")
     for i, line in enumerate(lines, 1):
         # Simple check for unmatched quotes
         single_quotes = line.count("'") % 2
         double_quotes = line.count('"') % 2
         if single_quotes != 0 or double_quotes != 0:
             syntax_issues.append(f"Potential unmatched quotes at line {i}")
-    
+
     logger.info(f"Input code length: {len(code)} characters")
     if syntax_issues:
         logger.warning(f"Syntax issues detected: {syntax_issues}")
@@ -776,12 +792,10 @@ def analyze_naming_conventions(code: str) -> str:
             "good_names": len(good_names),
             "naming_issues": issues,
             "naming_score": naming_score,
-            "convention_compliance": round(
-                len(good_names) / len(names) * 100, 1
-            )
-            if names
-            else 100,
-            "warnings": syntax_issues if syntax_issues else None
+            "convention_compliance": (
+                round(len(good_names) / len(names) * 100, 1) if names else 100
+            ),
+            "warnings": syntax_issues if syntax_issues else None,
         }
 
         logger.info(
@@ -791,31 +805,33 @@ def analyze_naming_conventions(code: str) -> str:
             "analyze_naming_conventions function completed successfully"
         )
         return json.dumps(result)
-        
+
     except SyntaxError as e:
         logger.error(f"Syntax error in analyze_naming_conventions: {str(e)}")
         error_result = {
             "error": "Invalid Python syntax",
             "details": str(e),
-            "line": getattr(e, 'lineno', 'unknown'),
-            "offset": getattr(e, 'offset', 'unknown'),
-            "text": getattr(e, 'text', 'unknown')
+            "line": getattr(e, "lineno", "unknown"),
+            "offset": getattr(e, "offset", "unknown"),
+            "text": getattr(e, "text", "unknown"),
         }
         logger.info("analyze_naming_conventions function completed with error")
         return json.dumps(error_result)
-        
+
     except IndentationError as e:
-        logger.error(f"Indentation error in analyze_naming_conventions: {str(e)}")
+        logger.error(
+            f"Indentation error in analyze_naming_conventions: {str(e)}"
+        )
         error_result = {
             "error": "Indentation error",
             "details": str(e),
-            "line": getattr(e, 'lineno', 'unknown'),
-            "offset": getattr(e, 'offset', 'unknown'),
-            "text": getattr(e, 'text', 'unknown')
+            "line": getattr(e, "lineno", "unknown"),
+            "offset": getattr(e, "offset", "unknown"),
+            "text": getattr(e, "text", "unknown"),
         }
         logger.info("analyze_naming_conventions function completed with error")
         return json.dumps(error_result)
-        
+
     except Exception as e:
         logger.error(
             f"Unexpected error in analyze_naming_conventions: {str(e)}"
@@ -823,7 +839,7 @@ def analyze_naming_conventions(code: str) -> str:
         error_result = {
             "error": "Naming analysis failed",
             "details": str(e),
-            "error_type": type(e).__name__
+            "error_type": type(e).__name__,
         }
         logger.info("analyze_naming_conventions function completed with error")
         return json.dumps(error_result)
@@ -840,59 +856,64 @@ def calculate_maintainability_index(code: str) -> str:
         str: JSON string with maintainability metrics
     """
     logger.info("Starting calculate_maintainability_index function")
-    
+
     # Input validation and sanitization
     if not isinstance(code, str):
         logger.error("Input is not a string")
         error_result = {
             "error": "Invalid input type",
-            "details": "Input must be a string containing Python code"
+            "details": "Input must be a string containing Python code",
         }
         return json.dumps(error_result)
-    
+
     if not code.strip():
         logger.error("Empty or whitespace-only input")
         error_result = {
             "error": "Empty input",
-            "details": "Input code cannot be empty or contain only whitespace"
+            "details": "Input code cannot be empty or contain only whitespace",
         }
         return json.dumps(error_result)
-    
+
     # Check for potentially dangerous patterns before parsing
     dangerous_patterns = [
-        r'__import__\s*\(',
-        r'eval\s*\(',
-        r'exec\s*\(',
-        r'compile\s*\(',
-        r'input\s*\(',
-        r'open\s*\(',
-        r'file\s*\(',
-        r'raw_input\s*\(',
+        r"__import__\s*\(",
+        r"eval\s*\(",
+        r"exec\s*\(",
+        r"compile\s*\(",
+        r"input\s*\(",
+        r"open\s*\(",
+        r"file\s*\(",
+        r"raw_input\s*\(",
     ]
-    
+
     import re
+
     for pattern in dangerous_patterns:
         if re.search(pattern, code, re.IGNORECASE):
-            logger.warning(f"Potentially dangerous pattern detected: {pattern}")
-    
+            logger.warning(
+                f"Potentially dangerous pattern detected: {pattern}"
+            )
+
     # Check for common syntax issues
     syntax_issues = []
-    
+
     # Check for leading zeros in integer literals
-    leading_zero_pattern = r'\b0[0-9]+\b'
+    leading_zero_pattern = r"\b0[0-9]+\b"
     leading_zero_matches = re.findall(leading_zero_pattern, code)
     if leading_zero_matches:
-        syntax_issues.append(f"Leading zeros in integer literals: {leading_zero_matches}")
-    
+        syntax_issues.append(
+            f"Leading zeros in integer literals: {leading_zero_matches}"
+        )
+
     # Check for unterminated strings
-    lines = code.split('\n')
+    lines = code.split("\n")
     for i, line in enumerate(lines, 1):
         # Simple check for unmatched quotes
         single_quotes = line.count("'") % 2
         double_quotes = line.count('"') % 2
         if single_quotes != 0 or double_quotes != 0:
             syntax_issues.append(f"Potential unmatched quotes at line {i}")
-    
+
     logger.info(f"Input code length: {len(code)} characters")
     if syntax_issues:
         logger.warning(f"Syntax issues detected: {syntax_issues}")
@@ -968,14 +989,18 @@ def calculate_maintainability_index(code: str) -> str:
             "function_count": len(functions),
             "avg_function_length": round(avg_function_length, 1),
             "maintainability_index": round(maintainability_index, 1),
-            "maintainability_level": "excellent"
-            if maintainability_index > 85
-            else "good"
-            if maintainability_index > 65
-            else "fair"
-            if maintainability_index > 25
-            else "poor",
-            "warnings": syntax_issues if syntax_issues else None
+            "maintainability_level": (
+                "excellent"
+                if maintainability_index > 85
+                else (
+                    "good"
+                    if maintainability_index > 65
+                    else "fair"
+                    if maintainability_index > 25
+                    else "poor"
+                )
+            ),
+            "warnings": syntax_issues if syntax_issues else None,
         }
 
         logger.info(
@@ -985,7 +1010,7 @@ def calculate_maintainability_index(code: str) -> str:
             "calculate_maintainability_index function completed successfully"
         )
         return json.dumps(result)
-        
+
     except SyntaxError as e:
         logger.error(
             f"Syntax error in calculate_maintainability_index: {str(e)}"
@@ -993,27 +1018,31 @@ def calculate_maintainability_index(code: str) -> str:
         error_result = {
             "error": "Invalid Python syntax",
             "details": str(e),
-            "line": getattr(e, 'lineno', 'unknown'),
-            "offset": getattr(e, 'offset', 'unknown'),
-            "text": getattr(e, 'text', 'unknown')
+            "line": getattr(e, "lineno", "unknown"),
+            "offset": getattr(e, "offset", "unknown"),
+            "text": getattr(e, "text", "unknown"),
         }
         logger.info(
             "calculate_maintainability_index function completed with error"
         )
         return json.dumps(error_result)
-        
+
     except IndentationError as e:
-        logger.error(f"Indentation error in calculate_maintainability_index: {str(e)}")
+        logger.error(
+            f"Indentation error in calculate_maintainability_index: {str(e)}"
+        )
         error_result = {
             "error": "Indentation error",
             "details": str(e),
-            "line": getattr(e, 'lineno', 'unknown'),
-            "offset": getattr(e, 'offset', 'unknown'),
-            "text": getattr(e, 'text', 'unknown')
+            "line": getattr(e, "lineno", "unknown"),
+            "offset": getattr(e, "offset", "unknown"),
+            "text": getattr(e, "text", "unknown"),
         }
-        logger.info("calculate_maintainability_index function completed with error")
+        logger.info(
+            "calculate_maintainability_index function completed with error"
+        )
         return json.dumps(error_result)
-        
+
     except Exception as e:
         logger.error(
             f"Unexpected error in calculate_maintainability_index: {str(e)}"
@@ -1021,7 +1050,7 @@ def calculate_maintainability_index(code: str) -> str:
         error_result = {
             "error": "Maintainability analysis failed",
             "details": str(e),
-            "error_type": type(e).__name__
+            "error_type": type(e).__name__,
         }
         logger.info(
             "calculate_maintainability_index function completed with error"
@@ -1092,13 +1121,17 @@ def analyze_security_patterns(code: str) -> str:
         result = {
             "security_issues": security_issues,
             "security_score": max(0, security_score),
-            "security_level": "excellent"
-            if security_score > 85
-            else "good"
-            if security_score > 70
-            else "fair"
-            if security_score > 50
-            else "poor",
+            "security_level": (
+                "excellent"
+                if security_score > 85
+                else (
+                    "good"
+                    if security_score > 70
+                    else "fair"
+                    if security_score > 50
+                    else "poor"
+                )
+            ),
             "issue_count": len(security_issues),
         }
 
@@ -1188,13 +1221,17 @@ def calculate_performance_metrics(code: str) -> str:
         result = {
             "performance_issues": performance_issues,
             "performance_score": max(0, performance_score),
-            "performance_level": "excellent"
-            if performance_score > 85
-            else "good"
-            if performance_score > 70
-            else "fair"
-            if performance_score > 50
-            else "poor",
+            "performance_level": (
+                "excellent"
+                if performance_score > 85
+                else (
+                    "good"
+                    if performance_score > 70
+                    else "fair"
+                    if performance_score > 50
+                    else "poor"
+                )
+            ),
             "issue_count": len(performance_issues),
         }
 
@@ -1312,13 +1349,15 @@ def analyze_documentation_quality(code: str) -> str:
             "documented_classes": documented_classes,
             "documentation_coverage": round(doc_coverage, 1),
             "documentation_score": round(doc_score, 1),
-            "doc_quality_level": "excellent"
-            if doc_score > 80
-            else "good"
-            if doc_score > 60
-            else "fair"
-            if doc_score > 40
-            else "poor",
+            "doc_quality_level": (
+                "excellent"
+                if doc_score > 80
+                else "good"
+                if doc_score > 60
+                else "fair"
+                if doc_score > 40
+                else "poor"
+            ),
         }
 
         logger.info(
@@ -1391,16 +1430,20 @@ def calculate_code_duplication(code: str) -> str:
             "duplication_percentage": round(duplication_percentage, 2),
             "consecutive_duplicate_blocks": len(consecutive_duplicates),
             "duplication_score": round(duplication_score, 1),
-            "duplication_level": "excellent"
-            if duplication_score > 90
-            else "good"
-            if duplication_score > 75
-            else "fair"
-            if duplication_score > 50
-            else "poor",
-            "most_duplicated_lines": list(duplicate_lines.keys())[:5]
-            if duplicate_lines
-            else [],
+            "duplication_level": (
+                "excellent"
+                if duplication_score > 90
+                else (
+                    "good"
+                    if duplication_score > 75
+                    else "fair"
+                    if duplication_score > 50
+                    else "poor"
+                )
+            ),
+            "most_duplicated_lines": (
+                list(duplicate_lines.keys())[:5] if duplicate_lines else []
+            ),
         }
 
         logger.info(
@@ -1428,59 +1471,64 @@ def analyze_error_handling(code: str) -> str:
         str: JSON string with error handling metrics
     """
     logger.info("Starting analyze_error_handling function")
-    
+
     # Input validation and sanitization
     if not isinstance(code, str):
         logger.error("Input is not a string")
         error_result = {
             "error": "Invalid input type",
-            "details": "Input must be a string containing Python code"
+            "details": "Input must be a string containing Python code",
         }
         return json.dumps(error_result)
-    
+
     if not code.strip():
         logger.error("Empty or whitespace-only input")
         error_result = {
             "error": "Empty input",
-            "details": "Input code cannot be empty or contain only whitespace"
+            "details": "Input code cannot be empty or contain only whitespace",
         }
         return json.dumps(error_result)
-    
+
     # Check for potentially dangerous patterns before parsing
     dangerous_patterns = [
-        r'__import__\s*\(',
-        r'eval\s*\(',
-        r'exec\s*\(',
-        r'compile\s*\(',
-        r'input\s*\(',
-        r'open\s*\(',
-        r'file\s*\(',
-        r'raw_input\s*\(',
+        r"__import__\s*\(",
+        r"eval\s*\(",
+        r"exec\s*\(",
+        r"compile\s*\(",
+        r"input\s*\(",
+        r"open\s*\(",
+        r"file\s*\(",
+        r"raw_input\s*\(",
     ]
-    
+
     import re
+
     for pattern in dangerous_patterns:
         if re.search(pattern, code, re.IGNORECASE):
-            logger.warning(f"Potentially dangerous pattern detected: {pattern}")
-    
+            logger.warning(
+                f"Potentially dangerous pattern detected: {pattern}"
+            )
+
     # Check for common syntax issues
     syntax_issues = []
-    
+
     # Check for leading zeros in integer literals
-    leading_zero_pattern = r'\b0[0-9]+\b'
+    leading_zero_pattern = r"\b0[0-9]+\b"
     leading_zero_matches = re.findall(leading_zero_pattern, code)
     if leading_zero_matches:
-        syntax_issues.append(f"Leading zeros in integer literals: {leading_zero_matches}")
-    
+        syntax_issues.append(
+            f"Leading zeros in integer literals: {leading_zero_matches}"
+        )
+
     # Check for unterminated strings
-    lines = code.split('\n')
+    lines = code.split("\n")
     for i, line in enumerate(lines, 1):
         # Simple check for unmatched quotes
         single_quotes = line.count("'") % 2
         double_quotes = line.count('"') % 2
         if single_quotes != 0 or double_quotes != 0:
             syntax_issues.append(f"Potential unmatched quotes at line {i}")
-    
+
     logger.info(f"Input code length: {len(code)} characters")
     if syntax_issues:
         logger.warning(f"Syntax issues detected: {syntax_issues}")
@@ -1544,14 +1592,18 @@ def analyze_error_handling(code: str) -> str:
             "bare_excepts": bare_excepts,
             "proper_error_handling": proper_error_handling,
             "error_handling_score": max(0, error_handling_score),
-            "robustness_level": "excellent"
-            if error_handling_score > 85
-            else "good"
-            if error_handling_score > 70
-            else "fair"
-            if error_handling_score > 50
-            else "poor",
-            "warnings": syntax_issues if syntax_issues else None
+            "robustness_level": (
+                "excellent"
+                if error_handling_score > 85
+                else (
+                    "good"
+                    if error_handling_score > 70
+                    else "fair"
+                    if error_handling_score > 50
+                    else "poor"
+                )
+            ),
+            "warnings": syntax_issues if syntax_issues else None,
         }
 
         logger.info(
@@ -1559,37 +1611,37 @@ def analyze_error_handling(code: str) -> str:
         )
         logger.info("analyze_error_handling function completed successfully")
         return json.dumps(result)
-        
+
     except SyntaxError as e:
         logger.error(f"Syntax error in analyze_error_handling: {str(e)}")
         error_result = {
             "error": "Invalid Python syntax",
             "details": str(e),
-            "line": getattr(e, 'lineno', 'unknown'),
-            "offset": getattr(e, 'offset', 'unknown'),
-            "text": getattr(e, 'text', 'unknown')
+            "line": getattr(e, "lineno", "unknown"),
+            "offset": getattr(e, "offset", "unknown"),
+            "text": getattr(e, "text", "unknown"),
         }
         logger.info("analyze_error_handling function completed with error")
         return json.dumps(error_result)
-        
+
     except IndentationError as e:
         logger.error(f"Indentation error in analyze_error_handling: {str(e)}")
         error_result = {
             "error": "Indentation error",
             "details": str(e),
-            "line": getattr(e, 'lineno', 'unknown'),
-            "offset": getattr(e, 'offset', 'unknown'),
-            "text": getattr(e, 'text', 'unknown')
+            "line": getattr(e, "lineno", "unknown"),
+            "offset": getattr(e, "offset", "unknown"),
+            "text": getattr(e, "text", "unknown"),
         }
         logger.info("analyze_error_handling function completed with error")
         return json.dumps(error_result)
-        
+
     except Exception as e:
         logger.error(f"Unexpected error in analyze_error_handling: {str(e)}")
         error_result = {
             "error": "Error handling analysis failed",
             "details": str(e),
-            "error_type": type(e).__name__
+            "error_type": type(e).__name__,
         }
         logger.info("analyze_error_handling function completed with error")
         return json.dumps(error_result)
