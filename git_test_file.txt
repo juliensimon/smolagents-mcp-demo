@@ -11,3 +11,6 @@ This is a test file to demonstrate the MCP Git Server functionality.
 
 ## Usage:
 The git server provides basic git operations for local files.
+
+## Additional Content
+This line was added after the initial commit.
