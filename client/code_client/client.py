@@ -16,14 +16,14 @@ import sys
 from pathlib import Path
 from typing import Any, Dict
 
+# Add the project root to the path so we can import the shared config_loader
+project_root = Path(__file__).parent.parent.parent
+sys.path.insert(0, str(project_root))
+
 import gradio as gr
 from smolagents import MCPClient, OpenAIServerModel, ToolCallingAgent
 
 from config_loader import get_config_loader
-
-# Add the project root to the path so we can import the shared config_loader
-project_root = Path(__file__).parent.parent.parent
-sys.path.insert(0, str(project_root))
 
 
 # Create wrapper functions to match the expected interface
