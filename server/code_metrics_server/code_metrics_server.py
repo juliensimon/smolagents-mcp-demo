@@ -14,9 +14,9 @@ sys.path.insert(
     ),
 )
 
-import gradio as gr
+import gradio as gr  # noqa: E402
 
-from config_loader import get_config_loader
+from config_loader import get_config_loader  # noqa: E402
 
 # Load configuration
 config_loader = get_config_loader()
@@ -44,21 +44,205 @@ logger = logging.getLogger(__name__)
 
 def calculate_code_complexity(code: str) -> str:
     """
-    Calculate cyclomatic complexity and other complexity metrics.
+    Calculate cyclomatic complexity and structural metrics for Python source code.
+
+    This function analyzes Python source code to determine its complexity using
+    cyclomatic complexity, which measures the number of linearly independent paths
+    through the code. It also counts functions and classes to provide structural
+    insights. The analysis uses Python's Abstract Syntax Tree (AST) for accurate
+    parsing and metric calculation.
 
     Args:
-        code (str): The source code to analyze
+        code (str): The Python source code to analyze. Must be valid Python syntax.
+                   Can be a single function, class, module, or complete script.
+                   Examples: "def hello(): return 'world'",
+                            "class MyClass: pass",
+                            "if x > 0: print('positive')"
 
     Returns:
-        str: JSON string with complexity metrics
+        str: A JSON string containing complexity analysis results with the following structure:
+        {
+            "cyclomatic_complexity": 3,      // Integer: number of decision points + 1
+            "function_count": 2,             // Integer: number of function definitions
+            "class_count": 1,                // Integer: number of class definitions
+            "complexity_level": "low"        // String: "low", "medium", or "high"
+        }
+
+        Complexity levels are determined as follows:
+        - Low: 1-5 (simple, easy to understand)
+        - Medium: 6-10 (moderate complexity)
+        - High: 11+ (complex, may need refactoring)
+
+        Cyclomatic complexity is calculated by counting:
+        - Base complexity (1)
+        - Each decision point (if, while, for, etc.)
+        - Each exception handler
+        - Each boolean operator (and, or)
+
+    Raises:
+        No exceptions are raised - all errors are returned in the JSON response.
+
+    Examples:
+        >>> code = '''
+        ... def simple_function():
+        ...     return "hello"
+        ... '''
+        >>> result = calculate_code_complexity(code)
+        >>> data = json.loads(result)
+        >>> print(f"Complexity: {data['cyclomatic_complexity']}")  # 1
+        >>> print(f"Level: {data['complexity_level']}")  # "low"
+
+        >>> code = '''
+        ... def complex_function(x, y):
+        ...     if x > 0:
+        ...         if y < 0:
+        ...             return "positive_x_negative_y"
+        ...         else:
+        ...             return "positive_x_positive_y"
+        ...     else:
+        ...         return "negative_x"
+        ... '''
+        >>> result = calculate_code_complexity(code)
+        >>> data = json.loads(result)
+        >>> print(f"Complexity: {data['cyclomatic_complexity']}")  # 4
+        >>> print(f"Level: {data['complexity_level']}")  # "low"
+
+    Notes:
+        - Uses Python's ast module for accurate syntax parsing
+        - Cyclomatic complexity is a widely-used metric for code quality
+        - Higher complexity indicates more decision points and potential bugs
+        - Function and class counts help assess code organization
+        - Invalid Python syntax will return an error response
+        - Results are logged for monitoring and debugging purposes
     """
     logger.info("Starting calculate_code_complexity function")
+
+    # Input validation and sanitization
+    if not isinstance(code, str):
+        logger.error("Input is not a string")
+        error_result = {
+            "error": "Invalid input type",
+            "details": "Input must be a string containing Python code",
+        }
+        return json.dumps(error_result)
+
+    if not code.strip():
+        logger.error("Empty or whitespace-only input")
+        error_result = {
+            "error": "Empty input",
+            "details": "Input code cannot be empty or contain only whitespace",
+        }
+        return json.dumps(error_result)
+
+    # Check for potentially dangerous patterns before parsing
+    dangerous_patterns = [
+        r"__import__\s*\(",
+        r"eval\s*\(",
+        r"exec\s*\(",
+        r"compile\s*\(",
+        r"input\s*\(",
+        r"open\s*\(",
+        r"file\s*\(",
+        r"raw_input\s*\(",
+        r"getattr\s*\(",
+        r"setattr\s*\(",
+        r"delattr\s*\(",
+        r"hasattr\s*\(",
+        r"globals\s*\(",
+        r"locals\s*\(",
+        r"vars\s*\(",
+        r"dir\s*\(",
+        r"type\s*\(",
+        r"isinstance\s*\(",
+        r"issubclass\s*\(",
+        r"super\s*\(",
+        r"property\s*\(",
+        r"staticmethod\s*\(",
+        r"classmethod\s*\(",
+        r"abs\s*\(",
+        r"all\s*\(",
+        r"any\s*\(",
+        r"bin\s*\(",
+        r"bool\s*\(",
+        r"chr\s*\(",
+        r"dict\s*\(",
+        r"enumerate\s*\(",
+        r"filter\s*\(",
+        r"float\s*\(",
+        r"format\s*\(",
+        r"frozenset\s*\(",
+        r"hash\s*\(",
+        r"hex\s*\(",
+        r"int\s*\(",
+        r"iter\s*\(",
+        r"len\s*\(",
+        r"list\s*\(",
+        r"map\s*\(",
+        r"max\s*\(",
+        r"min\s*\(",
+        r"next\s*\(",
+        r"oct\s*\(",
+        r"ord\s*\(",
+        r"pow\s*\(",
+        r"print\s*\(",
+        r"range\s*\(",
+        r"repr\s*\(",
+        r"reversed\s*\(",
+        r"round\s*\(",
+        r"set\s*\(",
+        r"slice\s*\(",
+        r"sorted\s*\(",
+        r"str\s*\(",
+        r"sum\s*\(",
+        r"tuple\s*\(",
+        r"zip\s*\(",
+    ]
+
+    import re
+
+    for pattern in dangerous_patterns:
+        if re.search(pattern, code, re.IGNORECASE):
+            logger.warning(
+                f"Potentially dangerous pattern detected: {pattern}"
+            )
+            # Continue analysis but log the warning
+
+    # Check for common syntax issues that might cause problems
+    syntax_issues = []
+
+    # Check for leading zeros in integer literals (Python 3 syntax error)
+    leading_zero_pattern = r"\b0[0-9]+\b"
+    leading_zero_matches = re.findall(leading_zero_pattern, code)
+    if leading_zero_matches:
+        syntax_issues.append(
+            f"Leading zeros in integer literals: {leading_zero_matches}"
+        )
+
+    # Check for invalid indentation
+    lines = code.split("\n")
+    for i, line in enumerate(lines, 1):
+        if (
+            line.strip()
+            and not line.startswith(" ")
+            and not line.startswith("\t")
+        ):
+            # This line should be at the root level
+            pass
+        elif line.strip():
+            # Check for mixed tabs and spaces
+            if "\t" in line and " " in line[: len(line) - len(line.lstrip())]:
+                syntax_issues.append(f"Mixed tabs and spaces at line {i}")
+
     logger.info(f"Input code length: {len(code)} characters")
+    if syntax_issues:
+        logger.warning(f"Syntax issues detected: {syntax_issues}")
 
     try:
+        # Attempt to parse the code
         tree = ast.parse(code)
         complexity = 1  # Base complexity
 
+        # Walk through the AST to calculate complexity
         for node in ast.walk(tree):
             if isinstance(node, (ast.If, ast.While, ast.For, ast.AsyncFor)):
                 complexity += 1
@@ -70,6 +254,13 @@ def calculate_code_complexity(code: str) -> str:
                 complexity += 1
             elif isinstance(node, ast.BoolOp):
                 complexity += len(node.values) - 1
+            elif isinstance(node, ast.Assert):
+                complexity += 1
+            elif isinstance(node, ast.Return):
+                # Multiple return statements can indicate complexity
+                pass  # Already counted in function definition
+            elif isinstance(node, ast.Raise):
+                complexity += 1
 
         # Count functions and classes
         functions = len(
@@ -79,15 +270,36 @@ def calculate_code_complexity(code: str) -> str:
             [n for n in ast.walk(tree) if isinstance(n, ast.ClassDef)]
         )
 
+        # Count other structural elements
+        imports = len(
+            [
+                n
+                for n in ast.walk(tree)
+                if isinstance(n, (ast.Import, ast.ImportFrom))
+            ]
+        )
+        assignments = len(
+            [n for n in ast.walk(tree) if isinstance(n, ast.Assign)]
+        )
+        calls = len([n for n in ast.walk(tree) if isinstance(n, ast.Call)])
+
+        # Determine complexity level
+        if complexity <= 5:
+            complexity_level = "low"
+        elif complexity <= 10:
+            complexity_level = "medium"
+        else:
+            complexity_level = "high"
+
         result = {
             "cyclomatic_complexity": complexity,
             "function_count": functions,
             "class_count": classes,
-            "complexity_level": "low"
-            if complexity <= 5
-            else "medium"
-            if complexity <= 10
-            else "high",
+            "import_count": imports,
+            "assignment_count": assignments,
+            "call_count": calls,
+            "complexity_level": complexity_level,
+            "warnings": syntax_issues if syntax_issues else None,
         }
 
         logger.info(
@@ -97,29 +309,122 @@ def calculate_code_complexity(code: str) -> str:
             "calculate_code_complexity function completed successfully"
         )
         return json.dumps(result)
+
     except SyntaxError as e:
         logger.error(f"Syntax error in calculate_code_complexity: {str(e)}")
-        error_result = {"error": "Invalid Python syntax"}
+        error_result = {
+            "error": "Invalid Python syntax",
+            "details": str(e),
+            "line": getattr(e, "lineno", "unknown"),
+            "offset": getattr(e, "offset", "unknown"),
+            "text": getattr(e, "text", "unknown"),
+        }
         logger.info("calculate_code_complexity function completed with error")
         return json.dumps(error_result)
+
+    except IndentationError as e:
+        logger.error(
+            f"Indentation error in calculate_code_complexity: {str(e)}"
+        )
+        error_result = {
+            "error": "Indentation error",
+            "details": str(e),
+            "line": getattr(e, "lineno", "unknown"),
+            "offset": getattr(e, "offset", "unknown"),
+            "text": getattr(e, "text", "unknown"),
+        }
+        logger.info("calculate_code_complexity function completed with error")
+        return json.dumps(error_result)
+
+    except ValueError as e:
+        logger.error(f"Value error in calculate_code_complexity: {str(e)}")
+        error_result = {"error": "Value error", "details": str(e)}
+        logger.info("calculate_code_complexity function completed with error")
+        return json.dumps(error_result)
+
     except Exception as e:
         logger.error(
             f"Unexpected error in calculate_code_complexity: {str(e)}"
         )
-        error_result = {"error": f"Analysis failed: {str(e)}"}
+        error_result = {
+            "error": "Analysis failed",
+            "details": str(e),
+            "error_type": type(e).__name__,
+        }
         logger.info("calculate_code_complexity function completed with error")
         return json.dumps(error_result)
 
 
 def analyze_code_style(code: str) -> str:
     """
-    Analyze code style and formatting issues.
+    Analyze Python code style and formatting compliance with PEP 8 guidelines.
+
+    This function examines Python source code for common style and formatting issues
+    that violate PEP 8 (Python's official style guide). It checks for line length,
+    whitespace usage, indentation consistency, and other formatting standards that
+    improve code readability and maintainability.
 
     Args:
-        code (str): The source code to analyze
+        code (str): The Python source code to analyze for style issues. Can be any
+                   valid Python code including functions, classes, modules, or scripts.
+                   Examples: "def hello(): return 'world'",
+                            "x=1+2",
+                            "def long_function_name_with_many_parameters(...):"
 
     Returns:
-        str: JSON string with style metrics
+        str: A JSON string containing style analysis results with the following structure:
+        {
+            "style_score": 85,                    // Integer: 0-100 style compliance score
+            "issues_found": 3,                    // Integer: number of style issues
+            "issues": [                           // List of style issue descriptions
+                "Long lines found at: [5, 12]",
+                "Trailing whitespace at lines: [8]",
+                "Mixed tabs and spaces detected"
+            ],
+            "recommendations": [                  // List of improvement suggestions
+                "Use 4 spaces for indentation",
+                "Limit lines to 79 characters",
+                "Remove trailing whitespace"
+            ],
+            "compliance_level": "good"            // String: "excellent", "good", "needs_improvement"
+        }
+
+        Compliance levels are determined as follows:
+        - Excellent: 90-100 (minimal issues)
+        - Good: 70-89 (some issues, generally compliant)
+        - Needs Improvement: 0-69 (significant style violations)
+
+    Raises:
+        No exceptions are raised - all errors are returned in the JSON response.
+
+    Examples:
+        >>> code = '''
+        ... def hello():
+        ...     print("Hello, World!")
+        ... '''
+        >>> result = analyze_code_style(code)
+        >>> data = json.loads(result)
+        >>> print(f"Style score: {data['style_score']}")  # Likely 90+
+        >>> print(f"Issues found: {data['issues_found']}")  # Likely 0
+
+        >>> code = '''
+        ... def bad_style():
+        ...     x=1+2
+        ...     print("very long line that exceeds the recommended 79 character limit")
+        ... '''
+        >>> result = analyze_code_style(code)
+        >>> data = json.loads(result)
+        >>> print(f"Style score: {data['style_score']}")  # Likely < 70
+        >>> print(f"Issues: {data['issues']}")  # List of style violations
+
+    Notes:
+        - Based on PEP 8 Python style guide recommendations
+        - Checks line length (79 character limit)
+        - Detects trailing whitespace and mixed indentation
+        - Identifies common formatting issues
+        - Provides actionable recommendations for improvement
+        - Style score is calculated based on number and severity of issues
+        - Results are logged for monitoring and debugging purposes
     """
     logger.info("Starting analyze_code_style function")
     logger.info(f"Input code length: {len(code)} characters")
