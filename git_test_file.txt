@@ -1,0 +1,13 @@
+# Test File for Git Server
+
+This is a test file to demonstrate the MCP Git Server functionality.
+
+## Features Tested:
+- Git Status
+- Git Add
+- Git Commit
+- Git Diff
+- Git Log
+
+## Usage:
+The git server provides basic git operations for local files.
