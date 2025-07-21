@@ -6,7 +6,7 @@ This client implements a multi-agent system using the smolagents library to coor
 
 The system consists of four main components:
 
-### 1. Code Analysis Agent (coder-large)
+### 1. Code Agent (coder-large)
 - **Model**: `arcee-ai/coder-large`
 - **Specialization**: Code metrics and security analysis
 - **MCP Servers**:
@@ -19,7 +19,7 @@ The system consists of four main components:
 - **Specialization**: Code retrieval and git operations
 - **MCP Servers**:
   - Code Retrieval Server
-  - Git Repo Analysis Server
+  - Git Server
 - **Use Cases**: Finding code examples, analyzing repositories
 
 ### 3. Web Search Agent (AFM-4.5B-Preview)
@@ -29,8 +29,8 @@ The system consists of four main components:
 - **Use Cases**: Researching error messages, understanding technical issues, finding best practices, gathering context about problems
 - **Note**: Focuses on informational research only - does not fetch files or download code
 
-### 4. Manager Agent (maestro-reasoning)
-- **Model**: `arcee-ai/maestro-reasoning`
+### 4. Manager Agent (AFM-4.5B-Preview)
+- **Model**: `arcee-ai/AFM-4.5B-Preview`
 - **Specialization**: Coordination and task delegation
 - **Role**: Routes user requests to the appropriate specialized agent(s)
 
@@ -59,10 +59,11 @@ python client.py
    ```
 
 2. **MCP Servers**: Ensure all required MCP servers are running:
+   - Basic Server (port 7860)
    - Code Metrics Server (port 7862)
    - Code Security Server (port 7865)
    - Code Retrieval Server (port 7866)
-   - Git Repo Analysis Server (port 7867)
+   - Git Server (port 7867)
 
 ### Interface
 
@@ -107,8 +108,7 @@ The client uses the centralized configuration from `config.json`:
   "model": {
     "configs": {
       "arcee-ai/coder-large": { ... },
-      "arcee-ai/afm": { ... },
-      "arcee-ai/maestro-reasoning": { ... }
+      "arcee-ai/AFM-4.5B-Preview": { ... }
     }
   }
 }

@@ -24,12 +24,7 @@ python code_metrics_server.py
 **Server Port:** 7862
 **Access:** http://localhost:7862
 
-### Launch Test Client
-```bash
-python test_client.py
-```
-**Test Client Port:** 7862
-**Access:** http://localhost:7862
+
 
 ## 📋 Features
 
@@ -86,11 +81,7 @@ The server provides 10 comprehensive code analysis functions:
     - Error handling completeness
     - Best practices assessment
 
-### Test Client Features
-- **Chat Interface**: AI-powered code analysis conversations
-- **Example Code Samples**: Pre-filled examples for testing
-- **Multi-tabbed Interface**: Organized functionality sections
-- **Export Functionality**: Save analysis results
+
 
 ## 🎯 Usage Examples
 
@@ -179,30 +170,7 @@ logging.basicConfig(
 )
 ```
 
-### Test Client Configuration
-The test client uses `config.json` for MCP server communication:
 
-```json
-{
-  "server": {
-    "url": "http://127.0.0.1:7862/gradio_api/mcp/sse"
-  },
-  "model": {
-    "default": "arcee-ai/coder-large",
-    "api_base": "https://api.together.xyz/v1",
-    "configs": {
-      "arcee-ai/coder-large": {
-        "temperature": 0.1,
-        "max_tokens": 2000,
-        "top_p": 0.9,
-        "top_k": 40,
-        "repetition_penalty": 1.1,
-        "system_prompt": "You are a helpful AI assistant specialized in code analysis..."
-      }
-    }
-  }
-}
-```
 
 ## 🌐 Interface Features
 
@@ -212,17 +180,7 @@ The test client uses `config.json` for MCP server communication:
 - **Error Handling**: Comprehensive error management
 - **Logging**: Detailed operation logging
 
-### Test Client Interface
-- **Chat Interface**: AI-powered code analysis conversations
-- **Example Code Samples**: Pre-filled examples for testing
-- **Multi-tabbed Design**: Organized functionality sections
-- **Export Functionality**: Save analysis results
 
-### Interactive Elements
-- **Code Input**: Large text areas for code input
-- **Analysis Selection**: Multiple analysis types
-- **JSON Outputs**: Structured results display
-- **Examples**: Pre-filled code examples
 
 ## 📊 API Reference
 

@@ -24,12 +24,7 @@ python code_security_server.py
 **Server Port:** 7865
 **Access:** http://localhost:7865
 
-### Launch Test Client
-```bash
-python test_client.py
-```
-**Test Client Port:** 7865
-**Access:** http://localhost:7865
+
 
 ## 📋 Features
 
@@ -73,11 +68,7 @@ The server provides 6 comprehensive security analysis functions:
    - Priority-based recommendations
    - Security score calculation
 
-### Test Client Features
-- **Multi-tabbed Interface**: Organized security analysis
-- **Interactive Examples**: Pre-filled vulnerable code examples
-- **Real-time Results**: Instant security analysis feedback
-- **Comprehensive Documentation**: Security best practices
+
 
 ## 🎯 Usage Examples
 

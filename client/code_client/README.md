@@ -12,21 +12,25 @@ A unified client that connects to multiple MCP (Model Context Protocol) servers 
 
 ## Connected Servers
 
-1. **Code Retriever Server** (Port 7860)
-   - HTTP file retrieval and analysis
-   - URL validation and content fetching
+1. **Basic Server** (Port 7860)
+   - Text sentiment analysis
+   - Emotion detection and text processing
 
-2. **Code Metrics Server** (Port 7861)
+2. **Code Metrics Server** (Port 7862)
    - Code complexity analysis
    - Code quality metrics
    - Performance analysis
 
-3. **Code Security Server** (Port 7862)
+3. **Code Security Server** (Port 7865)
    - Security vulnerability detection
    - Code security analysis
    - Best practices checking
 
-4. **Git Server** (Port 7863)
+4. **Code Retrieval Server** (Port 7866)
+   - HTTP file retrieval and analysis
+   - URL validation and content fetching
+
+5. **Git Server** (Port 7867)
    - Git operations on local files
    - Repository status and history
    - File tracking and changes

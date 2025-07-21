@@ -137,7 +137,7 @@
 
 ## 🧪 Testing
 
-The project includes a comprehensive test suite with multiple scenarios and categories:
+The project includes a comprehensive test suite with multiple scenarios and categories, organized into offline and online tests:
 
 ### Quick Start
 ```bash
@@ -150,6 +150,20 @@ python run_tests.py list
 # List available test scenarios
 python run_tests.py list-scenarios
 ```
+
+### Test Organization
+
+The test suite is organized into two categories:
+
+**Offline Tests** (CI/CD Safe):
+- Configuration and environment validation
+- File structure and import checks
+- No external dependencies required
+
+**Online Tests** (Require Live Servers):
+- Real MCP server integration
+- Server functionality testing
+- External endpoint validation
 
 ### Test Categories
 ```bash
@@ -197,6 +211,18 @@ python run_tests.py code_metrics_functionality
 python run_tests.py code_security_functionality
 python run_tests.py code_retrieval_functionality
 python run_tests.py git_functionality
+```
+
+### Dedicated Test Runners
+```bash
+# Offline tests only (CI/CD safe)
+python tests/run_offline_tests.py all
+
+# Online tests only (requires servers)
+python tests/run_online_tests.py all
+
+# User-friendly wrapper
+python tests/run_test_suite.py all
 ```
 
 ### Advanced Options

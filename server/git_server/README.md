@@ -25,15 +25,8 @@ git init  # if not already initialized
 ```bash
 python git_server.py
 ```
-**Server Port:** 7866
-**Access:** http://localhost:7866
-
-### Launch Test Client
-```bash
-python test_client.py
-```
-**Test Client Port:** 7866
-**Access:** http://localhost:7866
+**Server Port:** 7867
+**Access:** http://localhost:7867
 
 ## 📋 Features
 
@@ -70,23 +63,19 @@ The server provides 5 comprehensive Git operations:
    - Commit metadata (author, date, message)
    - Configurable log limits
 
-### Test Client Features
-- **Multi-tabbed Interface**: Organized Git operations
-- **Interactive Examples**: Pre-filled examples for testing
-- **Real-time Results**: Instant Git operation feedback
-- **Comprehensive Documentation**: Git best practices and examples
+
 
 ## 🎯 Usage Examples
 
 ### Git Status Check
 ```python
 # Check status of a file
-file_path = "server/git_server/test_client.py"
+file_path = "server/git_server/git_server.py"
 
 # Expected result:
 {
-  "file_path": "server/git_server/test_client.py",
-  "relative_path": "server/git_server/test_client.py",
+  "file_path": "server/git_server/git_server.py",
+  "relative_path": "server/git_server/git_server.py",
   "status": "modified",
   "message": "File has been modified",
   "last_commit": {
@@ -196,30 +185,7 @@ logging.basicConfig(
 )
 ```
 
-### Test Client Configuration
-The test client uses `config.json` for MCP server communication:
 
-```json
-{
-  "server": {
-    "url": "http://127.0.0.1:7866/gradio_api/mcp/sse"
-  },
-  "model": {
-    "default": "arcee-ai/coder-large",
-    "api_base": "https://api.together.xyz/v1",
-    "configs": {
-      "arcee-ai/coder-large": {
-        "temperature": 0.1,
-        "max_tokens": 2000,
-        "top_p": 0.9,
-        "top_k": 40,
-        "repetition_penalty": 1.1,
-        "system_prompt": "You are a helpful AI assistant specialized in Git operations..."
-      }
-    }
-  }
-}
-```
 
 ## 🌐 Interface Features
 
@@ -229,13 +195,7 @@ The test client uses `config.json` for MCP server communication:
 - **Error Handling**: Comprehensive error management
 - **Logging**: Detailed operation logging
 
-### Test Client Interface
-- **Git Status Tab**: File status checking
-- **Git Add Tab**: File staging operations
-- **Git Commit Tab**: Commit operations
-- **Git Diff Tab**: Change viewing
-- **Git Log Tab**: History retrieval
-- **Examples & Documentation Tab**: Comprehensive Git documentation
+
 
 ### Interactive Elements
 - **File Path Input**: Text inputs for file paths
@@ -387,7 +347,7 @@ The server includes comprehensive logging for monitoring and debugging:
 **1. Port Already in Use**
 ```bash
 # Check if port is in use
-lsof -i :7866
+lsof -i :7867
 
 # Kill process using the port
 kill -9 <PID>
@@ -443,7 +403,7 @@ The server implements the Model Context Protocol for AI-powered interactions:
 from smolagents import MCPClient
 
 # Connect to server
-client = MCPClient({"url": "http://127.0.0.1:7866/gradio_api/mcp/sse"})
+client = MCPClient({"url": "http://127.0.0.1:7867/gradio_api/mcp/sse"})
 
 # Get available tools
 tools = client.get_tools()

@@ -7,32 +7,27 @@ This folder contains different MCP server implementations for providing various 
 ```
 server/
 ├── basic_server/           # Text sentiment analysis server
-│   ├── basic_server.py     # Basic sentiment analysis using TextBlob
-│   ├── test_client.py      # Multi-tabbed test client
+│   ├── basic_server.py     # Basic sentiment analysis with built-in interface
 │   ├── config.json         # Server configuration
 │   ├── README.md           # Comprehensive documentation
 │   └── __init__.py         # Package initialization
 ├── code_metrics_server/    # Advanced code analysis server
-│   ├── code_metrics_server.py  # 10 different code analysis functions
-│   ├── test_client.py      # AI-powered chat interface
+│   ├── code_metrics_server.py  # 10 different code analysis functions with built-in interface
 │   ├── config.json         # Server configuration
 │   ├── README.md           # Comprehensive documentation
 │   └── __init__.py         # Package initialization
 ├── git_server/             # Git operations server
-│   ├── git_server.py       # 5 Git operations (status, add, commit, diff, log)
-│   ├── test_client.py      # Multi-tabbed Git interface
+│   ├── git_server.py       # 5 Git operations (status, add, commit, diff, log) with built-in interface
 │   ├── config.json         # Server configuration
 │   ├── README.md           # Comprehensive documentation
 │   └── __init__.py         # Package initialization
 ├── code_retriever_server/  # File retrieval and analysis server
-│   ├── code_retriever_server.py  # 5 file operations (validate, retrieve, analyze, search, batch)
-│   ├── test_client.py      # Multi-tabbed file interface
+│   ├── code_retriever_server.py  # 5 file operations with built-in interface
 │   ├── config.json         # Server configuration
 │   ├── README.md           # Comprehensive documentation
 │   └── __init__.py         # Package initialization
 ├── code_security_server/   # Security vulnerability analysis server
-│   ├── code_security_server.py  # 6 security analysis functions
-│   ├── test_client.py      # Multi-tabbed security interface
+│   ├── code_security_server.py  # 6 security analysis functions with built-in interface
 │   ├── config.json         # Server configuration
 │   ├── README.md           # Comprehensive documentation
 │   └── __init__.py         # Package initialization
@@ -58,31 +53,31 @@ cd server
 ## 📋 Server Overview
 
 ### 1. Basic Server (`basic_server/`)
-- **Port**: 7860 (Test Client only)
+- **Port**: 7860 (Server with built-in interface)
 - **Functionality**: Text sentiment analysis using TextBlob
 - **Features**: Polarity scoring, subjectivity analysis, batch processing
 - **Use Case**: Simple text analysis and sentiment detection
 
 ### 2. Code Metrics Server (`code_metrics_server/`)
-- **Port**: 7862 (Server + Test Client)
+- **Port**: 7862 (Server with built-in interface)
 - **Functionality**: Advanced code analysis and quality assessment
 - **Features**: 10 analysis functions (complexity, style, security, performance, etc.)
 - **Use Case**: Code review, quality assessment, maintainability analysis
 
 ### 3. Git Server (`git_server/`)
-- **Port**: 7866 (Server + Test Client)
+- **Port**: 7867 (Server with built-in interface)
 - **Functionality**: Git operations and version control management
 - **Features**: 5 Git operations (status, add, commit, diff, log)
 - **Use Case**: File-specific Git workflow management
 
 ### 4. Code Retriever Server (`code_retriever_server/`)
-- **Port**: 7864 (Test Client only)
+- **Port**: 7866 (Server with built-in interface)
 - **Functionality**: File retrieval and analysis from HTTP servers
 - **Features**: 5 file operations (validate, retrieve, analyze, search, batch)
 - **Use Case**: Remote file analysis, content retrieval, URL validation
 
 ### 5. Code Security Server (`code_security_server/`)
-- **Port**: 7865 (Server + Test Client)
+- **Port**: 7865 (Server with built-in interface)
 - **Functionality**: Security vulnerability analysis and assessment
 - **Features**: 6 security analysis functions (SQL injection, command injection, etc.)
 - **Use Case**: Security auditing, vulnerability detection, secure coding
@@ -91,28 +86,25 @@ cd server
 
 ### Individual Servers
 ```bash
-# Basic Server (Test Client only)
+# Basic Server
 cd basic_server
-python test_client.py
+python basic_server.py  # Server with built-in interface
 
 # Code Metrics Server
 cd code_metrics_server
-python code_metrics_server.py  # Server
-python test_client.py          # Test Client
+python code_metrics_server.py  # Server with built-in interface
 
 # Git Server
 cd git_server
-python git_server.py           # Server
-python test_client.py          # Test Client
+python git_server.py           # Server with built-in interface
 
-# Code Retriever Server (Test Client only)
+# Code Retriever Server
 cd code_retriever_server
-python test_client.py
+python code_retriever_server.py  # Server with built-in interface
 
 # Code Security Server
 cd code_security_server
-python code_security_server.py # Server
-python test_client.py          # Test Client
+python code_security_server.py # Server with built-in interface
 ```
 
 ### All Servers at Once
@@ -169,13 +161,13 @@ Each server has its own `config.json` file with:
 
 ## 📊 Port Assignments
 
-| Server | Server Port | Test Client Port | Status |
-|--------|-------------|------------------|---------|
-| Basic Server | ❌ No server | 7860 | ✅ Active |
-| Code Metrics Server | 7862 | 7862 | ✅ Active |
-| Git Server | 7866 | 7866 | ✅ Active |
-| Code Retriever Server | ❌ No server | 7864 | ✅ Active |
-| Code Security Server | 7865 | 7865 | ✅ Active |
+| Server | Port | Interface | Status |
+|--------|------|-----------|---------|
+| Basic Server | 7860 | Built-in Gradio | ✅ Active |
+| Code Metrics Server | 7862 | Built-in Gradio | ✅ Active |
+| Code Security Server | 7865 | Built-in Gradio | ✅ Active |
+| Code Retriever Server | 7866 | Built-in Gradio | ✅ Active |
+| Git Server | 7867 | Built-in Gradio | ✅ Active |
 
 ## 🔍 Logging
 

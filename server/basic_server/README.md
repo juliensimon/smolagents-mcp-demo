@@ -24,12 +24,7 @@ python basic_server.py
 **Server Port:** 7860
 **Access:** http://localhost:7860
 
-### Launch Test Client
-```bash
-python test_client.py
-```
-**Test Client Port:** 7860
-**Access:** http://localhost:7860
+
 
 ## 📋 Features
 
@@ -39,11 +34,7 @@ python test_client.py
 - **Subjectivity Analysis**: 0 (objective) to 1 (subjective) content assessment
 - **JSON Response Format**: Structured output for easy integration
 
-### Test Client Features
-- **Single Text Analysis**: Analyze individual text inputs
-- **Batch Analysis**: Process multiple texts simultaneously
-- **Interactive Examples**: Pre-filled examples for quick testing
-- **Real-time Results**: Instant sentiment analysis feedback
+
 
 ## 🎯 Usage Examples
 
@@ -100,30 +91,7 @@ demo = gr.Interface(
 )
 ```
 
-### Test Client Configuration
-The test client uses `config.json` for MCP server communication:
 
-```json
-{
-  "server": {
-    "url": "http://127.0.0.1:7860/gradio_api/mcp/sse"
-  },
-  "model": {
-    "default": "arcee-ai/coder-large",
-    "api_base": "https://api.together.xyz/v1",
-    "configs": {
-      "arcee-ai/coder-large": {
-        "temperature": 0.1,
-        "max_tokens": 2000,
-        "top_p": 0.9,
-        "top_k": 40,
-        "repetition_penalty": 1.1,
-        "system_prompt": "You are a helpful AI assistant specialized in text sentiment analysis..."
-      }
-    }
-  }
-}
-```
 
 ## 🌐 Interface Features
 
@@ -133,17 +101,7 @@ The test client uses `config.json` for MCP server communication:
 - **Real-time Processing**: Instant analysis feedback
 - **Error Handling**: Graceful error management
 
-### Test Client Interface
-- **Multi-tabbed Design**: Organized functionality sections
-- **Single Text Analysis Tab**: Individual text processing
-- **Batch Analysis Tab**: Multiple text processing
-- **Examples & Documentation Tab**: Comprehensive documentation
 
-### Interactive Elements
-- **Text Inputs**: Large text areas for content input
-- **JSON Outputs**: Structured results display
-- **Examples**: Pre-filled examples for quick testing
-- **Export Functionality**: Save analysis results
 
 ## 📊 API Reference
 

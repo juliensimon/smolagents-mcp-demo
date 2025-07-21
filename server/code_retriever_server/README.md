@@ -21,15 +21,8 @@ cd server/code_retriever_server
 ```bash
 python code_retriever_server.py
 ```
-**Server Port:** 7864
-**Access:** http://localhost:7864
-
-### Launch Test Client
-```bash
-python test_client.py
-```
-**Test Client Port:** 7864
-**Access:** http://localhost:7864
+**Server Port:** 7866
+**Access:** http://localhost:7866
 
 ## 📋 Features
 
@@ -66,11 +59,7 @@ The server provides 5 comprehensive file retrieval and analysis functions:
    - Summary statistics
    - Error handling
 
-### Test Client Features
-- **Multi-tabbed Interface**: Organized file operations
-- **Interactive Examples**: Pre-filled examples for testing
-- **Real-time Results**: Instant file operation feedback
-- **Comprehensive Documentation**: File retrieval best practices
+
 
 ## 🎯 Usage Examples
 
@@ -192,30 +181,7 @@ logging.basicConfig(
 )
 ```
 
-### Test Client Configuration
-The test client uses `config.json` for MCP server communication:
 
-```json
-{
-  "server": {
-    "url": "http://127.0.0.1:7864/gradio_api/mcp/sse"
-  },
-  "model": {
-    "default": "arcee-ai/coder-large",
-    "api_base": "https://api.together.xyz/v1",
-    "configs": {
-      "arcee-ai/coder-large": {
-        "temperature": 0.1,
-        "max_tokens": 2000,
-        "top_p": 0.9,
-        "top_k": 40,
-        "repetition_penalty": 1.1,
-        "system_prompt": "You are a helpful AI assistant specialized in file retrieval..."
-      }
-    }
-  }
-}
-```
 
 ## 🌐 Interface Features
 
@@ -225,12 +191,7 @@ The test client uses `config.json` for MCP server communication:
 - **Error Handling**: Comprehensive error management
 - **Logging**: Detailed operation logging
 
-### Test Client Interface
-- **URL Validation Tab**: URL accessibility checking
-- **File Retrieval Tab**: Content downloading
-- **Content Analysis Tab**: File structure analysis
-- **Content Search Tab**: Text search capabilities
-- **Examples & Documentation Tab**: Comprehensive documentation
+
 
 ### Interactive Elements
 - **URL Input**: Text inputs for URLs
@@ -372,7 +333,7 @@ The server includes comprehensive logging for monitoring and debugging:
 **1. Port Already in Use**
 ```bash
 # Check if port is in use
-lsof -i :7864
+lsof -i :7866
 
 # Kill process using the port
 kill -9 <PID>
@@ -429,7 +390,7 @@ The server implements the Model Context Protocol for AI-powered interactions:
 from smolagents import MCPClient
 
 # Connect to server
-client = MCPClient({"url": "http://127.0.0.1:7864/gradio_api/mcp/sse"})
+client = MCPClient({"url": "http://127.0.0.1:7866/gradio_api/mcp/sse"})
 
 # Get available tools
 tools = client.get_tools()
