@@ -8,6 +8,8 @@ from collections import Counter
 
 import gradio as gr
 
+from config_loader import get_config_loader
+
 # Add the project root to the path to import config_loader
 sys.path.insert(
     0,
@@ -15,8 +17,6 @@ sys.path.insert(
         os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     ),
 )
-
-from config_loader import get_config_loader
 
 # Load configuration
 config_loader = get_config_loader()
@@ -698,7 +698,7 @@ def analyze_documentation_quality(code: str) -> str:
                     in_docstring = True
                     docstring_delimiter = '"""' if '"""' in stripped else "'''"
                     docstrings.append(i + 1)
-                elif docstring_delimiter in stripped:
+                elif docstring_delimiter and docstring_delimiter in stripped:
                     in_docstring = False
                     docstring_delimiter = None
             elif in_docstring:
@@ -732,7 +732,7 @@ def analyze_documentation_quality(code: str) -> str:
                 if ast.get_docstring(cls):
                     documented_classes += 1
 
-            doc_coverage = 0
+            doc_coverage = 0.0
             if functions or classes:
                 doc_coverage = (
                     (documented_functions + documented_classes)
@@ -745,7 +745,7 @@ def analyze_documentation_quality(code: str) -> str:
             classes = []
             documented_functions = 0
             documented_classes = 0
-            doc_coverage = 0
+            doc_coverage = 0.0
 
         # Calculate documentation score
         total_lines = len(lines)

@@ -5,7 +5,7 @@ Logging utilities for MCP servers
 
 import logging
 import re
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 
 class ToolCallFilter(logging.Filter):
@@ -82,7 +82,9 @@ def setup_logging(logging_config: Dict[str, Any]) -> logging.Logger:
 
 
 def log_tool_call(
-    logger: logging.Logger, tool_name: str, args: Dict[str, Any] = None
+    logger: logging.Logger,
+    tool_name: str,
+    args: Optional[Dict[str, Any]] = None,
 ):
     """Log a tool call with standardized format."""
     args_str = f" with args: {args}" if args else ""

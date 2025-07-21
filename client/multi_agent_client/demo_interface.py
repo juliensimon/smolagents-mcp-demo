@@ -9,11 +9,11 @@ import os
 import sys
 from pathlib import Path
 
+from client.multi_agent_client.client import create_interface
+
 # Add the project root to the path
 project_root = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(project_root))
-
-from client.multi_agent_client.client import create_multi_agent_interface
 
 
 def main():
@@ -34,9 +34,9 @@ def main():
     print("🔌 Connecting to MCP servers...")
 
     # Create interface
-    demo, client = create_multi_agent_interface()
+    demo = create_interface()
 
-    if demo and client:
+    if demo:
         print("✅ Interface created successfully!")
         print("📋 Features:")
         print("  - Clean, organized text layout")

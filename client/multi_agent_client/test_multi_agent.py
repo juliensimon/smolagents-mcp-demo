@@ -9,11 +9,18 @@ import os
 import sys
 from pathlib import Path
 
+from client.multi_agent_client.client import (
+    disconnect,
+    get_status,
+    run_analysis,
+    setup_agents,
+    setup_connections,
+    setup_manager,
+)
+
 # Add the project root to the path
 project_root = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(project_root))
-
-from client.multi_agent_client.client import MultiAgentMCPClient
 
 
 def test_multi_agent_system():
@@ -22,8 +29,10 @@ def test_multi_agent_system():
     print("🚀 Testing Multi-Agent MCP Client")
     print("=" * 50)
 
-    # Initialize the client
-    client = MultiAgentMCPClient()
+    # Initialize the system
+    setup_connections()
+    setup_agents()
+    setup_manager()
 
     # Test cases
     test_cases = [
@@ -56,7 +65,7 @@ def test_multi_agent_system():
 
         try:
             # Run the analysis
-            result = client.run_analysis(test_case["request"])
+            result = run_analysis(test_case["request"])
 
             # Check if the result contains expected content
             if result and not result.startswith("❌"):
@@ -74,7 +83,10 @@ def test_multi_agent_system():
 
     # Display agent status
     print("\n📊 Agent Status:")
-    print(client.get_agent_status())
+    print(get_status())
+
+    # Clean up
+    disconnect()
 
 
 if __name__ == "__main__":

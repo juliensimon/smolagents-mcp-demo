@@ -6,7 +6,7 @@ This module defines test configurations and scenarios for different testing purp
 """
 
 import os
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 
 class TestConfig:
@@ -223,7 +223,9 @@ def safe_query(user_input):
         return list(cls.SCENARIOS.keys())
 
     @classmethod
-    def get_test_data(cls, category: str, subcategory: str = None) -> Any:
+    def get_test_data(
+        cls, category: str, subcategory: Optional[str] = None
+    ) -> Any:
         """Get test data for a specific category."""
         if subcategory:
             return cls.TEST_DATA.get(category, {}).get(subcategory, [])
@@ -243,21 +245,22 @@ def safe_query(user_input):
         )
 
         # Check environment variables
+        required_env_vars: List[str] = cls.ENVIRONMENT_REQUIREMENTS["required_env_vars"]  # type: ignore
         validation_results["env_vars"] = all(
-            os.getenv(var)
-            for var in cls.ENVIRONMENT_REQUIREMENTS["required_env_vars"]
+            os.getenv(var) for var in required_env_vars
         )
 
         # Check required packages
+        required_packages: List[str] = cls.ENVIRONMENT_REQUIREMENTS["required_packages"]  # type: ignore
         missing_packages = []
-        for package in cls.ENVIRONMENT_REQUIREMENTS["required_packages"]:
+        for package in required_packages:
             try:
                 __import__(package)
             except ImportError:
                 missing_packages.append(package)
 
         validation_results["packages"] = len(missing_packages) == 0
-        validation_results["missing_packages"] = missing_packages
+        validation_results["missing_packages"] = missing_packages  # type: ignore
 
         return validation_results
 
@@ -339,7 +342,6 @@ if __name__ == "__main__":
         status = "✅ PASS" if result else "❌ FAIL"
         print(f"{check:20} - {status}")
 
-    if validation.get("missing_packages"):
-        print(
-            f"\nMissing packages: {', '.join(validation['missing_packages'])}"
-        )
+    missing_packages: List[str] = validation.get("missing_packages", [])  # type: ignore
+    if missing_packages:
+        print(f"\nMissing packages: {', '.join(missing_packages)}")

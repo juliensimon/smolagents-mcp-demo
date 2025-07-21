@@ -7,7 +7,6 @@ for all components (clients, servers, tests) in the MCP demo project.
 """
 
 import json
-import os
 from pathlib import Path
 from typing import Any, Dict, Optional
 
@@ -25,10 +24,10 @@ class ConfigLoader:
         if config_path is None:
             # Find the config file relative to this script
             script_dir = Path(__file__).parent
-            config_path = script_dir / "config.json"
+            config_path = str(script_dir / "config.json")
 
         self.config_path = Path(config_path)
-        self._config = None
+        self._config: Optional[Dict[str, Any]] = None
         self._load_config()
 
     def _load_config(self):
@@ -43,10 +42,14 @@ class ConfigLoader:
 
     def get_config(self) -> Dict[str, Any]:
         """Get the entire configuration."""
+        if self._config is None:
+            raise RuntimeError("Configuration not loaded")
         return self._config
 
     def get_servers(self) -> Dict[str, Any]:
         """Get server configurations."""
+        if self._config is None:
+            raise RuntimeError("Configuration not loaded")
         return self._config.get("servers", {})
 
     def get_server_config(self, server_key: str) -> Dict[str, Any]:
@@ -59,31 +62,48 @@ class ConfigLoader:
     def get_server_port(self, server_key: str) -> int:
         """Get the port number for a specific server."""
         server_config = self.get_server_config(server_key)
-        return server_config.get("port")
+        port = server_config.get("port")
+        if port is None:
+            raise KeyError(f"Port not found for server '{server_key}'")
+        return port
 
     def get_server_url(self, server_key: str) -> str:
         """Get the URL for a specific server."""
         server_config = self.get_server_config(server_key)
-        return server_config.get("url")
+        url = server_config.get("url")
+        if url is None:
+            raise KeyError(f"URL not found for server '{server_key}'")
+        return url
 
     def get_server_path(self, server_key: str) -> str:
         """Get the file path for a specific server."""
         server_config = self.get_server_config(server_key)
-        return server_config.get("path")
+        path = server_config.get("path")
+        if path is None:
+            raise KeyError(f"Path not found for server '{server_key}'")
+        return path
 
     def get_model_config(self) -> Dict[str, Any]:
         """Get model configuration."""
+        if self._config is None:
+            raise RuntimeError("Configuration not loaded")
         return self._config.get("model", {})
 
     def get_model_default(self) -> str:
         """Get the default model name."""
         model_config = self.get_model_config()
-        return model_config.get("default")
+        default = model_config.get("default")
+        if default is None:
+            raise KeyError("Default model not found in configuration")
+        return default
 
     def get_model_api_base(self) -> str:
         """Get the model API base URL."""
         model_config = self.get_model_config()
-        return model_config.get("api_base")
+        api_base = model_config.get("api_base")
+        if api_base is None:
+            raise KeyError("API base not found in configuration")
+        return api_base
 
     def get_model_configs(self) -> Dict[str, Any]:
         """Get model-specific configurations."""
@@ -104,6 +124,8 @@ class ConfigLoader:
 
     def get_client_config(self) -> Dict[str, Any]:
         """Get client configuration."""
+        if self._config is None:
+            raise RuntimeError("Configuration not loaded")
         return self._config.get("client", {})
 
     def get_gradio_config(self) -> Dict[str, Any]:
@@ -113,10 +135,14 @@ class ConfigLoader:
 
     def get_testing_config(self) -> Dict[str, Any]:
         """Get testing configuration."""
+        if self._config is None:
+            raise RuntimeError("Configuration not loaded")
         return self._config.get("testing", {})
 
     def get_logging_config(self) -> Dict[str, Any]:
         """Get logging configuration."""
+        if self._config is None:
+            raise RuntimeError("Configuration not loaded")
         return self._config.get("logging", {})
 
     def get_all_server_ports(self) -> Dict[str, int]:
@@ -132,6 +158,9 @@ class ConfigLoader:
     def validate_config(self) -> bool:
         """Validate that the configuration is complete and correct."""
         try:
+            if self._config is None:
+                raise RuntimeError("Configuration not loaded")
+
             # Check required sections
             required_sections = [
                 "servers",

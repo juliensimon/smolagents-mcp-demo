@@ -3,8 +3,11 @@ import logging
 import os
 import re
 import sys
+from typing import Any, Dict, List
 
 import gradio as gr
+
+from config_loader import get_config_loader
 
 # Add the project root to the path to import config_loader
 sys.path.insert(
@@ -13,8 +16,6 @@ sys.path.insert(
         os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     ),
 )
-
-from config_loader import get_config_loader
 
 # Load configuration
 config_loader = get_config_loader()
@@ -650,7 +651,7 @@ def comprehensive_security_analysis(code: str) -> str:
     )
 
     # Group vulnerabilities by type
-    vulnerability_types = {}
+    vulnerability_types: Dict[str, List[Dict[str, Any]]] = {}
     for vuln in all_vulnerabilities:
         vuln_type = vuln["type"]
         if vuln_type not in vulnerability_types:

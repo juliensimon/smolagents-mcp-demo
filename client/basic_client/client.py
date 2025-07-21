@@ -4,6 +4,8 @@ import sys
 import gradio as gr
 from smolagents import MCPClient, OpenAIServerModel, ToolCallingAgent
 
+from config_loader import get_config_loader
+
 # Add the project root to the path to import the unified config_loader
 sys.path.insert(
     0,
@@ -11,8 +13,6 @@ sys.path.insert(
         os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     ),
 )
-
-from config_loader import get_config_loader
 
 try:
     # Load unified configuration

@@ -6,6 +6,8 @@ import sys
 
 import gradio as gr
 
+from config_loader import get_config_loader
+
 # Add the project root to the path to import config_loader
 sys.path.insert(
     0,
@@ -13,8 +15,6 @@ sys.path.insert(
         os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     ),
 )
-
-from config_loader import get_config_loader
 
 # Load configuration
 config_loader = get_config_loader()
@@ -146,7 +146,7 @@ def git_status(file_path: str) -> str:
                     "message": commit_parts[3],
                 }
 
-        result = {
+        status_result_dict = {
             "file_path": file_path,
             "relative_path": relative_path,
             "status": status,
@@ -160,7 +160,7 @@ def git_status(file_path: str) -> str:
             f"Git status completed - Status: {status}, Message: {message}"
         )
         logger.info("git_status function completed successfully")
-        return json.dumps(result, indent=2)
+        return json.dumps(status_result_dict, indent=2)
 
     except Exception as e:
         logger.error(f"Error in git_status: {str(e)}")
@@ -232,7 +232,7 @@ def git_add(file_path: str) -> str:
 
         status_output = status_result.stdout.strip()
 
-        result = {
+        add_result_dict = {
             "file_path": file_path,
             "relative_path": relative_path,
             "action": "added",
@@ -245,7 +245,7 @@ def git_add(file_path: str) -> str:
             f"Git add completed - File: {relative_path}, Success: True"
         )
         logger.info("git_add function completed successfully")
-        return json.dumps(result, indent=2)
+        return json.dumps(add_result_dict, indent=2)
 
     except Exception as e:
         logger.error(f"Error in git_add: {str(e)}")
@@ -348,7 +348,7 @@ def git_commit(file_path: str, commit_message: str) -> str:
             else "unknown"
         )
 
-        result = {
+        commit_result_dict = {
             "file_path": file_path,
             "relative_path": relative_path,
             "action": "committed",
@@ -362,7 +362,7 @@ def git_commit(file_path: str, commit_message: str) -> str:
             f"Git commit completed - File: {relative_path}, Hash: {commit_hash}"
         )
         logger.info("git_commit function completed successfully")
-        return json.dumps(result, indent=2)
+        return json.dumps(commit_result_dict, indent=2)
 
     except Exception as e:
         logger.error(f"Error in git_commit: {str(e)}")
@@ -454,7 +454,7 @@ def git_diff(file_path: str, staged: bool = False) -> str:
             elif line.startswith("-") and not line.startswith("---"):
                 lines_removed += 1
 
-        result = {
+        diff_result_dict = {
             "file_path": file_path,
             "relative_path": relative_path,
             "staged": staged,
@@ -469,7 +469,7 @@ def git_diff(file_path: str, staged: bool = False) -> str:
             f"Git diff completed - File: {relative_path}, Lines added: {lines_added}, Lines removed: {lines_removed}"
         )
         logger.info("git_diff function completed successfully")
-        return json.dumps(result, indent=2)
+        return json.dumps(diff_result_dict, indent=2)
 
     except Exception as e:
         logger.error(f"Error in git_diff: {str(e)}")
@@ -558,7 +558,7 @@ def git_log(file_path: str, limit: int = 5) -> str:
                             }
                         )
 
-        result = {
+        log_result_dict = {
             "file_path": file_path,
             "relative_path": relative_path,
             "limit": limit,
@@ -570,7 +570,7 @@ def git_log(file_path: str, limit: int = 5) -> str:
             f"Git log completed - File: {relative_path}, Commits found: {len(commits)}"
         )
         logger.info("git_log function completed successfully")
-        return json.dumps(result, indent=2)
+        return json.dumps(log_result_dict, indent=2)
 
     except Exception as e:
         logger.error(f"Error in git_log: {str(e)}")

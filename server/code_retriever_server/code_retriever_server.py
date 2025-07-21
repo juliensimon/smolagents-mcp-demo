@@ -11,6 +11,8 @@ from urllib.parse import urlparse
 import gradio as gr
 import requests
 
+from config_loader import get_config_loader
+
 # Add the project root to the path to import config_loader
 sys.path.insert(
     0,
@@ -18,8 +20,6 @@ sys.path.insert(
         os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     ),
 )
-
-from config_loader import get_config_loader
 
 # Load configuration
 config_loader = get_config_loader()
@@ -45,7 +45,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
-def validate_url(url: str) -> Dict[str, Any]:
+def validate_url(url: str) -> str:
     """
     Validate if the provided URL is accessible and returns file information.
 
@@ -286,7 +286,7 @@ def analyze_file_content(content: str, file_type: str = "auto") -> str:
     )
 
     try:
-        analysis = {
+        analysis: Dict[str, Any] = {
             "file_size": len(content),
             "line_count": len(content.splitlines()),
             "word_count": len(content.split()),

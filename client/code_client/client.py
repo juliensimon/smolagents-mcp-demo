@@ -12,24 +12,18 @@ Based on the test client structure but extended for multiple servers.
 """
 
 import os
-
-# Handle imports for both package and direct execution
 import sys
 from pathlib import Path
+from typing import Any, Dict
 
 import gradio as gr
 from smolagents import MCPClient, OpenAIServerModel, ToolCallingAgent
 
+from config_loader import get_config_loader
+
 # Add the project root to the path so we can import the shared config_loader
 project_root = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(project_root))
-
-from config_loader import (
-    get_config_loader,
-    get_gradio_config,
-    get_model_params,
-    get_server_url,
-)
 
 
 # Create wrapper functions to match the expected interface
@@ -216,7 +210,7 @@ class MultiServerMCPClient:
 
     def test_tool_connectivity(self) -> dict:
         """Test connectivity and functionality of all tools."""
-        results = {
+        results: Dict[str, Any] = {
             "total_tools": len(self.all_tools),
             "server_status": {},
             "tool_status": "operational" if self.all_tools else "no_tools",

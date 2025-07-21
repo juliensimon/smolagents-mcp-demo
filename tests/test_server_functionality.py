@@ -6,18 +6,12 @@ This test suite focuses on testing individual server functionalities in detail,
 including specific tool calls, edge cases, and error conditions.
 """
 
-import json
 import os
 import sys
 import tempfile
-import time
 import unittest
 from pathlib import Path
 
-# Add the parent directory to the path
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-import requests
 from smolagents import MCPClient, OpenAIServerModel, ToolCallingAgent
 
 from config_loader import get_config_loader

@@ -11,10 +11,10 @@ from typing import Dict
 
 import requests
 
-# Add the current directory to the path to import config_loader
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-
 from config_loader import get_config_loader
+
+# Add the project root to the path to import config_loader
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 
 class ServerManager:

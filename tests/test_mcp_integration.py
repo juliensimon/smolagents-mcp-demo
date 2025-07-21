@@ -6,7 +6,6 @@ This test suite tests real MCP server integration using actual MCP clients.
 It assumes all MCP servers are running and the Together AI endpoint is live.
 """
 
-import json
 import os
 import sys
 import tempfile
@@ -14,13 +13,13 @@ import time
 import unittest
 from pathlib import Path
 
-# Add the parent directory to the path
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
 import requests
 from smolagents import MCPClient, OpenAIServerModel, ToolCallingAgent
 
 from config_loader import get_config_loader
+
+# Add the parent directory to the path
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
 class TestMCPIntegration(unittest.TestCase):
@@ -74,7 +73,7 @@ class TestMCPIntegration(unittest.TestCase):
             if client:
                 try:
                     client.disconnect()
-                except:
+                except Exception:
                     pass
 
     def test_server_connectivity(self):
@@ -688,11 +687,8 @@ class TestEnvironment(unittest.TestCase):
     def test_dependencies_available(self):
         """Test that required dependencies are available."""
         try:
-            import gradio
-            import psutil
-            import requests
-            import smolagents
-            import textblob
+            # requests is already imported at the top of the file
+            pass
         except ImportError as e:
             self.fail(f"Missing dependency: {e}")
 
@@ -767,7 +763,7 @@ class TestServerHealth(unittest.TestCase):
 
                 start_time = time.time()
                 try:
-                    response = requests.get(
+                    response = requests.get(  # noqa: F841
                         f"http://localhost:{port}", timeout=10
                     )
                     end_time = time.time()
@@ -800,11 +796,11 @@ class TestServerHealth(unittest.TestCase):
                         self.assertEqual(
                             response.status_code,
                             200,
-                            f"Server {server_key} unstable on request {i+1}",
+                            f"Server {server_key} unstable on request {i + 1}",
                         )
                     except requests.exceptions.RequestException as e:
                         self.fail(
-                            f"Server {server_key} failed on request {i+1}: {e}"
+                            f"Server {server_key} failed on request {i + 1}: {e}"
                         )
 
 

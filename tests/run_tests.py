@@ -11,11 +11,7 @@ import sys
 import time
 import unittest
 
-# Add the parent directory to the path
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
 from tests.test_config import (
-    TestConfig,
     create_test_scenario,
     get_available_scenarios,
     validate_test_environment,
@@ -34,6 +30,9 @@ from tests.test_server_functionality import (
     TestCodeSecurityServerFunctionality,
     TestGitServerFunctionality,
 )
+
+# Add the current directory to the path
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 
 class TestRunner:

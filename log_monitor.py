@@ -4,9 +4,7 @@ Log monitor that filters out ListToolsRequest messages and shows tool calls
 """
 
 import os
-import re
 import time
-from pathlib import Path
 
 
 def monitor_logs(log_file="mcp_servers.log"):
@@ -51,7 +49,7 @@ def monitor_logs(log_file="mcp_servers.log"):
                         print(f"⚠️  {line.strip()}")
                     elif (
                         "INFO" in line
-                        and not "mcp.server.lowlevel.server" in line
+                        and "mcp.server.lowlevel.server" not in line
                     ):
                         print(f"ℹ️  {line.strip()}")
 
