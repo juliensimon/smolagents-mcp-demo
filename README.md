@@ -2,10 +2,9 @@
 
 [![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![CI](https://github.com/juliensimon/smolagents-mcp-demo/workflows/CI/badge.svg)](https://github.com/juliensimon/smolagents-mcp-demo/actions)
 [![Code Style](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![Imports](https://img.shields.io/badge/imports-isort-%231674b1?style=flat&labelColor=ef8336)](https://pycqa.github.io/isort/)
-[![Linting](https://img.shields.io/badge/linting-flake8-yellowgreen)](https://flake8.pycqa.org/)
-[![Type Checking](https://img.shields.io/badge/type%20checking-mypy-blue)](https://mypy-lang.org/)
 [![Pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
 [![Tests](https://img.shields.io/badge/tests-unittest-brightgreen)](https://docs.python.org/3/library/unittest.html)
 
