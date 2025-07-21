@@ -4,10 +4,6 @@ import os
 import subprocess
 import sys
 
-import gradio as gr
-
-from config_loader import get_config_loader
-
 # Add the project root to the path to import config_loader
 sys.path.insert(
     0,
@@ -15,6 +11,10 @@ sys.path.insert(
         os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     ),
 )
+
+import gradio as gr
+
+from config_loader import get_config_loader
 
 # Load configuration
 config_loader = get_config_loader()

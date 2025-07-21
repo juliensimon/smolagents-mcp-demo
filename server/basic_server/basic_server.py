@@ -3,6 +3,14 @@ import logging
 import os
 import sys
 
+# Add the project root to the path to import config_loader
+sys.path.insert(
+    0,
+    os.path.dirname(
+        os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    ),
+)
+
 import gradio as gr
 from textblob import TextBlob
 
@@ -13,14 +21,6 @@ from logging_utils import log_tool_call, log_tool_result, setup_logging
 logging.getLogger("mcp").setLevel(logging.ERROR)
 logging.getLogger("mcp.server").setLevel(logging.ERROR)
 logging.getLogger("mcp.server.lowlevel.server").setLevel(logging.ERROR)
-
-# Add the project root to the path to import config_loader
-sys.path.insert(
-    0,
-    os.path.dirname(
-        os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    ),
-)
 
 # Load configuration
 config_loader = get_config_loader()
