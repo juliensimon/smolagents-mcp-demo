@@ -1,0 +1,91 @@
+{
+  "servers": {
+    "basic_server": {
+      "name": "Basic Server",
+      "port": 7860,
+      "url": "http://127.0.0.1:7860/gradio_api/mcp/sse",
+      "description": "Basic text sentiment analysis",
+      "path": "server/basic_server/basic_server.py"
+    },
+    "code_metrics": {
+      "name": "Code Metrics Server",
+      "port": 7862,
+      "url": "http://127.0.0.1:7862/gradio_api/mcp/sse",
+      "description": "Code analysis and metrics",
+      "path": "server/code_metrics_server/code_metrics_server.py"
+    },
+    "code_security": {
+      "name": "Code Security Server",
+      "port": 7865,
+      "url": "http://127.0.0.1:7865/gradio_api/mcp/sse",
+      "description": "Security vulnerability detection",
+      "path": "server/code_security_server/code_security_server.py"
+    },
+    "code_retrieval": {
+      "name": "Code Retrieval Server",
+      "port": 7866,
+      "url": "http://127.0.0.1:7866/gradio_api/mcp/sse",
+      "description": "Code retrieval",
+      "path": "server/code_retriever_server/code_retriever_server.py"
+    },
+    "git_repo_analysis": {
+      "name": "Git Repo Analysis Server",
+      "port": 7867,
+      "url": "http://127.0.0.1:7867/gradio_api/mcp/sse",
+      "description": "Git repository analysis",
+      "path": "server/git_server/git_server.py"
+    }
+  },
+  "model": {
+    "default": "arcee-ai/coder-large",
+    "api_base": "https://api.together.xyz/v1",
+    "configs": {
+      "arcee-ai/coder-large": {
+        "temperature": 0.1,
+        "max_tokens": 1000,
+        "top_p": 0.9,
+        "frequency_penalty": 0.1,
+        "presence_penalty": 0.1
+      },
+      "arcee-ai/AFM-4.5B-Preview": {
+        "temperature": 0.0,
+        "max_tokens": 500,
+        "top_p": 0.9,
+        "frequency_penalty": 0.0,
+        "presence_penalty": 0.0
+      },
+      "arcee-ai/virtuoso-large": {
+        "temperature": 0.0,
+        "max_tokens": 500,
+        "top_p": 0.9,
+        "frequency_penalty": 0.0,
+        "presence_penalty": 0.0
+      }
+    }
+  },
+  "client": {
+    "gradio": {
+      "server_name": "127.0.0.1",
+      "server_port": 7864,
+      "share": false,
+      "show_error": true,
+      "theme": "default"
+    }
+  },
+  "testing": {
+    "timeout": 30,
+    "retry_attempts": 3,
+    "health_check_interval": 5,
+    "startup_wait_time": 3
+  },
+  "logging": {
+    "level": "INFO",
+    "file": "mcp_servers.log",
+    "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    "filters": {
+      "exclude": ["ListToolsRequest"],
+      "include": ["tool", "Tool", "CallTool", "call_tool"]
+    },
+    "mcp_logging_level": "ERROR"
+  }
+}

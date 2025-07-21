@@ -1,0 +1,12 @@
+gradio[mcp]
+gradio-client
+smolagents[mcp]
+smolagents[toolkit]
+textblob
+pre-commit
+black
+isort
+flake8
+mypy
+openai
+requests

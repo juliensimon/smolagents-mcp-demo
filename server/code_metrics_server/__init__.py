@@ -1,0 +1,5 @@
+"""
+Code Metrics Server Package for MCP Demo
+"""
+
+# Import statements removed to avoid unused import warnings
