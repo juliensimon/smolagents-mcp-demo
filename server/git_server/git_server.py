@@ -7,7 +7,9 @@ import sys
 # Add the project root to the path to import config_loader
 sys.path.insert(
     0,
-    os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
+    os.path.dirname(
+        os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    ),
 )
 
 import gradio as gr
@@ -213,7 +215,9 @@ def git_status(file_path: str) -> str:
             "last_commit": last_commit,
         }
 
-        logger.info(f"Git status completed - File: {file_path}, Status: {status}")
+        logger.info(
+            f"Git status completed - File: {file_path}, Status: {status}"
+        )
         logger.info("git_status function completed successfully")
         return json.dumps(status_result_dict)
     except Exception as e:
@@ -319,7 +323,9 @@ def git_add(file_path: str) -> str:
         )
 
         if add_result.returncode != 0:
-            return json.dumps({"error": f"Failed to add file: {add_result.stderr}"})
+            return json.dumps(
+                {"error": f"Failed to add file: {add_result.stderr}"}
+            )
 
         # Get updated status
         status_result = subprocess.run(
@@ -340,7 +346,9 @@ def git_add(file_path: str) -> str:
             "current_status": status_output[:2] if status_output else None,
         }
 
-        logger.info(f"Git add completed - File: {relative_path}, Success: True")
+        logger.info(
+            f"Git add completed - File: {relative_path}, Success: True"
+        )
         logger.info("git_add function completed successfully")
         return json.dumps(add_result_dict, indent=2)
 
@@ -411,8 +419,12 @@ def git_commit(file_path: str, commit_message: str) -> str:
             return json.dumps({"error": "No changes to commit for this file"})
 
         # Check if file is staged (status starts with A, M, D)
-        if not any(status_output.startswith(code) for code in ["A ", "M ", "D "]):
-            return json.dumps({"error": "File is not staged. Use git_add first."})
+        if not any(
+            status_output.startswith(code) for code in ["A ", "M ", "D "]
+        ):
+            return json.dumps(
+                {"error": "File is not staged. Use git_add first."}
+            )
 
         # Commit the changes
         commit_result = subprocess.run(
@@ -423,7 +435,9 @@ def git_commit(file_path: str, commit_message: str) -> str:
         )
 
         if commit_result.returncode != 0:
-            return json.dumps({"error": f"Failed to commit: {commit_result.stderr}"})
+            return json.dumps(
+                {"error": f"Failed to commit: {commit_result.stderr}"}
+            )
 
         # Get the commit hash
         hash_result = subprocess.run(
@@ -434,7 +448,9 @@ def git_commit(file_path: str, commit_message: str) -> str:
         )
 
         commit_hash = (
-            hash_result.stdout.strip()[:8] if hash_result.returncode == 0 else "unknown"
+            hash_result.stdout.strip()[:8]
+            if hash_result.returncode == 0
+            else "unknown"
         )
 
         commit_result_dict = {
@@ -513,7 +529,9 @@ def git_diff(file_path: str, staged: bool = False) -> str:
         )
 
         if diff_result.returncode != 0:
-            return json.dumps({"error": f"Failed to get diff: {diff_result.stderr}"})
+            return json.dumps(
+                {"error": f"Failed to get diff: {diff_result.stderr}"}
+            )
 
         diff_output = diff_result.stdout.strip()
 
@@ -527,7 +545,9 @@ def git_diff(file_path: str, staged: bool = False) -> str:
             stat_cmd, cwd=git_root, capture_output=True, text=True
         )
 
-        stat_output = stat_result.stdout.strip() if stat_result.returncode == 0 else ""
+        stat_output = (
+            stat_result.stdout.strip() if stat_result.returncode == 0 else ""
+        )
 
         # Count lines added/removed
         lines_added = 0
@@ -624,7 +644,9 @@ def git_log(file_path: str, limit: float = 5) -> str:
         )
 
         if log_result.returncode != 0:
-            return json.dumps({"error": f"Failed to get git log: {log_result.stderr}"})
+            return json.dumps(
+                {"error": f"Failed to get git log: {log_result.stderr}"}
+            )
 
         log_output = log_result.stdout.strip()
 

@@ -91,7 +91,9 @@ def log_tool_call(
     logger.info(f"🔧 TOOL CALL: {tool_name}{args_str}")
 
 
-def log_tool_result(logger: logging.Logger, tool_name: str, result: Any = None):
+def log_tool_result(
+    logger: logging.Logger, tool_name: str, result: Any = None
+):
     """Log a tool result with standardized format."""
     result_str = f" -> {result}" if result else ""
     logger.info(f"✅ TOOL RESULT: {tool_name}{result_str}")

@@ -223,7 +223,9 @@ def safe_query(user_input):
         return list(cls.SCENARIOS.keys())
 
     @classmethod
-    def get_test_data(cls, category: str, subcategory: Optional[str] = None) -> Any:
+    def get_test_data(
+        cls, category: str, subcategory: Optional[str] = None
+    ) -> Any:
         """Get test data for a specific category."""
         if subcategory:
             return cls.TEST_DATA.get(category, {}).get(subcategory, [])
@@ -238,7 +240,9 @@ def safe_query(user_input):
 
         # Check Python version
         version = sys.version_info
-        validation_results["python_version"] = version.major == 3 and version.minor >= 8
+        validation_results["python_version"] = (
+            version.major == 3 and version.minor >= 8
+        )
 
         # Check environment variables
         required_env_vars: List[str] = cls.ENVIRONMENT_REQUIREMENTS["required_env_vars"]  # type: ignore

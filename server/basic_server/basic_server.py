@@ -6,7 +6,9 @@ import sys
 # Add the project root to the path to import config_loader
 sys.path.insert(
     0,
-    os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
+    os.path.dirname(
+        os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    ),
 )
 
 import gradio as gr  # noqa: E402
@@ -96,14 +98,18 @@ def sentiment_analysis(text: str) -> str:
         sentiment = blob.sentiment
 
         result = {
-            "polarity": round(sentiment.polarity, 2),  # -1 (negative) to 1 (positive)
+            "polarity": round(
+                sentiment.polarity, 2
+            ),  # -1 (negative) to 1 (positive)
             "subjectivity": round(
                 sentiment.subjectivity, 2
             ),  # 0 (objective) to 1 (subjective)
             "assessment": (
                 "positive"
                 if sentiment.polarity > 0
-                else "negative" if sentiment.polarity < 0 else "neutral"
+                else "negative"
+                if sentiment.polarity < 0
+                else "neutral"
             ),
         }
 

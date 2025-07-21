@@ -4,7 +4,9 @@ import sys
 # Add the project root to the path to import the unified config_loader
 sys.path.insert(
     0,
-    os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
+    os.path.dirname(
+        os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    ),
 )
 
 import gradio as gr
@@ -47,7 +49,9 @@ def main():
         demo = gr.ChatInterface(
             fn=lambda message, history: str(agent.run(message)),
             type="messages",
-            examples=["Analyze the sentiment of the following text 'This is awesome'"],
+            examples=[
+                "Analyze the sentiment of the following text 'This is awesome'"
+            ],
             title=f"Agent with MCP Tools ({model_name})",
             description=(
                 f"This is a simple agent that uses MCP tools to answer questions. "

@@ -98,7 +98,9 @@ if __name__ == "__main__":
     # Check if API key is set
     if not os.getenv("TOGETHER_API_KEY"):
         print("❌ TOGETHER_API_KEY environment variable not set!")
-        print("Please set it with: export TOGETHER_API_KEY='your_api_key_here'")
+        print(
+            "Please set it with: export TOGETHER_API_KEY='your_api_key_here'"
+        )
         exit(1)
 
     test_multi_agent_system()

@@ -78,8 +78,10 @@ class ServerManager:
         port = server_config["port"]
 
         try:
-            health_check_interval = self.config_loader.get_testing_config().get(
-                "health_check_interval", 5
+            health_check_interval = (
+                self.config_loader.get_testing_config().get(
+                    "health_check_interval", 5
+                )
             )
             response = requests.get(
                 f"http://localhost:{port}", timeout=health_check_interval
@@ -147,7 +149,9 @@ class IntegrationTester:
             # Test basic connectivity
             response = requests.get(f"http://localhost:{port}", timeout=10)
             if response.status_code != 200:
-                print(f"❌ {server_key} server returned status {response.status_code}")
+                print(
+                    f"❌ {server_key} server returned status {response.status_code}"
+                )
                 return False
 
             print(f"✅ {server_key} server is responding")
@@ -171,7 +175,9 @@ class IntegrationTester:
             # Test basic connectivity
             response = requests.get(f"http://localhost:{port}", timeout=10)
             if response.status_code != 200:
-                print(f"❌ {server_key} server returned status {response.status_code}")
+                print(
+                    f"❌ {server_key} server returned status {response.status_code}"
+                )
                 return False
 
             print(f"✅ {server_key} server is responding")
@@ -195,7 +201,9 @@ class IntegrationTester:
             # Test basic connectivity
             response = requests.get(f"http://localhost:{port}", timeout=10)
             if response.status_code != 200:
-                print(f"❌ {server_key} server returned status {response.status_code}")
+                print(
+                    f"❌ {server_key} server returned status {response.status_code}"
+                )
                 return False
 
             print(f"✅ {server_key} server is responding")
@@ -219,7 +227,9 @@ class IntegrationTester:
             # Test basic connectivity
             response = requests.get(f"http://localhost:{port}", timeout=10)
             if response.status_code != 200:
-                print(f"❌ {server_key} server returned status {response.status_code}")
+                print(
+                    f"❌ {server_key} server returned status {response.status_code}"
+                )
                 return False
 
             print(f"✅ {server_key} server is responding")

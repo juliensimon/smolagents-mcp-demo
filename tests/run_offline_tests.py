@@ -90,7 +90,9 @@ class OfflineTestRunner:
             "tests_run": result.testsRun,
             "failures": len(result.failures),
             "errors": len(result.errors),
-            "skipped": len(result.skipped) if hasattr(result, "skipped") else 0,
+            "skipped": len(result.skipped)
+            if hasattr(result, "skipped")
+            else 0,
         }
 
     def run_all_offline_tests(self, verbose: bool = False) -> dict:
@@ -156,7 +158,9 @@ class OfflineTestRunner:
             if "total_tests" in results:
                 report.append("📈 Summary")
                 report.append(f"   Total Tests: {results['total_tests']}")
-                report.append(f"   Total Failures: {results['total_failures']}")
+                report.append(
+                    f"   Total Failures: {results['total_failures']}"
+                )
                 report.append(f"   Total Errors: {results['total_errors']}")
                 report.append(f"   Total Skipped: {results['total_skipped']}")
                 report.append("")
@@ -194,7 +198,9 @@ def main():
         default="all",
         help="Test category to run",
     )
-    parser.add_argument("--verbose", "-v", action="store_true", help="Verbose output")
+    parser.add_argument(
+        "--verbose", "-v", action="store_true", help="Verbose output"
+    )
     parser.add_argument(
         "--report", action="store_true", help="Generate detailed report"
     )

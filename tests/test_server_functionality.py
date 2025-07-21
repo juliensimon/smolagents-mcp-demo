@@ -62,7 +62,9 @@ class TestBasicServerFunctionality(unittest.TestCase):
 
         for text in test_cases:
             with self.subTest(text=text[:30] + "..."):
-                response = self.agent.run(f"Analyze the sentiment of this text: {text}")
+                response = self.agent.run(
+                    f"Analyze the sentiment of this text: {text}"
+                )
                 self.assertIsNotNone(response)
                 self.assertIn("sentiment", str(response).lower())
 
@@ -81,7 +83,9 @@ class TestBasicServerFunctionality(unittest.TestCase):
 
         for text in test_cases:
             with self.subTest(text=text[:30] + "..."):
-                response = self.agent.run(f"Analyze the sentiment of this text: {text}")
+                response = self.agent.run(
+                    f"Analyze the sentiment of this text: {text}"
+                )
                 self.assertIsNotNone(response)
                 self.assertIn("sentiment", str(response).lower())
 
@@ -100,7 +104,9 @@ class TestBasicServerFunctionality(unittest.TestCase):
 
         for text in test_cases:
             with self.subTest(text=text[:30] + "..."):
-                response = self.agent.run(f"Analyze the sentiment of this text: {text}")
+                response = self.agent.run(
+                    f"Analyze the sentiment of this text: {text}"
+                )
                 self.assertIsNotNone(response)
                 self.assertIn("sentiment", str(response).lower())
 
@@ -119,7 +125,9 @@ class TestBasicServerFunctionality(unittest.TestCase):
 
         for text in test_cases:
             with self.subTest(text=text[:30] + "..."):
-                response = self.agent.run(f"Analyze the sentiment of this text: {text}")
+                response = self.agent.run(
+                    f"Analyze the sentiment of this text: {text}"
+                )
                 self.assertIsNotNone(response)
                 self.assertIn("sentiment", str(response).lower())
 
@@ -141,7 +149,9 @@ class TestBasicServerFunctionality(unittest.TestCase):
 
         for text in edge_cases:
             with self.subTest(text=repr(text)):
-                response = self.agent.run(f"Analyze the sentiment of this text: {text}")
+                response = self.agent.run(
+                    f"Analyze the sentiment of this text: {text}"
+                )
                 self.assertIsNotNone(response)
 
 
@@ -255,7 +265,9 @@ def good_style_function(x, y):
 
         for code in style_test_codes:
             with self.subTest(code=code[:50] + "..."):
-                response = self.agent.run(f"Analyze the style of this code: {code}")
+                response = self.agent.run(
+                    f"Analyze the style of this code: {code}"
+                )
                 self.assertIsNotNone(response)
                 self.assertIn("style", str(response).lower())
 
@@ -499,7 +511,9 @@ class TestCodeSecurityServerFunctionality(unittest.TestCase):
     def setUpClass(cls):
         """Set up test environment."""
         cls.config_loader = get_config_loader()
-        cls.server_config = cls.config_loader.get_server_config("code_security")
+        cls.server_config = cls.config_loader.get_server_config(
+            "code_security"
+        )
         cls.model_config = cls.config_loader.get_model_config()
 
         try:
@@ -762,7 +776,9 @@ class TestCodeRetrievalServerFunctionality(unittest.TestCase):
     def setUpClass(cls):
         """Set up test environment."""
         cls.config_loader = get_config_loader()
-        cls.server_config = cls.config_loader.get_server_config("code_retrieval")
+        cls.server_config = cls.config_loader.get_server_config(
+            "code_retrieval"
+        )
         cls.model_config = cls.config_loader.get_model_config()
 
         try:
@@ -864,7 +880,9 @@ if __name__ == "__main__":
 
         for content in test_contents:
             with self.subTest(content=content[:50] + "..."):
-                response = self.agent.run(f"Analyze this file content: {content}")
+                response = self.agent.run(
+                    f"Analyze this file content: {content}"
+                )
                 self.assertIsNotNone(response)
                 self.assertIn("analysis", str(response).lower())
 
@@ -917,7 +935,9 @@ def main():
         ]
 
         urls_text = "\n".join(test_urls)
-        response = self.agent.run(f"Retrieve these files in batch: {urls_text}")
+        response = self.agent.run(
+            f"Retrieve these files in batch: {urls_text}"
+        )
         self.assertIsNotNone(response)
         self.assertIn("batch", str(response).lower())
 
@@ -929,7 +949,9 @@ class TestGitServerFunctionality(unittest.TestCase):
     def setUpClass(cls):
         """Set up test environment."""
         cls.config_loader = get_config_loader()
-        cls.server_config = cls.config_loader.get_server_config("git_repo_analysis")
+        cls.server_config = cls.config_loader.get_server_config(
+            "git_repo_analysis"
+        )
         cls.model_config = cls.config_loader.get_model_config()
 
         try:
@@ -963,7 +985,9 @@ class TestGitServerFunctionality(unittest.TestCase):
             # Initialize git repository
             os.system(f"cd {temp_path} && git init")
             os.system(f"cd {temp_path} && git config user.name 'Test User'")
-            os.system(f"cd {temp_path} && git config user.email 'test@example.com'")
+            os.system(
+                f"cd {temp_path} && git config user.email 'test@example.com'"
+            )
 
             # Create test file
             test_file = temp_path / "test.py"
@@ -991,7 +1015,9 @@ class TestGitServerFunctionality(unittest.TestCase):
             # Initialize git repository
             os.system(f"cd {temp_path} && git init")
             os.system(f"cd {temp_path} && git config user.name 'Test User'")
-            os.system(f"cd {temp_path} && git config user.email 'test@example.com'")
+            os.system(
+                f"cd {temp_path} && git config user.email 'test@example.com'"
+            )
 
             # Create and commit multiple files
             for i in range(3):
@@ -1018,7 +1044,9 @@ class TestGitServerFunctionality(unittest.TestCase):
             # Initialize git repository
             os.system(f"cd {temp_path} && git init")
             os.system(f"cd {temp_path} && git config user.name 'Test User'")
-            os.system(f"cd {temp_path} && git config user.email 'test@example.com'")
+            os.system(
+                f"cd {temp_path} && git config user.email 'test@example.com'"
+            )
 
             # Create initial commit
             test_file = temp_path / "main.py"
@@ -1047,7 +1075,9 @@ class TestGitServerFunctionality(unittest.TestCase):
             # Initialize git repository
             os.system(f"cd {temp_path} && git init")
             os.system(f"cd {temp_path} && git config user.name 'Test User'")
-            os.system(f"cd {temp_path} && git config user.email 'test@example.com'")
+            os.system(
+                f"cd {temp_path} && git config user.email 'test@example.com'"
+            )
 
             # Create test file
             test_file = temp_path / "new_file.py"
@@ -1069,7 +1099,9 @@ class TestGitServerFunctionality(unittest.TestCase):
             # Initialize git repository
             os.system(f"cd {temp_path} && git init")
             os.system(f"cd {temp_path} && git config user.name 'Test User'")
-            os.system(f"cd {temp_path} && git config user.email 'test@example.com'")
+            os.system(
+                f"cd {temp_path} && git config user.email 'test@example.com'"
+            )
 
             # Create and add test file
             test_file = temp_path / "test.py"
@@ -1094,7 +1126,9 @@ class TestGitServerFunctionality(unittest.TestCase):
             # Initialize git repository
             os.system(f"cd {temp_path} && git init")
             os.system(f"cd {temp_path} && git config user.name 'Test User'")
-            os.system(f"cd {temp_path} && git config user.email 'test@example.com'")
+            os.system(
+                f"cd {temp_path} && git config user.email 'test@example.com'"
+            )
 
             # Create initial file
             test_file = temp_path / "test.py"
@@ -1106,7 +1140,9 @@ class TestGitServerFunctionality(unittest.TestCase):
             test_file.write_text('print("Modified content")')
 
             # Test git diff
-            response = self.agent.run(f"Get the git diff for this file: {test_file}")
+            response = self.agent.run(
+                f"Get the git diff for this file: {test_file}"
+            )
             self.assertIsNotNone(response)
             self.assertIn("diff", str(response).lower())
 

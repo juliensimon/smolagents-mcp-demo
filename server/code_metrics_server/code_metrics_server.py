@@ -9,7 +9,9 @@ from collections import Counter
 # Add the project root to the path to import config_loader
 sys.path.insert(
     0,
-    os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
+    os.path.dirname(
+        os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    ),
 )
 
 import gradio as gr  # noqa: E402
@@ -200,7 +202,9 @@ def calculate_code_complexity(code: str) -> str:
 
     for pattern in dangerous_patterns:
         if re.search(pattern, code, re.IGNORECASE):
-            logger.warning(f"Potentially dangerous pattern detected: {pattern}")
+            logger.warning(
+                f"Potentially dangerous pattern detected: {pattern}"
+            )
             # Continue analysis but log the warning
 
     # Check for common syntax issues that might cause problems
@@ -217,7 +221,11 @@ def calculate_code_complexity(code: str) -> str:
     # Check for invalid indentation
     lines = code.split("\n")
     for i, line in enumerate(lines, 1):
-        if line.strip() and not line.startswith(" ") and not line.startswith("\t"):
+        if (
+            line.strip()
+            and not line.startswith(" ")
+            and not line.startswith("\t")
+        ):
             # This line should be at the root level
             pass
         elif line.strip():
@@ -255,14 +263,24 @@ def calculate_code_complexity(code: str) -> str:
                 complexity += 1
 
         # Count functions and classes
-        functions = len([n for n in ast.walk(tree) if isinstance(n, ast.FunctionDef)])
-        classes = len([n for n in ast.walk(tree) if isinstance(n, ast.ClassDef)])
+        functions = len(
+            [n for n in ast.walk(tree) if isinstance(n, ast.FunctionDef)]
+        )
+        classes = len(
+            [n for n in ast.walk(tree) if isinstance(n, ast.ClassDef)]
+        )
 
         # Count other structural elements
         imports = len(
-            [n for n in ast.walk(tree) if isinstance(n, (ast.Import, ast.ImportFrom))]
+            [
+                n
+                for n in ast.walk(tree)
+                if isinstance(n, (ast.Import, ast.ImportFrom))
+            ]
         )
-        assignments = len([n for n in ast.walk(tree) if isinstance(n, ast.Assign)])
+        assignments = len(
+            [n for n in ast.walk(tree) if isinstance(n, ast.Assign)]
+        )
         calls = len([n for n in ast.walk(tree) if isinstance(n, ast.Call)])
 
         # Determine complexity level
@@ -287,7 +305,9 @@ def calculate_code_complexity(code: str) -> str:
         logger.info(
             f"Complexity analysis completed - Complexity: {complexity}, Functions: {functions}, Classes: {classes}"
         )
-        logger.info("calculate_code_complexity function completed successfully")
+        logger.info(
+            "calculate_code_complexity function completed successfully"
+        )
         return json.dumps(result)
 
     except SyntaxError as e:
@@ -303,7 +323,9 @@ def calculate_code_complexity(code: str) -> str:
         return json.dumps(error_result)
 
     except IndentationError as e:
-        logger.error(f"Indentation error in calculate_code_complexity: {str(e)}")
+        logger.error(
+            f"Indentation error in calculate_code_complexity: {str(e)}"
+        )
         error_result = {
             "error": "Indentation error",
             "details": str(e),
@@ -321,7 +343,9 @@ def calculate_code_complexity(code: str) -> str:
         return json.dumps(error_result)
 
     except Exception as e:
-        logger.error(f"Unexpected error in calculate_code_complexity: {str(e)}")
+        logger.error(
+            f"Unexpected error in calculate_code_complexity: {str(e)}"
+        )
         error_result = {
             "error": "Analysis failed",
             "details": str(e),
@@ -419,7 +443,9 @@ def analyze_code_style(code: str) -> str:
             i + 1 for i, line in enumerate(lines) if line.rstrip() != line
         ]
         if trailing_whitespace:
-            issues.append(f"Trailing whitespace at lines: {trailing_whitespace}")
+            issues.append(
+                f"Trailing whitespace at lines: {trailing_whitespace}"
+            )
 
         # Check for mixed tabs and spaces
         has_tabs = any("\t" in line for line in lines)
@@ -496,7 +522,9 @@ def measure_code_coverage_metrics(code: str) -> str:
 
     for pattern in dangerous_patterns:
         if re.search(pattern, code, re.IGNORECASE):
-            logger.warning(f"Potentially dangerous pattern detected: {pattern}")
+            logger.warning(
+                f"Potentially dangerous pattern detected: {pattern}"
+            )
 
     # Check for common syntax issues
     syntax_issues = []
@@ -560,7 +588,9 @@ def measure_code_coverage_metrics(code: str) -> str:
                 statements["assert"] += 1
 
         # Calculate branch complexity
-        branch_complexity = statements["if"] + statements["for"] + statements["while"]
+        branch_complexity = (
+            statements["if"] + statements["for"] + statements["while"]
+        )
 
         # Estimate testability
         testability_score = 100
@@ -580,7 +610,9 @@ def measure_code_coverage_metrics(code: str) -> str:
             "coverage_risk": (
                 "high"
                 if branch_complexity > 15
-                else "medium" if branch_complexity > 8 else "low"
+                else "medium"
+                if branch_complexity > 8
+                else "low"
             ),
             "warnings": syntax_issues if syntax_issues else None,
         }
@@ -588,11 +620,15 @@ def measure_code_coverage_metrics(code: str) -> str:
         logger.info(
             f"Coverage analysis completed - Branch complexity: {branch_complexity}, Testability score: {testability_score}"
         )
-        logger.info("measure_code_coverage_metrics function completed successfully")
+        logger.info(
+            "measure_code_coverage_metrics function completed successfully"
+        )
         return json.dumps(result)
 
     except SyntaxError as e:
-        logger.error(f"Syntax error in measure_code_coverage_metrics: {str(e)}")
+        logger.error(
+            f"Syntax error in measure_code_coverage_metrics: {str(e)}"
+        )
         error_result = {
             "error": "Invalid Python syntax",
             "details": str(e),
@@ -600,11 +636,15 @@ def measure_code_coverage_metrics(code: str) -> str:
             "offset": getattr(e, "offset", "unknown"),
             "text": getattr(e, "text", "unknown"),
         }
-        logger.info("measure_code_coverage_metrics function completed with error")
+        logger.info(
+            "measure_code_coverage_metrics function completed with error"
+        )
         return json.dumps(error_result)
 
     except IndentationError as e:
-        logger.error(f"Indentation error in measure_code_coverage_metrics: {str(e)}")
+        logger.error(
+            f"Indentation error in measure_code_coverage_metrics: {str(e)}"
+        )
         error_result = {
             "error": "Indentation error",
             "details": str(e),
@@ -612,17 +652,23 @@ def measure_code_coverage_metrics(code: str) -> str:
             "offset": getattr(e, "offset", "unknown"),
             "text": getattr(e, "text", "unknown"),
         }
-        logger.info("measure_code_coverage_metrics function completed with error")
+        logger.info(
+            "measure_code_coverage_metrics function completed with error"
+        )
         return json.dumps(error_result)
 
     except Exception as e:
-        logger.error(f"Unexpected error in measure_code_coverage_metrics: {str(e)}")
+        logger.error(
+            f"Unexpected error in measure_code_coverage_metrics: {str(e)}"
+        )
         error_result = {
             "error": "Coverage analysis failed",
             "details": str(e),
             "error_type": type(e).__name__,
         }
-        logger.info("measure_code_coverage_metrics function completed with error")
+        logger.info(
+            "measure_code_coverage_metrics function completed with error"
+        )
         return json.dumps(error_result)
 
 
@@ -671,7 +717,9 @@ def analyze_naming_conventions(code: str) -> str:
 
     for pattern in dangerous_patterns:
         if re.search(pattern, code, re.IGNORECASE):
-            logger.warning(f"Potentially dangerous pattern detected: {pattern}")
+            logger.warning(
+                f"Potentially dangerous pattern detected: {pattern}"
+            )
 
     # Check for common syntax issues
     syntax_issues = []
@@ -722,7 +770,9 @@ def analyze_naming_conventions(code: str) -> str:
                 issues.append(f"Too short name: {name}")
             elif len(name) > 30:
                 issues.append(f"Too long name: {name}")
-            elif re.match(r"^[a-z_][a-z0-9_]*$", name) and not name.startswith("_"):
+            elif re.match(r"^[a-z_][a-z0-9_]*$", name) and not name.startswith(
+                "_"
+            ):
                 good_names.append(name)
             elif re.match(r"^[A-Z][a-zA-Z0-9]*$", name):
                 good_names.append(name)  # Class names
@@ -751,7 +801,9 @@ def analyze_naming_conventions(code: str) -> str:
         logger.info(
             f"Naming analysis completed - Total identifiers: {len(names)}, Good names: {len(good_names)}, Score: {naming_score}"
         )
-        logger.info("analyze_naming_conventions function completed successfully")
+        logger.info(
+            "analyze_naming_conventions function completed successfully"
+        )
         return json.dumps(result)
 
     except SyntaxError as e:
@@ -767,7 +819,9 @@ def analyze_naming_conventions(code: str) -> str:
         return json.dumps(error_result)
 
     except IndentationError as e:
-        logger.error(f"Indentation error in analyze_naming_conventions: {str(e)}")
+        logger.error(
+            f"Indentation error in analyze_naming_conventions: {str(e)}"
+        )
         error_result = {
             "error": "Indentation error",
             "details": str(e),
@@ -779,7 +833,9 @@ def analyze_naming_conventions(code: str) -> str:
         return json.dumps(error_result)
 
     except Exception as e:
-        logger.error(f"Unexpected error in analyze_naming_conventions: {str(e)}")
+        logger.error(
+            f"Unexpected error in analyze_naming_conventions: {str(e)}"
+        )
         error_result = {
             "error": "Naming analysis failed",
             "details": str(e),
@@ -834,7 +890,9 @@ def calculate_maintainability_index(code: str) -> str:
 
     for pattern in dangerous_patterns:
         if re.search(pattern, code, re.IGNORECASE):
-            logger.warning(f"Potentially dangerous pattern detected: {pattern}")
+            logger.warning(
+                f"Potentially dangerous pattern detected: {pattern}"
+            )
 
     # Check for common syntax issues
     syntax_issues = []
@@ -870,12 +928,18 @@ def calculate_maintainability_index(code: str) -> str:
         non_empty_lines = len([line for line in lines if line.strip()])
 
         # Count comments
-        comment_lines = len([line for line in lines if line.strip().startswith("#")])
-        comment_ratio = comment_lines / non_empty_lines if non_empty_lines > 0 else 0
+        comment_lines = len(
+            [line for line in lines if line.strip().startswith("#")]
+        )
+        comment_ratio = (
+            comment_lines / non_empty_lines if non_empty_lines > 0 else 0
+        )
 
         # Count functions and their complexity
         functions = [
-            node for node in ast.walk(tree) if isinstance(node, ast.FunctionDef)
+            node
+            for node in ast.walk(tree)
+            if isinstance(node, ast.FunctionDef)
         ]
         avg_function_length = (
             sum(len(node.body) for node in functions) / len(functions)
@@ -931,7 +995,9 @@ def calculate_maintainability_index(code: str) -> str:
                 else (
                     "good"
                     if maintainability_index > 65
-                    else "fair" if maintainability_index > 25 else "poor"
+                    else "fair"
+                    if maintainability_index > 25
+                    else "poor"
                 )
             ),
             "warnings": syntax_issues if syntax_issues else None,
@@ -940,11 +1006,15 @@ def calculate_maintainability_index(code: str) -> str:
         logger.info(
             f"Maintainability analysis completed - LOC: {loc}, Functions: {len(functions)}, Index: {maintainability_index}"
         )
-        logger.info("calculate_maintainability_index function completed successfully")
+        logger.info(
+            "calculate_maintainability_index function completed successfully"
+        )
         return json.dumps(result)
 
     except SyntaxError as e:
-        logger.error(f"Syntax error in calculate_maintainability_index: {str(e)}")
+        logger.error(
+            f"Syntax error in calculate_maintainability_index: {str(e)}"
+        )
         error_result = {
             "error": "Invalid Python syntax",
             "details": str(e),
@@ -952,11 +1022,15 @@ def calculate_maintainability_index(code: str) -> str:
             "offset": getattr(e, "offset", "unknown"),
             "text": getattr(e, "text", "unknown"),
         }
-        logger.info("calculate_maintainability_index function completed with error")
+        logger.info(
+            "calculate_maintainability_index function completed with error"
+        )
         return json.dumps(error_result)
 
     except IndentationError as e:
-        logger.error(f"Indentation error in calculate_maintainability_index: {str(e)}")
+        logger.error(
+            f"Indentation error in calculate_maintainability_index: {str(e)}"
+        )
         error_result = {
             "error": "Indentation error",
             "details": str(e),
@@ -964,17 +1038,23 @@ def calculate_maintainability_index(code: str) -> str:
             "offset": getattr(e, "offset", "unknown"),
             "text": getattr(e, "text", "unknown"),
         }
-        logger.info("calculate_maintainability_index function completed with error")
+        logger.info(
+            "calculate_maintainability_index function completed with error"
+        )
         return json.dumps(error_result)
 
     except Exception as e:
-        logger.error(f"Unexpected error in calculate_maintainability_index: {str(e)}")
+        logger.error(
+            f"Unexpected error in calculate_maintainability_index: {str(e)}"
+        )
         error_result = {
             "error": "Maintainability analysis failed",
             "details": str(e),
             "error_type": type(e).__name__,
         }
-        logger.info("calculate_maintainability_index function completed with error")
+        logger.info(
+            "calculate_maintainability_index function completed with error"
+        )
         return json.dumps(error_result)
 
 
@@ -1047,7 +1127,9 @@ def analyze_security_patterns(code: str) -> str:
                 else (
                     "good"
                     if security_score > 70
-                    else "fair" if security_score > 50 else "poor"
+                    else "fair"
+                    if security_score > 50
+                    else "poor"
                 )
             ),
             "issue_count": len(security_issues),
@@ -1056,7 +1138,9 @@ def analyze_security_patterns(code: str) -> str:
         logger.info(
             f"Security analysis completed - Issues: {len(security_issues)}, Score: {security_score}"
         )
-        logger.info("analyze_security_patterns function completed successfully")
+        logger.info(
+            "analyze_security_patterns function completed successfully"
+        )
         return json.dumps(result)
     except Exception as e:
         logger.error(f"Error in analyze_security_patterns: {str(e)}")
@@ -1106,7 +1190,10 @@ def calculate_performance_metrics(code: str) -> str:
             for node in ast.walk(tree):
                 if isinstance(node, (ast.For, ast.While)):
                     for child in ast.walk(node):
-                        if isinstance(child, (ast.For, ast.While)) and child != node:
+                        if (
+                            isinstance(child, (ast.For, ast.While))
+                            and child != node
+                        ):
                             nested_loops += 1
                             break
 
@@ -1140,7 +1227,9 @@ def calculate_performance_metrics(code: str) -> str:
                 else (
                     "good"
                     if performance_score > 70
-                    else "fair" if performance_score > 50 else "poor"
+                    else "fair"
+                    if performance_score > 50
+                    else "poor"
                 )
             ),
             "issue_count": len(performance_issues),
@@ -1149,12 +1238,16 @@ def calculate_performance_metrics(code: str) -> str:
         logger.info(
             f"Performance analysis completed - Issues: {len(performance_issues)}, Score: {performance_score}"
         )
-        logger.info("calculate_performance_metrics function completed successfully")
+        logger.info(
+            "calculate_performance_metrics function completed successfully"
+        )
         return json.dumps(result)
     except Exception as e:
         logger.error(f"Error in calculate_performance_metrics: {str(e)}")
         error_result = {"error": f"Performance analysis failed: {str(e)}"}
-        logger.info("calculate_performance_metrics function completed with error")
+        logger.info(
+            "calculate_performance_metrics function completed with error"
+        )
         return json.dumps(error_result)
 
 
@@ -1202,10 +1295,14 @@ def analyze_documentation_quality(code: str) -> str:
         try:
             tree = ast.parse(code)
             functions = [
-                node for node in ast.walk(tree) if isinstance(node, ast.FunctionDef)
+                node
+                for node in ast.walk(tree)
+                if isinstance(node, ast.FunctionDef)
             ]
             classes = [
-                node for node in ast.walk(tree) if isinstance(node, ast.ClassDef)
+                node
+                for node in ast.walk(tree)
+                if isinstance(node, ast.ClassDef)
             ]
 
             # Check which functions/classes have docstrings
@@ -1255,19 +1352,27 @@ def analyze_documentation_quality(code: str) -> str:
             "doc_quality_level": (
                 "excellent"
                 if doc_score > 80
-                else "good" if doc_score > 60 else "fair" if doc_score > 40 else "poor"
+                else "good"
+                if doc_score > 60
+                else "fair"
+                if doc_score > 40
+                else "poor"
             ),
         }
 
         logger.info(
             f"Documentation analysis completed - Total lines: {total_lines}, Coverage: {doc_coverage}%, Score: {doc_score}"
         )
-        logger.info("analyze_documentation_quality function completed successfully")
+        logger.info(
+            "analyze_documentation_quality function completed successfully"
+        )
         return json.dumps(result)
     except Exception as e:
         logger.error(f"Error in analyze_documentation_quality: {str(e)}")
         error_result = {"error": f"Documentation analysis failed: {str(e)}"}
-        logger.info("analyze_documentation_quality function completed with error")
+        logger.info(
+            "analyze_documentation_quality function completed with error"
+        )
         return json.dumps(error_result)
 
 
@@ -1297,9 +1402,13 @@ def calculate_code_duplication(code: str) -> str:
 
         # Calculate duplication percentage
         total_lines = len(lines)
-        duplicate_line_count = sum(count - 1 for count in duplicate_lines.values())
+        duplicate_line_count = sum(
+            count - 1 for count in duplicate_lines.values()
+        )
         duplication_percentage = (
-            (duplicate_line_count / total_lines * 100) if total_lines > 0 else 0
+            (duplicate_line_count / total_lines * 100)
+            if total_lines > 0
+            else 0
         )
 
         # Find potential code blocks (consecutive duplicate lines)
@@ -1327,7 +1436,9 @@ def calculate_code_duplication(code: str) -> str:
                 else (
                     "good"
                     if duplication_score > 75
-                    else "fair" if duplication_score > 50 else "poor"
+                    else "fair"
+                    if duplication_score > 50
+                    else "poor"
                 )
             ),
             "most_duplicated_lines": (
@@ -1338,7 +1449,9 @@ def calculate_code_duplication(code: str) -> str:
         logger.info(
             f"Duplication analysis completed - Total lines: {total_lines}, Duplication: {duplication_percentage}%, Score: {duplication_score}"
         )
-        logger.info("calculate_code_duplication function completed successfully")
+        logger.info(
+            "calculate_code_duplication function completed successfully"
+        )
         return json.dumps(result)
     except Exception as e:
         logger.error(f"Error in calculate_code_duplication: {str(e)}")
@@ -1392,7 +1505,9 @@ def analyze_error_handling(code: str) -> str:
 
     for pattern in dangerous_patterns:
         if re.search(pattern, code, re.IGNORECASE):
-            logger.warning(f"Potentially dangerous pattern detected: {pattern}")
+            logger.warning(
+                f"Potentially dangerous pattern detected: {pattern}"
+            )
 
     # Check for common syntax issues
     syntax_issues = []
@@ -1423,9 +1538,15 @@ def analyze_error_handling(code: str) -> str:
         tree = ast.parse(code)
 
         # Count different error handling constructs
-        try_blocks = len([node for node in ast.walk(tree) if isinstance(node, ast.Try)])
+        try_blocks = len(
+            [node for node in ast.walk(tree) if isinstance(node, ast.Try)]
+        )
         except_blocks = len(
-            [node for node in ast.walk(tree) if isinstance(node, ast.ExceptHandler)]
+            [
+                node
+                for node in ast.walk(tree)
+                if isinstance(node, ast.ExceptHandler)
+            ]
         )
         raise_statements = len(
             [node for node in ast.walk(tree) if isinstance(node, ast.Raise)]
@@ -1477,7 +1598,9 @@ def analyze_error_handling(code: str) -> str:
                 else (
                     "good"
                     if error_handling_score > 70
-                    else "fair" if error_handling_score > 50 else "poor"
+                    else "fair"
+                    if error_handling_score > 50
+                    else "poor"
                 )
             ),
             "warnings": syntax_issues if syntax_issues else None,

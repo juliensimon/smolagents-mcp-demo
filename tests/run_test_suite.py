@@ -9,7 +9,6 @@ It guides users to choose the appropriate test type based on their needs.
 import os
 import subprocess
 import sys
-from pathlib import Path
 
 
 def print_banner():
@@ -83,7 +82,7 @@ def check_environment():
                 sock.close()
                 if result != 0:
                     issues.append(f"Server on port {port} not accessible")
-            except:
+            except Exception:  # noqa: E722
                 issues.append(f"Could not check port {port}")
 
     return issues
@@ -96,7 +95,7 @@ def run_command(cmd, description):
     print("-" * 50)
 
     try:
-        result = subprocess.run(cmd, check=True, capture_output=False)
+        subprocess.run(cmd, check=True, capture_output=False)
         print(f"✅ {description} completed successfully")
         return True
     except subprocess.CalledProcessError as e:
@@ -179,16 +178,16 @@ def main():
                 print("❌ Cannot run online tests with current environment.")
                 print("   Please:")
                 print("   1. Set TOGETHER_API_KEY environment variable")
-                print("   2. Start all MCP servers: python start_all_servers.py")
+                print(
+                    "   2. Start all MCP servers: python start_all_servers.py"
+                )
                 print(
                     "   3. Try running offline tests first: python run_test_suite.py offline"
                 )
                 sys.exit(1)
 
     # Run the test command
-    success = run_command(cmd, f"{test_type.title()} Tests")
-
-    if success:
+    if run_command(cmd, f"{test_type.title()} Tests"):
         print("\n🎉 Test execution completed successfully!")
         sys.exit(0)
     else:

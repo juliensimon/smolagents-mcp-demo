@@ -168,7 +168,9 @@ def calculate_correlation(data1, data2):
     sum_y2 = sum(y * y for y in data2)
 
     numerator = n * sum_xy - sum_x * sum_y
-    denominator = ((n * sum_x2 - sum_x * sum_x) * (n * sum_y2 - sum_y * sum_y)) ** 0.5
+    denominator = (
+        (n * sum_x2 - sum_x * sum_x) * (n * sum_y2 - sum_y * sum_y)
+    ) ** 0.5
 
     if denominator == 0:
         return 0

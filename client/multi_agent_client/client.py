@@ -211,7 +211,9 @@ def get_status() -> str:
     status.append("")
     status.append("## Servers:")
     for server_key, server_config in servers.items():
-        status_text = "Connected" if server_key in mcp_clients else "Disconnected"
+        status_text = (
+            "Connected" if server_key in mcp_clients else "Disconnected"
+        )
         status.append(f"- **{server_config['name']}**: {status_text}")
 
     return "\n".join(status)
@@ -225,7 +227,9 @@ def disconnect():
             client.disconnect()
             print(f"Disconnected from {servers[server_key]['name']}")
         except Exception as e:
-            print(f"Error disconnecting from {servers[server_key]['name']}: {e}")
+            print(
+                f"Error disconnecting from {servers[server_key]['name']}: {e}"
+            )
 
 
 def respond(message, chat_history):
@@ -243,20 +247,24 @@ def respond(message, chat_history):
         if not manager:
             response = "❌ Manager agent not initialized. Please check server connections and API configuration."
         elif not agents:
-            response = (
-                "❌ No specialized agents available. Please check server connections."
-            )
+            response = "❌ No specialized agents available. Please check server connections."
         else:
             print(f"🎯 Running analysis: {message[:100]}...")
             # Actually call the manager to get a response
             try:
                 result = manager.run(message)
-                response = result.content if hasattr(result, "content") else str(result)
+                response = (
+                    result.content
+                    if hasattr(result, "content")
+                    else str(result)
+                )
             except Exception as e:
                 response = f"❌ Error during analysis: {str(e)}"
 
         if not response or response.strip() == "":
-            response = "⚠️ No results returned. Please try rephrasing your request."
+            response = (
+                "⚠️ No results returned. Please try rephrasing your request."
+            )
 
         # Add assistant response with correct format
         chat_history.append({"role": "assistant", "content": response})
@@ -280,7 +288,9 @@ The Together AI server encountered an internal error. This can happen when:
 - Break down your request into smaller parts
 - Try a simpler, more direct question
 - Check if the Together AI service is experiencing issues"""
-        elif "422" in error_msg and "unprocessable entity" in error_msg.lower():
+        elif (
+            "422" in error_msg and "unprocessable entity" in error_msg.lower()
+        ):
             response = f"""❌ **Model Input Error**
 
 The model received invalid input that it couldn't process. This can happen when:
@@ -294,7 +304,9 @@ The model received invalid input that it couldn't process. This can happen when:
 - Breaking down your request into smaller, simpler parts
 - Using more specific and clear language
 - Checking that all MCP servers are properly connected"""
-        elif "input validation error" in error_msg.lower() or "400" in error_msg:
+        elif (
+            "input validation error" in error_msg.lower() or "400" in error_msg
+        ):
             response = f"""❌ **Input Validation Error**
 
 The model encountered an input validation error. This can happen when:
@@ -310,7 +322,9 @@ The model encountered an input validation error. This can happen when:
 - Avoiding requests that might generate very large responses"""
         elif "timeout" in error_msg.lower():
             response = "⏱️ **Request Timeout**: The analysis took too long to complete. Please try with a smaller request or simpler question."
-        elif "authentication" in error_msg.lower() or "api" in error_msg.lower():
+        elif (
+            "authentication" in error_msg.lower() or "api" in error_msg.lower()
+        ):
             response = "🔑 **Authentication Error**: There may be an issue with the API configuration. Please check your settings and try again."
         else:
             response = f"""❌ **Analysis Error**: {error_msg}
@@ -371,7 +385,9 @@ def create_interface():
                         lines=3,
                     )
 
-                    chatbot = gr.Chatbot(label="Analysis Results", type="messages")
+                    chatbot = gr.Chatbot(
+                        label="Analysis Results", type="messages"
+                    )
 
                     with gr.Row():
                         submit_btn = gr.Button("Analyze", variant="primary")

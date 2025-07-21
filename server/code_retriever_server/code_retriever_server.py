@@ -8,7 +8,9 @@ from urllib.parse import urlparse
 # Add the project root to the path to import config_loader
 sys.path.insert(
     0,
-    os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
+    os.path.dirname(
+        os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    ),
 )
 
 import gradio as gr  # noqa: E402
@@ -112,7 +114,9 @@ def retrieve_url(url: str) -> str:
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
         }
 
-        response = requests.get(url, headers=headers, timeout=30, allow_redirects=True)
+        response = requests.get(
+            url, headers=headers, timeout=30, allow_redirects=True
+        )
 
         if response.status_code == 200:
             content = response.text
@@ -125,7 +129,9 @@ def retrieve_url(url: str) -> str:
                 "content": content,
                 "content_length": content_length,
                 "content_hash": content_hash,
-                "content_type": response.headers.get("content-type", "unknown"),
+                "content_type": response.headers.get(
+                    "content-type", "unknown"
+                ),
                 "encoding": response.encoding,
                 "status_code": response.status_code,
             }
@@ -147,10 +153,14 @@ def retrieve_url(url: str) -> str:
 
     except requests.exceptions.Timeout:
         logger.error(f"Timeout error for URL: {url}")
-        return json.dumps({"success": False, "error": "Request timeout", "url": url})
+        return json.dumps(
+            {"success": False, "error": "Request timeout", "url": url}
+        )
     except requests.exceptions.ConnectionError:
         logger.error(f"Connection error for URL: {url}")
-        return json.dumps({"success": False, "error": "Connection error", "url": url})
+        return json.dumps(
+            {"success": False, "error": "Connection error", "url": url}
+        )
     except Exception as e:
         logger.error(f"Error retrieving URL {url}: {str(e)}")
         return json.dumps(

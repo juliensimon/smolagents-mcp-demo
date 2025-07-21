@@ -8,7 +8,9 @@ from typing import Any, Dict, List
 # Add the project root to the path to import config_loader
 sys.path.insert(
     0,
-    os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
+    os.path.dirname(
+        os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    ),
 )
 
 import gradio as gr
@@ -410,7 +412,9 @@ def analyze_hardcoded_secrets(code: str) -> str:
         for match in matches:
             line_num = code[: match.start()].count("\n") + 1
             # Mask the actual value for security
-            masked_code = re.sub(r'["\'][^"\']+["\']', '"***MASKED***"', match.group(0))
+            masked_code = re.sub(
+                r'["\'][^"\']+["\']', '"***MASKED***"', match.group(0)
+            )
             vulnerabilities.append(
                 {
                     "type": "Hardcoded Secret",
@@ -773,8 +777,12 @@ def comprehensive_security_analysis(code: str) -> str:
     )
 
     # Calculate overall risk level
-    high_severity = len([v for v in all_vulnerabilities if v["severity"] == "high"])
-    medium_severity = len([v for v in all_vulnerabilities if v["severity"] == "medium"])
+    high_severity = len(
+        [v for v in all_vulnerabilities if v["severity"] == "high"]
+    )
+    medium_severity = len(
+        [v for v in all_vulnerabilities if v["severity"] == "medium"]
+    )
 
     if high_severity > 0:
         overall_risk = "high"
@@ -785,7 +793,9 @@ def comprehensive_security_analysis(code: str) -> str:
 
     # Calculate security score
     total_vulnerabilities = len(all_vulnerabilities)
-    security_score = max(0, 100 - (high_severity * 20) - (medium_severity * 10))
+    security_score = max(
+        0, 100 - (high_severity * 20) - (medium_severity * 10)
+    )
 
     # Group vulnerabilities by type
     vulnerability_types: Dict[str, List[Dict[str, Any]]] = {}
@@ -808,7 +818,9 @@ def comprehensive_security_analysis(code: str) -> str:
             "command_injection": len(command_result["vulnerabilities"]),
             "hardcoded_secrets": len(secrets_result["vulnerabilities"]),
             "path_traversal": len(path_result["vulnerabilities"]),
-            "unsafe_deserialization": len(deserialization_result["vulnerabilities"]),
+            "unsafe_deserialization": len(
+                deserialization_result["vulnerabilities"]
+            ),
             "xss": len(xss_result["vulnerabilities"]),
             "input_validation": len(validation_result["vulnerabilities"]),
         },

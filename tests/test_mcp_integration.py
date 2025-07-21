@@ -57,7 +57,9 @@ class TestMCPIntegration(unittest.TestCase):
                 agent = ToolCallingAgent(tools=tools, model=model)
                 cls.tool_agents[server_key] = agent
 
-                print(f"✅ Connected to {server_config['name']} ({len(tools)} tools)")
+                print(
+                    f"✅ Connected to {server_config['name']} ({len(tools)} tools)"
+                )
 
             except Exception as e:
                 print(f"❌ Failed to connect to {server_config['name']}: {e}")
@@ -105,19 +107,25 @@ class TestMCPIntegration(unittest.TestCase):
 
         # Test positive sentiment
         positive_text = "I love this product! It's absolutely amazing."
-        response = agent.run(f"Analyze the sentiment of this text: {positive_text}")
+        response = agent.run(
+            f"Analyze the sentiment of this text: {positive_text}"
+        )
         self.assertIsNotNone(response)
         self.assertIn("sentiment", str(response).lower())
 
         # Test negative sentiment
         negative_text = "This is terrible. I hate it."
-        response = agent.run(f"Analyze the sentiment of this text: {negative_text}")
+        response = agent.run(
+            f"Analyze the sentiment of this text: {negative_text}"
+        )
         self.assertIsNotNone(response)
         self.assertIn("sentiment", str(response).lower())
 
         # Test neutral sentiment
         neutral_text = "The weather is cloudy today."
-        response = agent.run(f"Analyze the sentiment of this text: {neutral_text}")
+        response = agent.run(
+            f"Analyze the sentiment of this text: {neutral_text}"
+        )
         self.assertIsNotNone(response)
         self.assertIn("sentiment", str(response).lower())
 
@@ -133,7 +141,9 @@ class TestMCPIntegration(unittest.TestCase):
 def hello():
     print("Hello, World!")
 """
-        response = agent.run(f"Calculate the complexity of this code: {simple_code}")
+        response = agent.run(
+            f"Calculate the complexity of this code: {simple_code}"
+        )
         self.assertIsNotNone(response)
         self.assertIn("complexity", str(response).lower())
 
@@ -149,7 +159,9 @@ def fibonacci(n):
     else:
         return fibonacci(n-1) + fibonacci(n-2) + 1
 """
-        response = agent.run(f"Calculate the complexity of this code: {complex_code}")
+        response = agent.run(
+            f"Calculate the complexity of this code: {complex_code}"
+        )
         self.assertIsNotNone(response)
         self.assertIn("complexity", str(response).lower())
 
@@ -290,7 +302,9 @@ def vulnerable_query(user_input):
             # Initialize git repository
             os.system(f"cd {temp_path} && git init")
             os.system(f"cd {temp_path} && git config user.name 'Test User'")
-            os.system(f"cd {temp_path} && git config user.email 'test@example.com'")
+            os.system(
+                f"cd {temp_path} && git config user.email 'test@example.com'"
+            )
 
             # Create test files
             test_file1 = temp_path / "test1.py"
@@ -304,12 +318,16 @@ def vulnerable_query(user_input):
             os.system(f"cd {temp_path} && git commit -m 'Initial commit'")
 
             # Test git status
-            response = agent.run(f"Get the git status of this repository: {temp_path}")
+            response = agent.run(
+                f"Get the git status of this repository: {temp_path}"
+            )
             self.assertIsNotNone(response)
             self.assertIn("status", str(response).lower())
 
             # Test git log
-            response = agent.run(f"Get the git log of this repository: {temp_path}")
+            response = agent.run(
+                f"Get the git log of this repository: {temp_path}"
+            )
             self.assertIsNotNone(response)
             self.assertIn("log", str(response).lower())
 
@@ -327,7 +345,9 @@ def vulnerable_query(user_input):
             # Initialize git repository
             os.system(f"cd {temp_path} && git init")
             os.system(f"cd {temp_path} && git config user.name 'Test User'")
-            os.system(f"cd {temp_path} && git config user.email 'test@example.com'")
+            os.system(
+                f"cd {temp_path} && git config user.email 'test@example.com'"
+            )
 
             # Create initial file
             test_file = temp_path / "main.py"
@@ -341,7 +361,9 @@ def vulnerable_query(user_input):
             os.system(f"cd {temp_path} && git checkout -b feature-branch")
 
             # Test branch listing
-            response = agent.run(f"List all branches in this repository: {temp_path}")
+            response = agent.run(
+                f"List all branches in this repository: {temp_path}"
+            )
             self.assertIsNotNone(response)
             self.assertIn("branch", str(response).lower())
 
@@ -381,7 +403,9 @@ def vulnerable_query(user_input):
 
             with self.subTest(server=server_key):
                 # Test with standard input
-                test_input = "This is a test input for performance measurement."
+                test_input = (
+                    "This is a test input for performance measurement."
+                )
 
                 start_time = time.time()
                 response = agent.run(f"Analyze this: {test_input}")
@@ -401,7 +425,9 @@ def vulnerable_query(user_input):
 
         # Log performance summary
         if performance_results:
-            avg_time = sum(performance_results.values()) / len(performance_results)
+            avg_time = sum(performance_results.values()) / len(
+                performance_results
+            )
             print(f"Average response time: {avg_time:.2f}s")
 
     def test_concurrent_requests(self):
@@ -507,7 +533,9 @@ def vulnerable_query(user_input):
         # Make multiple calls with the same input
         responses = []
         for _ in range(3):
-            response = agent.run(f"Analyze the sentiment of this text: {test_text}")
+            response = agent.run(
+                f"Analyze the sentiment of this text: {test_text}"
+            )
             responses.append(response)
             time.sleep(1)  # Small delay between calls
 
@@ -604,7 +632,9 @@ class TestConfiguration(unittest.TestCase):
         ports = [server["port"] for server in servers.values()]
         unique_ports = set(ports)
 
-        self.assertEqual(len(ports), len(unique_ports), "Duplicate ports found")
+        self.assertEqual(
+            len(ports), len(unique_ports), "Duplicate ports found"
+        )
 
     def test_model_configuration(self):
         """Test that model configuration is complete."""
@@ -655,7 +685,9 @@ class TestEnvironment(unittest.TestCase):
     def test_environment_variables(self):
         """Test that required environment variables are set."""
         api_key = os.getenv("TOGETHER_API_KEY")
-        self.assertIsNotNone(api_key, "TOGETHER_API_KEY environment variable not set")
+        self.assertIsNotNone(
+            api_key, "TOGETHER_API_KEY environment variable not set"
+        )
         self.assertGreater(len(api_key), 0, "TOGETHER_API_KEY is empty")
 
     def test_dependencies_available(self):
@@ -695,7 +727,9 @@ class TestServerHealth(unittest.TestCase):
                 port = server_config["port"]
 
                 try:
-                    response = requests.get(f"http://localhost:{port}", timeout=5)
+                    response = requests.get(
+                        f"http://localhost:{port}", timeout=5
+                    )
                     self.assertEqual(
                         response.status_code,
                         200,
@@ -762,14 +796,18 @@ class TestServerHealth(unittest.TestCase):
                 # Make multiple requests to test stability
                 for i in range(5):
                     try:
-                        response = requests.get(f"http://localhost:{port}", timeout=5)
+                        response = requests.get(
+                            f"http://localhost:{port}", timeout=5
+                        )
                         self.assertEqual(
                             response.status_code,
                             200,
                             f"Server {server_key} unstable on request {i + 1}",
                         )
                     except requests.exceptions.RequestException as e:
-                        self.fail(f"Server {server_key} failed on request {i + 1}: {e}")
+                        self.fail(
+                            f"Server {server_key} failed on request {i + 1}: {e}"
+                        )
 
 
 class TestIntegrationScenarios(unittest.TestCase):
@@ -855,7 +893,9 @@ def process_user_input(user_input):
             # Create a test repository
             os.system(f"cd {temp_path} && git init")
             os.system(f"cd {temp_path} && git config user.name 'CI Bot'")
-            os.system(f"cd {temp_path} && git config user.email 'ci@example.com'")
+            os.system(
+                f"cd {temp_path} && git config user.email 'ci@example.com'"
+            )
 
             # Create test code
             test_file = temp_path / "app.py"
@@ -978,7 +1018,9 @@ if __name__ == "__main__":
     main()
 """
 
-        response = agent.run(f"Analyze the complexity of this large code: {large_code}")
+        response = agent.run(
+            f"Analyze the complexity of this large code: {large_code}"
+        )
         self.assertIsNotNone(response)
 
 

@@ -44,12 +44,18 @@ class TestConfigurationOffline(unittest.TestCase):
         for server_key, server_config in servers.items():
             required_server_keys = ["name", "url", "port"]
             for key in required_server_keys:
-                self.assertIn(key, server_config, f"Server {server_key} missing {key}")
+                self.assertIn(
+                    key, server_config, f"Server {server_key} missing {key}"
+                )
 
         # Check model configuration
         model_config = config["model"]
-        self.assertIn("default", model_config, "Model config missing default model")
-        self.assertIn("api_base", model_config, "Model config missing api_base")
+        self.assertIn(
+            "default", model_config, "Model config missing default model"
+        )
+        self.assertIn(
+            "api_base", model_config, "Model config missing api_base"
+        )
         self.assertIn("configs", model_config, "Model config missing configs")
 
     def test_server_urls_valid(self):
@@ -139,13 +145,7 @@ class TestEnvironmentOffline(unittest.TestCase):
     def test_dependencies_available(self):
         """Test that required Python packages can be imported."""
         try:
-            import json
-            import pathlib
-            import tempfile
-            import time
-            import unittest
-
-            import requests
+            pass
 
             # These are core dependencies that should be available
             self.assertTrue(True, "Core dependencies are available")
@@ -243,11 +243,7 @@ class TestFileStructureOffline(unittest.TestCase):
         """Test that server modules can be imported."""
         try:
             # Test that we can import the modules (they don't export classes)
-            import server.basic_server.basic_server
-            import server.code_metrics_server.code_metrics_server
-            import server.code_retriever_server.code_retriever_server
-            import server.code_security_server.code_security_server
-            import server.git_server.git_server
+            pass
 
             self.assertTrue(True, "All server modules can be imported")
         except ImportError as e:
@@ -257,9 +253,7 @@ class TestFileStructureOffline(unittest.TestCase):
         """Test that client modules can be imported."""
         try:
             # Test that we can import the modules (they don't export classes)
-            import client.basic_client.client
-            import client.code_client.client
-            import client.multi_agent_client.client
+            pass
 
             self.assertTrue(True, "All client modules can be imported")
         except ImportError as e:

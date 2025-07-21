@@ -73,11 +73,15 @@ class MultiServerMCPClient:
 
                 # Add server context to tool descriptions for clarity
                 for tool in tools:
-                    tool.description = f"[{server_config['name']}] {tool.description}"
+                    tool.description = (
+                        f"[{server_config['name']}] {tool.description}"
+                    )
 
                 self.mcp_clients[server_key] = mcp_client
                 self.all_tools.extend(tools)
-                print(f"  ✅ {server_config['name']}: {len(tools)} tools available")
+                print(
+                    f"  ✅ {server_config['name']}: {len(tools)} tools available"
+                )
 
             except Exception as e:
                 print(f"  ❌ Failed to connect to {server_config['name']}: {e}")
@@ -117,7 +121,9 @@ class MultiServerMCPClient:
     def setup_agent(self):
         """Setup the ToolCallingAgent with all available tools."""
         if not self.all_tools:
-            print("⚠️ No tools available! Agent will run without tool capabilities.")
+            print(
+                "⚠️ No tools available! Agent will run without tool capabilities."
+            )
             return
 
         # Get model configuration
@@ -179,10 +185,14 @@ class MultiServerMCPClient:
                     )
                     status_lines.append("")
             else:
-                status_lines.append(f"❌ **{server_config['name']}**: Not Connected")
+                status_lines.append(
+                    f"❌ **{server_config['name']}**: Not Connected"
+                )
                 status_lines.append("")
 
-        status_lines.append(f"📋 **Total Tools Available**: {len(self.all_tools)}")
+        status_lines.append(
+            f"📋 **Total Tools Available**: {len(self.all_tools)}"
+        )
 
         if self.all_tools:
             status_lines.append("")
@@ -192,7 +202,9 @@ class MultiServerMCPClient:
                     f"{i}. **{tool.name}**: {tool.description[:100]}..."
                 )
             if len(self.all_tools) > 10:
-                status_lines.append(f"... and {len(self.all_tools) - 10} more tools")
+                status_lines.append(
+                    f"... and {len(self.all_tools) - 10} more tools"
+                )
 
         return "\n".join(status_lines)
 
@@ -279,7 +291,9 @@ class MultiServerMCPClient:
 
         # Reinitialize agent with new tools
         if self.all_tools:
-            print(f"🔧 Reinitializing agent with {len(self.all_tools)} total tools")
+            print(
+                f"🔧 Reinitializing agent with {len(self.all_tools)} total tools"
+            )
             self.setup_agent()
         else:
             print("🔧 No tools available - agent disabled")
@@ -348,7 +362,9 @@ def create_multi_server_interface():
 
                         try:
                             # Add user message to history with loading state
-                            chat_history.append({"role": "user", "content": message})
+                            chat_history.append(
+                                {"role": "user", "content": message}
+                            )
                             chat_history.append(
                                 {
                                     "role": "assistant",
@@ -443,11 +459,15 @@ Please try your request again, or check the Server Status tab to ensure all serv
                             "quality": "Please evaluate the following code for quality issues, maintainability, readability, and adherence to best practices:",
                             "git": "Please analyze this repository or code for git-related issues, commit patterns, branch strategy, and version control best practices:",
                         }
-                        return prompts.get(action_type, "") + "\n\n" + current_msg
+                        return (
+                            prompts.get(action_type, "") + "\n\n" + current_msg
+                        )
 
                     # Event handlers
                     msg.submit(respond, [msg, chatbot], [msg, chatbot, status])
-                    submit_btn.click(respond, [msg, chatbot], [msg, chatbot, status])
+                    submit_btn.click(
+                        respond, [msg, chatbot], [msg, chatbot, status]
+                    )
                     clear.click(clear_chat, outputs=[chatbot])
 
                     # Quick action handlers
@@ -825,9 +845,7 @@ class APIClient:
                                 tool_names = [
                                     tool.name for tool in tools
                                 ]  # Show all tools
-                                tool_list = (
-                                    f"**{tool_count} tools:** {', '.join(tool_names)}"
-                                )
+                                tool_list = f"**{tool_count} tools:** {', '.join(tool_names)}"
                             except Exception:
                                 tool_list = "Error loading tools"
                         elif is_connected:
@@ -844,7 +862,9 @@ class APIClient:
                         server_checkboxes[server_key] = checkbox
 
                     # Apply selection button
-                    apply_btn = gr.Button("Apply Server Selection", variant="primary")
+                    apply_btn = gr.Button(
+                        "Apply Server Selection", variant="primary"
+                    )
 
                     def update_server_selection(*checkbox_values):
                         """Update which servers are enabled based on checkbox selections."""
@@ -864,7 +884,11 @@ class APIClient:
                             is_selected = server_key in enabled_servers
                             was_enabled = server_key in client.enabled_servers
                             if is_selected != was_enabled:
-                                action = "✅ Enabled" if is_selected else "❌ Disabled"
+                                action = (
+                                    "✅ Enabled"
+                                    if is_selected
+                                    else "❌ Disabled"
+                                )
                                 print(
                                     f"  {action} {server_config['name']} ({server_key})"
                                 )
@@ -918,7 +942,9 @@ def main():
             if client:
                 client.disconnect()
     else:
-        print("Failed to create interface. Check your configuration and server status.")
+        print(
+            "Failed to create interface. Check your configuration and server status."
+        )
 
 
 if __name__ == "__main__":
