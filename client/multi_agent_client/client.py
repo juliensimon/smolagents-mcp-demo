@@ -122,11 +122,11 @@ def setup_agents():
 
     if research_tools:
         try:
-            model_params = get_model_params("arcee-ai/AFM-4.5B-Preview")
+            model_params = get_model_params("arcee-ai/coder-large")
             agents["research"] = ToolCallingAgent(
                 tools=research_tools,
                 model=OpenAIServerModel(
-                    model_id="arcee-ai/AFM-4.5B-Preview",
+                    model_id="arcee-ai/coder-large",
                     api_base=api_base,
                     api_key=api_key,
                     **model_params,
@@ -140,17 +140,17 @@ def setup_agents():
 
     # Web Search Agent
     try:
-        model_params = get_model_params("arcee-ai/AFM-4.5B-Preview")
+        model_params = get_model_params("arcee-ai/coder-large")
         agents["web_search"] = ToolCallingAgent(
             tools=[WebSearchTool()],
             model=OpenAIServerModel(
-                model_id="arcee-ai/AFM-4.5B-Preview",
+                model_id="arcee-ai/coder-large",
                 api_base=api_base,
                 api_key=api_key,
                 **model_params,
             ),
             name="web_search_agent",
-            description="Specialized in web search and information gathering.",
+            description="Specialized in finding additional information about problems, errors, and technical concepts. Use for researching error messages, understanding technical issues, finding best practices, and gathering context about problems. Do NOT use for fetching files or downloading code - focus on informational research only.",
         )
         print("  ✅ Web Search Agent ready")
     except Exception as e:
@@ -175,100 +175,18 @@ def setup_manager():
         manager = ToolCallingAgent(
             tools=[],
             model=OpenAIServerModel(
-                model_id="arcee-ai/AFM-4.5B-Preview",  # Use AFM for manager (working)
+                model_id="arcee-ai/coder-large",
                 api_base=api_base,
                 api_key=api_key,
-                **get_model_params("arcee-ai/AFM-4.5B-Preview"),
+                **get_model_params("arcee-ai/coder-large"),
             ),
             managed_agents=list(agents.values()),
-            max_steps=3,  # Further limit steps
+            max_steps=5,
         )
         print(f"  ✅ Manager Agent: {len(agents)} managed agents")
     except Exception as e:
         print(f"  ❌ Failed to create Manager Agent: {e}")
         manager = None
-
-
-def run_analysis(message: str) -> str:
-    """Run analysis using the multi-agent system."""
-    global manager
-    if not manager:
-        return "❌ Manager agent not initialized. Please check server connections and API configuration."
-
-    if not agents:
-        return "❌ No specialized agents available. Please check server connections."
-
-    try:
-        print(f"🎯 Running analysis: {message[:100]}...")
-
-        # Validate input length to prevent model input errors
-        if len(message) > 4000:  # Reduced limit to prevent 400 errors
-            return "❌ **Input Too Long**: Your request is too long. Please break it down into smaller, more specific requests."
-
-        # Clean the message to prevent malformed input
-        cleaned_message = message.strip()
-        if not cleaned_message:
-            return "❌ **Empty Input**: Please provide a valid request."
-
-        # Additional sanitization to prevent problematic characters
-        cleaned_message = cleaned_message.replace("\x00", "").replace(
-            "\r", "\n"
-        )
-        if len(cleaned_message) > 4000:
-            cleaned_message = cleaned_message[:4000]
-
-        result = manager.run(cleaned_message)
-        return str(result)
-
-    except Exception as e:
-        error_msg = str(e)
-        print(f"❌ Analysis error: {error_msg}")
-
-        # Handle specific error types
-        if "422" in error_msg and "unprocessable entity" in error_msg.lower():
-            return f"""❌ **Model Input Error**
-
-The model received invalid input that it couldn't process. This can happen when:
-- The input is too long or complex
-- The model receives malformed data from tools
-- There's an issue with the model configuration
-
-**Error Details:** {error_msg}
-
-💡 **Try:**
-- Breaking down your request into smaller, simpler parts
-- Using more specific and clear language
-- Checking that all MCP servers are properly connected"""
-        elif (
-            "input validation error" in error_msg.lower() or "400" in error_msg
-        ):
-            return f"""❌ **Input Validation Error**
-
-The model encountered an input validation error. This can happen when:
-- The input is too long or complex
-- The model receives malformed data from tools
-- The response from a tool is too large
-
-**Error Details:** {error_msg}
-
-💡 **Try:**
-- Breaking down your request into smaller, simpler parts
-- Using more specific and focused questions
-- Avoiding requests that might generate very large responses"""
-        elif "timeout" in error_msg.lower():
-            return "⏱️ **Request Timeout**: The analysis took too long to complete. Please try with a smaller request or simpler question."
-        elif (
-            "authentication" in error_msg.lower() or "api" in error_msg.lower()
-        ):
-            return "🔑 **Authentication Error**: There may be an issue with the API configuration. Please check your settings and try again."
-        else:
-            return f"""❌ **Analysis Error**: {error_msg}
-
-💡 **Troubleshooting:**
-- Ensure your request is clear and specific
-- Try breaking down complex requests
-- Check that MCP servers are running
-- Verify your API configuration"""
 
 
 def get_status() -> str:
@@ -316,6 +234,8 @@ def disconnect():
 
 def respond(message, chat_history):
     """Handle chat responses."""
+    global manager
+
     if not message.strip():
         return "", chat_history
 
@@ -323,7 +243,35 @@ def respond(message, chat_history):
     chat_history.append({"role": "user", "content": message})
 
     try:
-        response = run_analysis(message)
+        # Check if manager is available
+        if not manager:
+            response = "❌ Manager agent not initialized. Please check server connections and API configuration."
+        elif not agents:
+            response = "❌ No specialized agents available. Please check server connections."
+        else:
+            print(f"🎯 Running analysis: {message[:100]}...")
+
+            # Validate input length to prevent model input errors
+            if len(message) > 4000:  # Reduced limit to prevent 400 errors
+                response = "❌ **Input Too Long**: Your request is too long. Please break it down into smaller, more specific requests."
+            else:
+                # Clean the message to prevent malformed input
+                cleaned_message = message.strip()
+                if not cleaned_message:
+                    response = (
+                        "❌ **Empty Input**: Please provide a valid request."
+                    )
+                else:
+                    # Additional sanitization to prevent problematic characters
+                    cleaned_message = cleaned_message.replace(
+                        "\x00", ""
+                    ).replace("\r", "\n")
+                    if len(cleaned_message) > 4000:
+                        cleaned_message = cleaned_message[:4000]
+
+                    result = manager.run(cleaned_message)
+                    response = str(result)
+
         if not response or response.strip() == "":
             response = (
                 "⚠️ No results returned. Please try rephrasing your request."
@@ -336,7 +284,24 @@ def respond(message, chat_history):
         print(f"❌ Response error: {error_msg}")
 
         # Handle specific error types
-        if "422" in error_msg and "unprocessable entity" in error_msg.lower():
+        if "500" in error_msg and "internal server error" in error_msg.lower():
+            response = f"""❌ **Server Error (500)**
+
+The Together AI server encountered an internal error. This can happen when:
+- The server is temporarily overloaded
+- There's an issue with the model or API endpoint
+- The request is too complex for the current server state
+
+**Error Details:** {error_msg}
+
+💡 **Try:**
+- Wait a moment and try again
+- Break down your request into smaller parts
+- Try a simpler, more direct question
+- Check if the Together AI service is experiencing issues"""
+        elif (
+            "422" in error_msg and "unprocessable entity" in error_msg.lower()
+        ):
             response = f"""❌ **Model Input Error**
 
 The model received invalid input that it couldn't process. This can happen when:
@@ -350,8 +315,36 @@ The model received invalid input that it couldn't process. This can happen when:
 - Breaking down your request into smaller, simpler parts
 - Using more specific and clear language
 - Checking that all MCP servers are properly connected"""
+        elif (
+            "input validation error" in error_msg.lower() or "400" in error_msg
+        ):
+            response = f"""❌ **Input Validation Error**
+
+The model encountered an input validation error. This can happen when:
+- The input is too long or complex
+- The model receives malformed data from tools
+- The response from a tool is too large
+
+**Error Details:** {error_msg}
+
+💡 **Try:**
+- Breaking down your request into smaller, simpler parts
+- Using more specific and focused questions
+- Avoiding requests that might generate very large responses"""
+        elif "timeout" in error_msg.lower():
+            response = "⏱️ **Request Timeout**: The analysis took too long to complete. Please try with a smaller request or simpler question."
+        elif (
+            "authentication" in error_msg.lower() or "api" in error_msg.lower()
+        ):
+            response = "🔑 **Authentication Error**: There may be an issue with the API configuration. Please check your settings and try again."
         else:
-            response = f"❌ Error: {error_msg}"
+            response = f"""❌ **Analysis Error**: {error_msg}
+
+💡 **Troubleshooting:**
+- Ensure your request is clear and specific
+- Try breaking down complex requests
+- Check that MCP servers are running
+- Verify your API configuration"""
 
         chat_history.append({"role": "assistant", "content": response})
 
@@ -379,13 +372,19 @@ def create_interface():
         with gr.Blocks(title="Simple Multi-Agent Code Analysis") as demo:
             gr.Markdown(
                 """
-                # Simple Multi-Agent Code Analysis Platform
+                # Multi-Agent MCP Analysis Platform
 
-                **Agents:**
-                - Code Analysis Agent (arcee-ai/coder-large): Code metrics and security
-                - Research Agent (arcee-ai/AFM-4.5B-Preview): Code retrieval and git operations
-                - Web Search Agent (arcee-ai/AFM-4.5B-Preview): Web search and information gathering
-                - Manager Agent (arcee-ai/AFM-4.5B-Preview): Coordinates all agents
+                **Specialized MCP Servers:**
+                - 🔍 **Code Retrieval Server**: Find and retrieve code files
+                - 📊 **Code Metrics Server**: Analyze complexity, maintainability, and code quality
+                - 🔒 **Code Security Server**: Detect vulnerabilities and security issues
+                - 📝 **Basic Server**: Sentiment analysis of text content
+                - 🗂️ **Git Repo Analysis Server**: Analyze git history and repository structure
+
+                **AI Agents:**
+                - Code Analysis Agent (arcee-ai/coder-large): Code metrics and security analysis
+                - Research Agent (arcee-ai/coder-large): Code retrieval and git operations
+                - Manager Agent (arcee-ai/coder-large): Coordinates all agents
                 """
             )
 

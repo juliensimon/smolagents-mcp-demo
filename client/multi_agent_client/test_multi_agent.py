@@ -12,7 +12,7 @@ from pathlib import Path
 from client.multi_agent_client.client import (
     disconnect,
     get_status,
-    run_analysis,
+    manager,
     setup_agents,
     setup_connections,
     setup_manager,
@@ -64,13 +64,18 @@ def test_multi_agent_system():
         print(f"Expected Agent: {test_case['expected_agent']}")
 
         try:
-            # Run the analysis
-            result = run_analysis(test_case["request"])
+            # Check if manager is available
+            if not manager:
+                print("❌ Manager agent not initialized")
+                continue
+
+            # Run the analysis directly
+            result = manager.run(test_case["request"])
 
             # Check if the result contains expected content
-            if result and not result.startswith("❌"):
+            if result and not str(result).startswith("❌"):
                 print("✅ Analysis completed successfully")
-                print(f"Result preview: {result[:200]}...")
+                print(f"Result preview: {str(result)[:200]}...")
             else:
                 print("⚠️ Analysis completed with issues")
                 print(f"Result: {result}")

@@ -24,9 +24,10 @@ The system consists of four main components:
 
 ### 3. Web Search Agent (AFM-4.5B-Preview)
 - **Model**: `arcee-ai/AFM-4.5B-Preview`
-- **Specialization**: Web search and information gathering
+- **Specialization**: Finding additional information about problems, errors, and technical concepts
 - **Tools**: WebSearchTool()
-- **Use Cases**: Finding current information, documentation, external resources
+- **Use Cases**: Researching error messages, understanding technical issues, finding best practices, gathering context about problems
+- **Note**: Focuses on informational research only - does not fetch files or download code
 
 ### 4. Manager Agent (maestro-reasoning)
 - **Model**: `arcee-ai/maestro-reasoning`
@@ -94,7 +95,7 @@ Analyze this repository for commit patterns, branch strategy, and version contro
 
 #### Web Search
 ```
-Search for current information about Python async programming best practices.
+Research this error message: "ModuleNotFoundError: No module named 'requests'". Find common causes and solutions.
 ```
 
 ## Configuration
