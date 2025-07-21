@@ -1,251 +1,228 @@
-# MCP Demo Project
+# 🤖 Smolagents MCP Demo
 
-A comprehensive demonstration of Model Context Protocol (MCP) servers and clients, showcasing various AI-powered tools and integrations.
+[![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/downloads/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![Code Style](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![Imports](https://img.shields.io/badge/imports-isort-%231674b1?style=flat&labelColor=ef8336)](https://pycqa.github.io/isort/)
+[![Linting](https://img.shields.io/badge/linting-flake8-yellowgreen)](https://flake8.pycqa.org/)
+[![Type Checking](https://img.shields.io/badge/type%20checking-mypy-blue)](https://mypy-lang.org/)
+[![Pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
+[![Tests](https://img.shields.io/badge/tests-unittest-brightgreen)](https://docs.python.org/3/library/unittest.html)
 
-## 🏗️ Project Structure
+> **A comprehensive demonstration of Model Context Protocol (MCP) servers and clients, showcasing AI-powered tools and multi-agent systems for code analysis, security scanning, and intelligent automation.**
+
+## 🌟 Features
+
+- **🤖 Multi-Agent System**: Intelligent agents with specialized capabilities
+- **🔍 Code Analysis**: Metrics, complexity, and quality assessment
+- **🛡️ Security Scanning**: Vulnerability detection and security auditing
+- **📁 File Retrieval**: HTTP file processing and content analysis
+- **📊 Git Operations**: Repository management and version control
+- **💬 Sentiment Analysis**: Text emotion and tone analysis
+- **🎯 Unified Interface**: Single platform for all AI-powered tools
+- **⚙️ Configurable**: Centralized configuration management
+- **🧪 Comprehensive Testing**: Full test suite with multiple scenarios
+
+## 🏗️ Architecture
 
 ```
-mcp-demo/
-├── config.json              # Unified configuration for all components
-├── config_loader.py         # Unified configuration loader
-├── start_all_servers.py     # Script to start all MCP servers
-├── server/                  # MCP server implementations
-│   ├── basic_server/        # Basic text sentiment analysis
-│   ├── code_metrics_server/ # Code analysis and metrics
-│   ├── code_security_server/# Security vulnerability detection
-│   ├── code_retriever_server/# HTTP file retrieval and analysis
-│   └── git_server/          # Git repository operations
-├── client/                  # MCP client implementations
-│   ├── basic_client/        # Simple client for basic server
-│   ├── code_client/         # Multi-server client with advanced features
-│   └── multi_agent_client/  # Multi-agent system with specialized agents
-└── tests/                   # Test suite
-    ├── run_tests.py         # Test runner
-    └── test_config.py       # Configuration tests
+┌─────────────────────────────────────────────────────────────┐
+│                    Multi-Agent Client                       │
+│  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐           │
+│  │ Code Agent  │ │Research Agent│ │Manager Agent│           │
+│  │(coder-large)│ │(AFM-4.5B)   │ │(maestro)    │           │
+│  └─────────────┘ └─────────────┘ └─────────────┘           │
+└─────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│                    MCP Servers                              │
+│  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐           │
+│  │ Code Metrics│ │Code Security│ │Code Retrieval│           │
+│  │   (7862)    │ │   (7865)    │ │   (7866)    │           │
+│  └─────────────┘ └─────────────┘ └─────────────┘           │
+│  ┌─────────────┐ ┌─────────────┐                           │
+│  │ Git Server  │ │Basic Server │                           │
+│  │   (7867)    │ │   (7860)    │                           │
+│  └─────────────┘ └─────────────┘                           │
+└─────────────────────────────────────────────────────────────┘
 ```
 
 ## 🚀 Quick Start
 
 ### Prerequisites
 
-1. **Python 3.8+** installed
-2. **Git** for repository operations
-3. **Together AI API Key** (set as environment variable):
-   ```bash
-   export TOGETHER_API_KEY="your-api-key-here"
-   ```
+- **Python 3.8+**
+- **Git**
+- **Together AI API Key**
 
 ### Installation
 
 1. **Clone the repository**:
    ```bash
-   git clone <repository-url>
-   cd mcp-demo
+   git clone https://github.com/juliensimon/smolagents-mcp-demo.git
+   cd smolagents-mcp-demo
    ```
 
-2. **Install dependencies**:
+2. **Set up environment**:
    ```bash
+   export TOGETHER_API_KEY="your-api-key-here"
    pip install -r requirements.txt
    ```
 
-3. **Start all MCP servers**:
+3. **Start all servers**:
    ```bash
    python start_all_servers.py
    ```
 
-4. **Run a client** (in a new terminal):
+4. **Launch the multi-agent client** (recommended):
    ```bash
-   # Basic client
-   python client/basic_client/client.py
-
-   # Multi-server client
-   python client/code_client/client.py
-
-   # Multi-agent client (recommended)
    python client/multi_agent_client/client.py
    ```
 
-## 🔧 Configuration
+## 🎯 Multi-Agent System
 
-The project uses a **unified configuration system** with a single `config.json` file that defines:
+### Specialized Agents
 
-- **Server configurations**: Ports, URLs, and paths for all MCP servers
-- **Model settings**: Together AI model parameters and API configuration
-- **Client settings**: Gradio interface configuration
-- **Testing parameters**: Timeouts, retry attempts, and health check intervals
-- **Logging settings**: Log levels, file paths, and formats
+| Agent | Model | Specialization | Capabilities |
+|-------|-------|----------------|--------------|
+| **Code Agent** | coder-large | Code Analysis | Metrics, complexity, style analysis |
+| **Research Agent** | AFM-4.5B-Preview | Research & Retrieval | File retrieval, git ops, web search |
+| **Manager Agent** | maestro-reasoning | Task Delegation | Intelligent routing, workflow management |
 
-### Server Ports
+### Intelligent Workflow
 
-| Server | Port | Description |
-|--------|------|-------------|
-| Basic Server | 7860 | Text sentiment analysis |
-| Code Metrics | 7862 | Code analysis and metrics |
-| Code Security | 7865 | Security vulnerability detection |
-| Code Retrieval | 7866 | HTTP file retrieval and analysis |
-| Git Repo Analysis | 7867 | Git repository operations |
+1. **Task Analysis**: Manager agent analyzes user requests
+2. **Agent Selection**: Automatically routes to appropriate specialist
+3. **Execution**: Specialized agent performs the task
+4. **Integration**: Results are combined and presented
 
-### Configuration Management
+## 🔧 Available Servers
 
-- **Single Source of Truth**: All configuration is centralized in `config.json`
-- **Automatic Validation**: Configuration is validated for correctness
-- **Easy Maintenance**: Changes only need to be made in one place
-- **Component Independence**: All components use the same configuration
+| Server | Port | Purpose | Key Features |
+|--------|------|---------|--------------|
+| **Basic Server** | 7860 | Text Analysis | Sentiment analysis, emotion detection |
+| **Code Metrics** | 7862 | Code Quality | Complexity, maintainability, style metrics |
+| **Code Security** | 7865 | Security Audit | Vulnerability detection, security scanning |
+| **Code Retrieval** | 7866 | File Processing | HTTP retrieval, content analysis |
+| **Git Server** | 7867 | Version Control | Repository operations, commit analysis |
 
-For detailed configuration documentation, see [CONFIGURATION.md](CONFIGURATION.md).
+## 📊 Capabilities
+
+### 🔍 Code Analysis
+- **Complexity Metrics**: Cyclomatic complexity, cognitive complexity
+- **Style Analysis**: PEP 8 compliance, naming conventions
+- **Maintainability**: Maintainability index, technical debt assessment
+- **Documentation**: Docstring coverage, comment analysis
+
+### 🛡️ Security Scanning
+- **SQL Injection**: Detection of vulnerable database queries
+- **Command Injection**: Identification of unsafe system calls
+- **Hardcoded Secrets**: Detection of exposed credentials
+- **Path Traversal**: Identification of directory traversal vulnerabilities
+- **XSS Detection**: Cross-site scripting vulnerability analysis
+
+### 📁 File Operations
+- **HTTP Retrieval**: Secure file downloading and validation
+- **Content Analysis**: File type detection and metadata extraction
+- **Batch Processing**: Multiple file processing capabilities
+- **Search Integration**: Content search and filtering
+
+### 📊 Git Integration
+- **Repository Status**: File status and change tracking
+- **Commit Operations**: Staging, committing, and diff analysis
+- **History Analysis**: Commit history and change patterns
+- **Branch Management**: Branch operations and comparison
 
 ## 🧪 Testing
 
-Run the comprehensive test suite:
-
 ```bash
-# Run all tests
+# Run comprehensive test suite
 python tests/run_tests.py all
 
-# Run quick tests (environment and configuration only)
+# Quick validation
 python tests/run_tests.py quick
 
-# Run specific test categories
+# Specific test categories
 python tests/run_tests.py integration
-python tests/run_tests.py configuration
-python tests/run_tests.py environment
-
-# List available test categories
-python tests/run_tests.py list
+python tests/run_tests.py security
+python tests/run_tests.py performance
 ```
 
-## 📊 Available Servers
+## ⚙️ Configuration
 
-### 1. Basic Server (Port 7860)
-- **Functionality**: Text sentiment analysis
-- **Tools**: Sentiment analysis with polarity and subjectivity scoring
-- **Use Case**: Analyzing emotional tone in text
+The project uses a **unified configuration system** (`config.json`):
 
-### 2. Code Metrics Server (Port 7862)
-- **Functionality**: Code analysis and quality metrics
-- **Tools**: Complexity analysis, style checking, maintainability index
-- **Use Case**: Code quality assessment and optimization
-
-### 3. Code Security Server (Port 7865)
-- **Functionality**: Security vulnerability detection
-- **Tools**: SQL injection, command injection, hardcoded secrets detection
-- **Use Case**: Security auditing and vulnerability assessment
-
-### 4. Code Retrieval Server (Port 7866)
-- **Functionality**: HTTP file retrieval and analysis
-- **Tools**: URL validation, file content retrieval, content analysis
-- **Use Case**: Remote file processing and analysis
-
-### 5. Git Repo Analysis Server (Port 7867)
-- **Functionality**: Git repository operations
-- **Tools**: Git status, commit, diff, log analysis
-- **Use Case**: Version control and repository management
-
-## 🎯 Available Clients
-
-### Basic Client
-- **Purpose**: Simple interface for basic server functionality
-- **Features**: Chat interface with sentiment analysis
-- **Usage**: `python client/basic_client/client.py`
-
-### Multi-Server Client
-- **Purpose**: Advanced interface for all MCP servers
-- **Features**:
-  - Multi-server tool integration
-  - Server selection and management
-  - Advanced chat interface
-  - Example workflows
-- **Usage**: `python client/code_client/client.py`
-
-### Multi-Agent Client (Recommended)
-- **Purpose**: Intelligent multi-agent system with specialized agents
-- **Features**:
-  - **Code Analysis Agent** (coder-large): Code metrics and security analysis
-  - **Research Agent** (AFM-4.5B-Preview): Code retrieval, git operations, and web search
-  - **Manager Agent** (maestro-reasoning): Intelligent task delegation
-  - Automatic agent selection based on task type
-  - Unified interface for all analysis types
-  - Real-time agent status monitoring
-- **Usage**: `python client/multi_agent_client/client.py`
-- **Test**: `python client/multi_agent_client/test_multi_agent.py`
-
-## 🔄 Workflow Examples
-
-### Code Analysis Workflow
-1. **Retrieve code** from a URL using Code Retrieval Server
-2. **Analyze complexity** using Code Metrics Server
-3. **Check security** using Code Security Server
-4. **Commit changes** using Git Repo Analysis Server
-
-### Text Analysis Workflow
-1. **Analyze sentiment** using Basic Server
-2. **Process results** through the multi-server client
-3. **Generate insights** using AI model integration
+```json
+{
+  "servers": {
+    "basic": {"port": 7860, "name": "Basic Server"},
+    "code_metrics": {"port": 7862, "name": "Code Metrics"},
+    "code_security": {"port": 7865, "name": "Code Security"},
+    "code_retrieval": {"port": 7866, "name": "Code Retrieval"},
+    "git": {"port": 7867, "name": "Git Server"}
+  },
+  "model": {
+    "default": "togethercomputer/llama-2-70b-chat",
+    "api_base": "https://api.together.xyz/v1"
+  }
+}
+```
 
 ## 🛠️ Development
 
-### Adding New Servers
-
-1. **Add server configuration** to `config.json`:
-   ```json
-   "new_server": {
-     "name": "New Server",
-     "port": 7868,
-     "url": "http://127.0.0.1:7868/gradio_api/mcp/sse",
-     "description": "New server functionality",
-     "path": "server/new_server/new_server.py"
-   }
-   ```
-
-2. **Create server implementation** in `server/new_server/`
-3. **Update server to use unified configuration**
-4. **Add tests** to the test suite
-
 ### Code Quality
-
-The project uses pre-commit hooks for code quality:
 
 ```bash
 # Install pre-commit hooks
 ./setup_precommit.sh
 
-# Run pre-commit on all files
+# Run quality checks
 pre-commit run --all-files
 ```
 
-## 📝 API Documentation
+### Adding New Servers
 
-Each server provides detailed API documentation through their Gradio interfaces. Access them at:
-- Basic Server: http://127.0.0.1:7860
-- Code Metrics: http://127.0.0.1:7862
-- Code Security: http://127.0.0.1:7865
-- Code Retrieval: http://127.0.0.1:7866
-- Git Repo Analysis: http://127.0.0.1:7867
+1. **Add configuration** to `config.json`
+2. **Implement server** in `server/new_server/`
+3. **Add tests** to test suite
+4. **Update documentation**
+
+## 📚 API Documentation
+
+Each server provides interactive API documentation:
+
+- **Basic Server**: http://127.0.0.1:7860
+- **Code Metrics**: http://127.0.0.1:7862
+- **Code Security**: http://127.0.0.1:7865
+- **Code Retrieval**: http://127.0.0.1:7866
+- **Git Server**: http://127.0.0.1:7867
 
 ## 🤝 Contributing
 
-1. **Fork the repository**
-2. **Create a feature branch**
-3. **Make your changes**
-4. **Run tests** to ensure everything works
-5. **Submit a pull request**
+1. **Fork** the repository
+2. **Create** a feature branch
+3. **Make** your changes
+4. **Test** thoroughly
+5. **Submit** a pull request
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
 
-## 🆘 Troubleshooting
+## 🆘 Support
 
-### Common Issues
+- **Documentation**: [CONFIGURATION.md](CONFIGURATION.md)
+- **Issues**: [GitHub Issues](https://github.com/juliensimon/smolagents-mcp-demo/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/juliensimon/smolagents-mcp-demo/discussions)
 
-1. **Port conflicts**: Ensure ports are not already in use
-2. **API key issues**: Verify `TOGETHER_API_KEY` is set correctly
-3. **Import errors**: Check that all dependencies are installed
-4. **Configuration errors**: Run `python config_loader.py` to validate configuration
+## 🙏 Acknowledgments
 
-### Getting Help
+- **Smolagents**: Multi-agent framework
+- **Together AI**: Model hosting and inference
+- **Gradio**: Web interface framework
+- **MCP**: Model Context Protocol specification
 
-- Check the [CONFIGURATION.md](CONFIGURATION.md) for detailed configuration information
-- Review server-specific README files in the `server/` directory
-- Check the test suite for usage examples
-- Open an issue for bugs or feature requests
+---
+
+**Made with ❤️ for the AI community**
