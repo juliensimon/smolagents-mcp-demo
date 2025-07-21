@@ -16,7 +16,7 @@
 - **🤖 Multi-Agent System**: Intelligent agents with specialized capabilities
 - **🔍 Code Analysis**: Metrics, complexity, and quality assessment
 - **🛡️ Security Scanning**: Vulnerability detection and security auditing
-- **📁 File Retrieval**: HTTP file processing and content analysis
+- **📁 File Retrieval**: HTTP file processing, content analysis, and secure file operations
 - **📊 Git Operations**: Repository management and version control
 - **💬 Sentiment Analysis**: Text emotion and tone analysis
 - **🎯 Unified Interface**: Single platform for all AI-powered tools
@@ -123,10 +123,11 @@
 - **XSS Detection**: Cross-site scripting vulnerability analysis
 
 ### 📁 File Operations
-- **HTTP Retrieval**: Secure file downloading and validation
-- **Content Analysis**: File type detection and metadata extraction
-- **Batch Processing**: Multiple file processing capabilities
-- **Search Integration**: Content search and filtering
+- **HTTP Retrieval**: Secure file downloading and validation with error handling
+- **Content Analysis**: File type detection, metadata extraction, and content parsing
+- **Batch Processing**: Multiple file processing with progress tracking
+- **Search Integration**: Content search, filtering, and intelligent file discovery
+- **Security Validation**: URL validation, content type verification, and safe file handling
 
 ### 📊 Git Integration
 - **Repository Status**: File status and change tracking
@@ -136,17 +137,78 @@
 
 ## 🧪 Testing
 
+The project includes a comprehensive test suite with multiple scenarios and categories:
+
+### Quick Start
 ```bash
-# Run comprehensive test suite
-python tests/run_tests.py all
+# Run from root directory (recommended)
+python run_tests.py validate
 
-# Quick validation
-python tests/run_tests.py quick
+# List available test categories
+python run_tests.py list
 
+# List available test scenarios
+python run_tests.py list-scenarios
+```
+
+### Test Categories
+```bash
+# Quick validation (environment & configuration)
+python run_tests.py quick
+
+# Health checks (server connectivity)
+python run_tests.py health
+
+# Core functionality (integration & scenarios)
+python run_tests.py core
+
+# All server functionality tests
+python run_tests.py functionality
+
+# Complete test suite
+python run_tests.py all
+```
+
+### Test Scenarios
+```bash
+# Smoke tests (basic functionality)
+python run_tests.py smoke
+
+# Integration tests (full server integration)
+python run_tests.py integration
+
+# Performance tests (stress testing)
+python run_tests.py performance
+
+# Security tests (vulnerability scanning)
+python run_tests.py security
+
+# Full test suite (all categories)
+python run_tests.py full
+```
+
+### Individual Categories
+```bash
 # Specific test categories
-python tests/run_tests.py integration
-python tests/run_tests.py security
-python tests/run_tests.py performance
+python run_tests.py environment
+python run_tests.py configuration
+python run_tests.py basic_functionality
+python run_tests.py code_metrics_functionality
+python run_tests.py code_security_functionality
+python run_tests.py code_retrieval_functionality
+python run_tests.py git_functionality
+```
+
+### Advanced Options
+```bash
+# Verbose output
+python run_tests.py all --verbose
+
+# Generate detailed report
+python run_tests.py all --report
+
+# Run from tests directory (alternative)
+python tests/run_tests.py all
 ```
 
 ## ⚙️ Configuration
