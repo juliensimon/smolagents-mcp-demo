@@ -610,9 +610,7 @@ def measure_code_coverage_metrics(code: str) -> str:
             "coverage_risk": (
                 "high"
                 if branch_complexity > 15
-                else "medium"
-                if branch_complexity > 8
-                else "low"
+                else "medium" if branch_complexity > 8 else "low"
             ),
             "warnings": syntax_issues if syntax_issues else None,
         }
@@ -995,9 +993,7 @@ def calculate_maintainability_index(code: str) -> str:
                 else (
                     "good"
                     if maintainability_index > 65
-                    else "fair"
-                    if maintainability_index > 25
-                    else "poor"
+                    else "fair" if maintainability_index > 25 else "poor"
                 )
             ),
             "warnings": syntax_issues if syntax_issues else None,
@@ -1127,9 +1123,7 @@ def analyze_security_patterns(code: str) -> str:
                 else (
                     "good"
                     if security_score > 70
-                    else "fair"
-                    if security_score > 50
-                    else "poor"
+                    else "fair" if security_score > 50 else "poor"
                 )
             ),
             "issue_count": len(security_issues),
@@ -1227,9 +1221,7 @@ def calculate_performance_metrics(code: str) -> str:
                 else (
                     "good"
                     if performance_score > 70
-                    else "fair"
-                    if performance_score > 50
-                    else "poor"
+                    else "fair" if performance_score > 50 else "poor"
                 )
             ),
             "issue_count": len(performance_issues),
@@ -1352,11 +1344,11 @@ def analyze_documentation_quality(code: str) -> str:
             "doc_quality_level": (
                 "excellent"
                 if doc_score > 80
-                else "good"
-                if doc_score > 60
-                else "fair"
-                if doc_score > 40
-                else "poor"
+                else (
+                    "good"
+                    if doc_score > 60
+                    else "fair" if doc_score > 40 else "poor"
+                )
             ),
         }
 
@@ -1436,9 +1428,7 @@ def calculate_code_duplication(code: str) -> str:
                 else (
                     "good"
                     if duplication_score > 75
-                    else "fair"
-                    if duplication_score > 50
-                    else "poor"
+                    else "fair" if duplication_score > 50 else "poor"
                 )
             ),
             "most_duplicated_lines": (
@@ -1598,9 +1588,7 @@ def analyze_error_handling(code: str) -> str:
                 else (
                     "good"
                     if error_handling_score > 70
-                    else "fair"
-                    if error_handling_score > 50
-                    else "poor"
+                    else "fair" if error_handling_score > 50 else "poor"
                 )
             ),
             "warnings": syntax_issues if syntax_issues else None,

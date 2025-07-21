@@ -84,7 +84,9 @@ class MultiServerMCPClient:
                 )
 
             except Exception as e:
-                print(f"  ❌ Failed to connect to {server_config['name']}: {e}")
+                print(
+                    f"  ❌ Failed to connect to {server_config['name']}: {e}"
+                )
 
         print(f"📊 Total tools available: {len(self.all_tools)}")
 

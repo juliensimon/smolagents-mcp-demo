@@ -11,11 +11,13 @@ repos:
       - id: check-merge-conflict
       - id: debug-statements
 
-  - repo: https://github.com/psf/black
-    rev: 23.12.1
+  - repo: local
     hooks:
       - id: black
-        language_version: python3
+        name: black
+        entry: black
+        language: system
+        types: [python]
         args: [--line-length=79]
         exclude: ^sample_files/
 

@@ -114,9 +114,9 @@ class OnlineTestRunner:
             "tests_run": result.testsRun,
             "failures": len(result.failures),
             "errors": len(result.errors),
-            "skipped": len(result.skipped)
-            if hasattr(result, "skipped")
-            else 0,
+            "skipped": (
+                len(result.skipped) if hasattr(result, "skipped") else 0
+            ),
         }
 
     def run_all_online_tests(self, verbose: bool = False) -> dict:

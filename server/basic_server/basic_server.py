@@ -107,9 +107,7 @@ def sentiment_analysis(text: str) -> str:
             "assessment": (
                 "positive"
                 if sentiment.polarity > 0
-                else "negative"
-                if sentiment.polarity < 0
-                else "neutral"
+                else "negative" if sentiment.polarity < 0 else "neutral"
             ),
         }
 
