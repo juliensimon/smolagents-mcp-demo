@@ -313,7 +313,10 @@ def create_multi_server_interface():
         client = MultiServerMCPClient()
 
         # Get model name for display
-        model_name = os.getenv("TOGETHER_MODEL", "arcee-ai/coder-large")
+        config_loader = get_config_loader()
+        model_name = os.getenv(
+            "TOGETHER_MODEL", config_loader.get_model_config()["default"]
+        )
 
         # Create minimal Gradio interface with default theme
         with gr.Blocks(title="Code Analysis Platform") as demo:
