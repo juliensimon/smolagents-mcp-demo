@@ -71,7 +71,7 @@
     "timeout": 30,
     "retry_attempts": 3,
     "health_check_interval": 5,
-    "startup_wait_time": 3
+    "startup_wait_time": 5
   },
   "logging": {
     "level": "INFO",

@@ -53,7 +53,7 @@ class ServerManager:
 
             # Wait a bit for the server to start
             startup_wait = self.config_loader.get_testing_config().get(
-                "startup_wait_time", 3
+                "startup_wait_time", 5
             )
             time.sleep(startup_wait)
 
@@ -83,10 +83,21 @@ class ServerManager:
                     "health_check_interval", 5
                 )
             )
-            response = requests.get(
-                f"http://localhost:{port}", timeout=health_check_interval
-            )
-            return response.status_code == 200
+            # Use a longer timeout and retry a few times
+            for attempt in range(3):
+                try:
+                    response = requests.get(
+                        f"http://localhost:{port}",
+                        timeout=health_check_interval,
+                        headers={"User-Agent": "MCP-Health-Check/1.0"},
+                    )
+                    if response.status_code == 200:
+                        return True
+                except requests.exceptions.RequestException:
+                    if attempt < 2:  # Don't sleep on the last attempt
+                        time.sleep(1)
+                    continue
+            return False
         except Exception:
             return False
 
