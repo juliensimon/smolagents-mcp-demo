@@ -192,9 +192,14 @@ def setup_manager():
 def get_status() -> str:
     """Get simple status of all agents."""
     servers = load_servers()
+    config_loader = get_config_loader()
+    default_model = config_loader.get_model_config()["default"]
+    model_name = os.getenv("TOGETHER_MODEL", default_model)
+
     status = [
         "# Multi-Agent System Status",
         "",
+        f"**Model:** `{model_name}`",
         f"**Total Agents:** {len(agents) + (1 if manager else 0)}",
         f"**Connected Servers:** {len(mcp_clients)}/{len(servers)}",
         "",
@@ -203,10 +208,10 @@ def get_status() -> str:
 
     for name, agent in agents.items():
         tool_count = len(agent.tools) if hasattr(agent, "tools") else 0
-        status.append(f"- **{name}**: {tool_count} tools")
+        status.append(f"- **{name}** (`{model_name}`): {tool_count} tools")
 
     if manager:
-        status.append("- **Manager**: Active")
+        status.append(f"- **Manager** (`{model_name}`): Active")
 
     status.append("")
     status.append("## Servers:")
@@ -358,10 +363,19 @@ def create_interface():
         setup_agents()
         setup_manager()
 
-        with gr.Blocks(title="Simple Multi-Agent Code Analysis") as demo:
+        # Get model information for display
+        config_loader = get_config_loader()
+        default_model = config_loader.get_model_config()["default"]
+        model_name = os.getenv("TOGETHER_MODEL", default_model)
+
+        with gr.Blocks(
+            title=f"Multi-Agent MCP Analysis - {model_name}"
+        ) as demo:
             gr.Markdown(
-                """
+                f"""
                 # Multi-Agent MCP Analysis Platform
+
+                **Model:** `{model_name}`
 
                 **Specialized MCP Servers:**
                 - 🔍 **Code Retrieval Server**: Find and retrieve code files
@@ -371,9 +385,9 @@ def create_interface():
                 - 🗂️ **Git Repo Analysis Server**: Analyze git history and repository structure
 
                 **AI Agents:**
-                - Code Analysis Agent (arcee-ai/coder-large): Code metrics and security analysis
-                - Research Agent (arcee-ai/coder-large): Code retrieval and git operations
-                - Manager Agent (arcee-ai/coder-large): Coordinates all agents
+                - Code Analysis Agent (`{model_name}`): Code metrics and security analysis
+                - Research Agent (`{model_name}`): Code retrieval and git operations
+                - Manager Agent (`{model_name}`): Coordinates all agents
                 """
             )
 

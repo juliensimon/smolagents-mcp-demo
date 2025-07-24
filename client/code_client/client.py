@@ -129,7 +129,10 @@ class MultiServerMCPClient:
             return
 
         # Get model configuration
-        model_name = os.getenv("TOGETHER_MODEL", "arcee-ai/coder-large")
+        config_loader = get_config_loader()
+        model_name = os.getenv(
+            "TOGETHER_MODEL", config_loader.get_model_config()["default"]
+        )
         api_base = load_api_base()
 
         # Create model with OpenAIServerModel
@@ -323,7 +326,7 @@ def create_multi_server_interface():
 
                     Analyze code for security, performance, and quality issues using AI-powered tools.
 
-                    **Model:** {model_name} | **Status:** Ready
+                    **Model:** `{model_name}` | **Status:** Ready | **Tools:** {len(client.all_tools)} available
                     """
                     )
 

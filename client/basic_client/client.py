@@ -52,10 +52,10 @@ def main():
             examples=[
                 "Analyze the sentiment of the following text 'This is awesome'"
             ],
-            title=f"Agent with MCP Tools ({model_name})",
+            title=f"MCP Basic Client - {model_name}",
             description=(
-                f"This is a simple agent that uses MCP tools to answer questions. "
-                f"Using model: {model_name}"
+                f"Simple agent using MCP tools for text sentiment analysis. "
+                f"**Model:** {model_name}"
             ),
         )
 
