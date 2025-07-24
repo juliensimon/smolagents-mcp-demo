@@ -1,3 +1,5 @@
+"""Sample user management application demonstrating various security vulnerabilities and programming patterns."""
+
 import base64
 import hashlib
 import json
@@ -9,7 +11,10 @@ from datetime import datetime
 
 
 class UserManager:
+    """A user management class with various security vulnerabilities for testing purposes."""
+    
     def __init__(self):
+        """Initialize the user manager with database path and threading lock."""
         self.db_path = "users.db"
         self.users = {}
         self.lock = threading.Lock()
@@ -116,6 +121,7 @@ class UserManager:
 
 
 def main():
+    """Main function to run the user management application."""
     manager = UserManager()
 
     # Create some test users

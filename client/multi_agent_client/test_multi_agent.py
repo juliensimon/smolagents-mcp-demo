@@ -80,7 +80,7 @@ def test_multi_agent_system():
                 print("⚠️ Analysis completed with issues")
                 print(f"Result: {result}")
 
-        except Exception as e:
+        except (ConnectionError, OSError, ValueError) as e:
             print(f"❌ Test failed: {e}")
 
     print("\n" + "=" * 50)

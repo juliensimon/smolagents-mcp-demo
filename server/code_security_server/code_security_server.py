@@ -1,3 +1,5 @@
+"""MCP Code Security Server providing comprehensive security analysis tools via Gradio interface."""
+
 import json
 import logging
 import os
@@ -121,7 +123,7 @@ def analyze_sql_injection(code: str) -> str:
         - This is static analysis - runtime behavior may differ
     """
     logger.info("Starting analyze_sql_injection function")
-    logger.info(f"Input code length: {len(code)} characters")
+    logger.info("Input code length: %d characters", len(code))
 
     sql_injection_patterns = [
         # F-string SQL queries
@@ -281,7 +283,7 @@ def analyze_command_injection(code: str) -> str:
         - This is static analysis - runtime behavior may differ
     """
     logger.info("Starting analyze_command_injection function")
-    logger.info(f"Input code length: {len(code)} characters")
+    logger.info("Input code length: %d characters", len(code))
 
     command_injection_patterns = [
         # os.system with variables
@@ -363,7 +365,7 @@ def analyze_hardcoded_secrets(code: str) -> str:
         str: JSON string with hardcoded secrets analysis
     """
     logger.info("Starting analyze_hardcoded_secrets function")
-    logger.info(f"Input code length: {len(code)} characters")
+    logger.info("Input code length: %d characters", len(code))
 
     secret_patterns = [
         # Common secret variable names
@@ -1007,11 +1009,11 @@ demo = gr.TabbedInterface(
 # Launch the interface
 if __name__ == "__main__":
     port = server_config["port"]
-    logger.info(f"Starting {server_config['name']}")
-    logger.info(f"Launching Gradio interface on port {port}")
+    logger.info("Starting %s", server_config["name"])
+    logger.info("Launching Gradio interface on port %s", port)
     try:
         demo.launch(server_port=port, mcp_server=True)
-        logger.info(f"{server_config['name']} started successfully")
-    except Exception as e:
-        logger.error(f"Failed to start {server_config['name']}: {str(e)}")
+        logger.info("%s started successfully", server_config["name"])
+    except (OSError, RuntimeError, ValueError) as e:
+        logger.error("Failed to start %s: %s", server_config["name"], str(e))
         raise

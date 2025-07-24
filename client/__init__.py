@@ -1,1 +1,1 @@
-# Client package for MCP demo
+"""Client package for MCP demo applications."""

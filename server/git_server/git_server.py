@@ -1,3 +1,5 @@
+"""MCP Git Server providing Git repository analysis and management tools via Gradio interface."""
+
 import json
 import logging
 import os
@@ -111,7 +113,7 @@ def git_status(file_path: str) -> str:
         - Results are logged for monitoring and debugging purposes
     """
     logger.info("Starting git_status function")
-    logger.info(f"Input file_path: {file_path}")
+    logger.info("Input file_path: %s", file_path)
 
     try:
         # Check if file exists
@@ -220,8 +222,8 @@ def git_status(file_path: str) -> str:
         )
         logger.info("git_status function completed successfully")
         return json.dumps(status_result_dict)
-    except Exception as e:
-        logger.error(f"Error in git_status: {str(e)}")
+    except (subprocess.SubprocessError, OSError, ValueError) as e:
+        logger.error("Error in git_status: %s", str(e))
         logger.info("git_status function completed with error")
         return json.dumps({"error": f"Git status failed: {str(e)}"})
 
@@ -284,7 +286,7 @@ def git_add(file_path: str) -> str:
         - This operation does not create a commit - use git_commit() for that
     """
     logger.info("Starting git_add function")
-    logger.info(f"Input file_path: {file_path}")
+    logger.info("Input file_path: %s", file_path)
 
     try:
         # Check if file exists
@@ -352,8 +354,8 @@ def git_add(file_path: str) -> str:
         logger.info("git_add function completed successfully")
         return json.dumps(add_result_dict, indent=2)
 
-    except Exception as e:
-        logger.error(f"Error in git_add: {str(e)}")
+    except (subprocess.SubprocessError, OSError, ValueError) as e:
+        logger.error("Error in git_add: %s", str(e))
         logger.info("git_add function completed with error")
         return json.dumps({"error": f"Failed to add file: {str(e)}"})
 
@@ -371,7 +373,9 @@ def git_commit(file_path: str, commit_message: str) -> str:
     """
     logger.info("Starting git_commit function")
     logger.info(
-        f"Input file_path: {file_path}, commit_message: {commit_message[:50]}..."
+        "Input file_path: %s, commit_message: %s...",
+        file_path,
+        commit_message[:50],
     )
 
     try:
@@ -469,8 +473,8 @@ def git_commit(file_path: str, commit_message: str) -> str:
         logger.info("git_commit function completed successfully")
         return json.dumps(commit_result_dict, indent=2)
 
-    except Exception as e:
-        logger.error(f"Error in git_commit: {str(e)}")
+    except (subprocess.SubprocessError, OSError, ValueError) as e:
+        logger.error("Error in git_commit: %s", str(e))
         logger.info("git_commit function completed with error")
         return json.dumps({"error": f"Failed to commit: {str(e)}"})
 
@@ -487,7 +491,7 @@ def git_diff(file_path: str, staged: bool = False) -> str:
         str: JSON string with diff information
     """
     logger.info("Starting git_diff function")
-    logger.info(f"Input file_path: {file_path}, staged: {staged}")
+    logger.info("Input file_path: %s, staged: %s", file_path, staged)
 
     try:
         # Check if file exists
@@ -576,8 +580,8 @@ def git_diff(file_path: str, staged: bool = False) -> str:
         logger.info("git_diff function completed successfully")
         return json.dumps(diff_result_dict, indent=2)
 
-    except Exception as e:
-        logger.error(f"Error in git_diff: {str(e)}")
+    except (subprocess.SubprocessError, OSError, ValueError) as e:
+        logger.error("Error in git_diff: %s", str(e))
         logger.info("git_diff function completed with error")
         return json.dumps({"error": f"Failed to get diff: {str(e)}"})
 
@@ -594,7 +598,7 @@ def git_log(file_path: str, limit: float = 5) -> str:
         str: JSON string with log information
     """
     logger.info("Starting git_log function")
-    logger.info(f"Input file_path: {file_path}, limit: {limit}")
+    logger.info("Input file_path: %s, limit: %s", file_path, limit)
 
     # Convert limit to int for git command
     limit = int(limit)
@@ -680,8 +684,8 @@ def git_log(file_path: str, limit: float = 5) -> str:
         logger.info("git_log function completed successfully")
         return json.dumps(log_result_dict, indent=2)
 
-    except Exception as e:
-        logger.error(f"Error in git_log: {str(e)}")
+    except (subprocess.SubprocessError, OSError, ValueError) as e:
+        logger.error("Error in git_log: %s", str(e))
         logger.info("git_log function completed with error")
         return json.dumps({"error": f"Failed to get git log: {str(e)}"})
 
@@ -802,11 +806,11 @@ demo = gr.TabbedInterface(
 # Launch the interface and MCP server
 if __name__ == "__main__":
     port = server_config["port"]
-    logger.info(f"Starting {server_config['name']}")
-    logger.info(f"Launching Gradio interface on port {port}")
+    logger.info("Starting %s", server_config["name"])
+    logger.info("Launching Gradio interface on port %s", port)
     try:
         demo.launch(server_name="0.0.0.0", server_port=port, mcp_server=True)
-        logger.info(f"{server_config['name']} started successfully")
-    except Exception as e:
-        logger.error(f"Failed to start {server_config['name']}: {str(e)}")
+        logger.info("%s started successfully", server_config["name"])
+    except (OSError, RuntimeError, ValueError) as e:
+        logger.error("Failed to start %s: %s", server_config["name"], str(e))
         raise

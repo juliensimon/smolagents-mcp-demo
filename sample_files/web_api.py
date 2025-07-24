@@ -1,3 +1,5 @@
+"""Sample web API application demonstrating various security vulnerabilities and programming patterns."""
+
 import base64
 import hashlib
 import json

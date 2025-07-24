@@ -1,3 +1,5 @@
+"""MCP Code Retriever Server for fetching and loading code from URLs and local files via Gradio interface."""
+
 import hashlib
 import json
 import logging
@@ -99,7 +101,7 @@ def retrieve_url(url: str) -> str:
         - Calculates MD5 hash of content for integrity verification
         - Handles common HTTP status codes and network errors
     """
-    logger.info(f"Retrieving content from URL: {url}")
+    logger.info("Retrieving content from URL: %s", url)
 
     try:
         # Parse URL
@@ -141,7 +143,9 @@ def retrieve_url(url: str) -> str:
             )
             return json.dumps(result, indent=2)
         else:
-            logger.error(f"HTTP error {response.status_code} for URL: {url}")
+            logger.error(
+                "HTTP error %d for URL: %s", response.status_code, url
+            )
             return json.dumps(
                 {
                     "success": False,
@@ -152,17 +156,17 @@ def retrieve_url(url: str) -> str:
             )
 
     except requests.exceptions.Timeout:
-        logger.error(f"Timeout error for URL: {url}")
+        logger.error("Timeout error for URL: %s", url)
         return json.dumps(
             {"success": False, "error": "Request timeout", "url": url}
         )
     except requests.exceptions.ConnectionError:
-        logger.error(f"Connection error for URL: {url}")
+        logger.error("Connection error for URL: %s", url)
         return json.dumps(
             {"success": False, "error": "Connection error", "url": url}
         )
-    except Exception as e:
-        logger.error(f"Error retrieving URL {url}: {str(e)}")
+    except (requests.exceptions.RequestException, ValueError, TypeError) as e:
+        logger.error("Error retrieving URL %s: %s", url, str(e))
         return json.dumps(
             {
                 "success": False,
@@ -229,7 +233,7 @@ def load_local_file(file_path: str) -> str:
         - File extension is extracted from the path if present
         - Modification time is returned as Unix timestamp
     """
-    logger.info(f"Loading local file: {file_path}")
+    logger.info("Loading local file: %s", file_path)
 
     try:
         # Check if file exists
@@ -281,7 +285,7 @@ def load_local_file(file_path: str) -> str:
         return json.dumps(result, indent=2)
 
     except PermissionError:
-        logger.error(f"Permission denied for file: {file_path}")
+        logger.error("Permission denied for file: %s", file_path)
         return json.dumps(
             {
                 "success": False,
@@ -290,7 +294,7 @@ def load_local_file(file_path: str) -> str:
             }
         )
     except UnicodeDecodeError:
-        logger.error(f"Unicode decode error for file: {file_path}")
+        logger.error("Unicode decode error for file: %s", file_path)
         return json.dumps(
             {
                 "success": False,
@@ -298,8 +302,8 @@ def load_local_file(file_path: str) -> str:
                 "file_path": file_path,
             }
         )
-    except Exception as e:
-        logger.error(f"Error loading local file {file_path}: {str(e)}")
+    except (OSError, IOError, ValueError) as e:
+        logger.error("Error loading local file %s: %s", file_path, str(e))
         return json.dumps(
             {
                 "success": False,
@@ -354,11 +358,11 @@ demo = gr.TabbedInterface(
 # Launch the interface and MCP server
 if __name__ == "__main__":
     port = server_config["port"]
-    logger.info(f"Starting {server_config['name']}")
-    logger.info(f"Launching Gradio interface on port {port}")
+    logger.info("Starting %s", server_config["name"])
+    logger.info("Launching Gradio interface on port %s", port)
     try:
         demo.launch(server_port=port, mcp_server=True)
-        logger.info(f"{server_config['name']} started successfully")
-    except Exception as e:
-        logger.error(f"Failed to start {server_config['name']}: {str(e)}")
+        logger.info("%s started successfully", server_config["name"])
+    except (OSError, RuntimeError, ValueError) as e:
+        logger.error("Failed to start %s: %s", server_config["name"], str(e))
         raise

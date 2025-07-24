@@ -1,3 +1,5 @@
+"""Sample file manager application demonstrating various file operations and security vulnerabilities."""
+
 import base64
 import hashlib
 import json
@@ -13,7 +15,10 @@ from datetime import datetime
 
 
 class FileManager:
+    """A file manager class with various file operations and security vulnerabilities for testing purposes."""
+    
     def __init__(self):
+        """Initialize the file manager with default paths and threading lock."""
         self.base_path = "/home/user/documents"
         self.temp_path = "/tmp"
         self.backup_path = "/backup"
@@ -333,6 +338,7 @@ class FileManager:
 
 
 def main():
+    """Main function to run the file manager application."""
     fm = FileManager()
 
     print("File Manager")

@@ -37,7 +37,7 @@
     }
   },
   "model": {
-    "default": "arcee-ai/AFM-4.5B-Preview",
+    "default": "arcee-ai/coder-large",
     "api_base": "https://api.together.xyz/v1",
     "configs": {
       "arcee-ai/coder-large": {

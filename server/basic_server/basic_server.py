@@ -1,7 +1,12 @@
+"""MCP Basic Server with sentiment analysis functionality using Gradio interface."""
+
 import json
 import logging
 import os
 import sys
+
+import gradio as gr
+from textblob import TextBlob
 
 # Add the project root to the path to import config_loader
 sys.path.insert(
@@ -11,15 +16,7 @@ sys.path.insert(
     ),
 )
 
-import gradio as gr  # noqa: E402
-from textblob import TextBlob  # noqa: E402
-
 from config_loader import get_config_loader  # noqa: E402
-from logging_utils import (  # noqa: E402
-    log_tool_call,
-    log_tool_result,
-    setup_logging,
-)
 
 # Set MCP logging to ERROR before any imports (will be overridden by config)
 logging.getLogger("mcp").setLevel(logging.ERROR)
@@ -29,10 +26,13 @@ logging.getLogger("mcp.server.lowlevel.server").setLevel(logging.ERROR)
 # Load configuration
 config_loader = get_config_loader()
 server_config = config_loader.get_server_config("basic_server")
-logging_config = config_loader.get_logging_config()
 
-# Setup logging with custom filters
-logger = setup_logging(logging_config)
+# Setup basic logging
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+)
+logger = logging.getLogger(__name__)
 
 
 def sentiment_analysis(text: str) -> str:
@@ -91,7 +91,7 @@ def sentiment_analysis(text: str) -> str:
         - Performance may vary with very short text or non-English content
         - Results are logged for monitoring and debugging purposes
     """
-    log_tool_call(logger, "sentiment_analysis", {"text_length": len(text)})
+    logger.info("Sentiment analysis called with text length: %d", len(text))
 
     try:
         blob = TextBlob(text)
@@ -111,10 +111,10 @@ def sentiment_analysis(text: str) -> str:
             ),
         }
 
-        log_tool_result(logger, "sentiment_analysis", result)
+        logger.info("Sentiment analysis completed successfully")
         return json.dumps(result)
-    except Exception as e:
-        logger.error(f"Error in sentiment_analysis: {str(e)}")
+    except (ValueError, AttributeError, TypeError) as e:
+        logger.error("Error in sentiment_analysis: %s", str(e))
         return json.dumps({"error": f"Analysis failed: {str(e)}"})
 
 
@@ -141,11 +141,11 @@ demo = gr.Interface(
 # Launch the interface and MCP server
 if __name__ == "__main__":
     port = server_config["port"]
-    logger.info(f"Starting {server_config['name']}")
-    logger.info(f"Launching Gradio interface on port {port}")
+    logger.info("Starting %s", server_config["name"])
+    logger.info("Launching Gradio interface on port %s", port)
     try:
         demo.launch(server_port=port, mcp_server=True)
-        logger.info(f"{server_config['name']} started successfully")
-    except Exception as e:
-        logger.error(f"Failed to start {server_config['name']}: {str(e)}")
+        logger.info("%s started successfully", server_config["name"])
+    except (OSError, RuntimeError, ValueError) as e:
+        logger.error("Failed to start %s: %s", server_config["name"], str(e))
         raise

@@ -7,11 +7,13 @@ including specific tool calls, edge cases, and error conditions.
 """
 
 import os
+import subprocess
 import sys
 import tempfile
 import unittest
 from pathlib import Path
 
+import requests
 from smolagents import MCPClient, OpenAIServerModel, ToolCallingAgent
 
 from config_loader import get_config_loader
@@ -42,7 +44,7 @@ class TestBasicServerFunctionality(unittest.TestCase):
 
             cls.agent = ToolCallingAgent(tools=tools, model=model)
 
-        except Exception as e:
+        except (ConnectionError, OSError, ValueError) as e:
             print(f"Failed to connect to basic server: {e}")
             cls.mcp_client = None
             cls.agent = None
@@ -180,7 +182,7 @@ class TestCodeMetricsServerFunctionality(unittest.TestCase):
 
             cls.agent = ToolCallingAgent(tools=tools, model=model)
 
-        except Exception as e:
+        except (ValueError, RuntimeError, AttributeError) as e:
             print(f"Failed to connect to code metrics server: {e}")
             cls.mcp_client = None
             cls.agent = None
@@ -531,7 +533,7 @@ class TestCodeSecurityServerFunctionality(unittest.TestCase):
 
             cls.agent = ToolCallingAgent(tools=tools, model=model)
 
-        except Exception as e:
+        except (requests.exceptions.RequestException, OSError) as e:
             print(f"Failed to connect to code security server: {e}")
             cls.mcp_client = None
             cls.agent = None
@@ -796,7 +798,7 @@ class TestCodeRetrievalServerFunctionality(unittest.TestCase):
 
             cls.agent = ToolCallingAgent(tools=tools, model=model)
 
-        except Exception as e:
+        except (OSError, RuntimeError, ValueError) as e:
             print(f"Failed to connect to code retrieval server: {e}")
             cls.mcp_client = None
             cls.agent = None
@@ -969,7 +971,7 @@ class TestGitServerFunctionality(unittest.TestCase):
 
             cls.agent = ToolCallingAgent(tools=tools, model=model)
 
-        except Exception as e:
+        except (subprocess.SubprocessError, OSError) as e:
             print(f"Failed to connect to git server: {e}")
             cls.mcp_client = None
             cls.agent = None

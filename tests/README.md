@@ -184,6 +184,19 @@ python tests/run_tests.py all
 - All MCP servers running
 - Network connectivity to external endpoints
 
+### Environment Setup
+```bash
+# Create virtual environment
+python -m venv env
+source env/bin/activate  # On Windows: env\Scripts\activate
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Set API key
+export TOGETHER_API_KEY="your-api-key-here"
+```
+
 ## Test Categories Details
 
 ### Offline Test Categories
@@ -277,6 +290,8 @@ python tests/run_tests.py all
 - **Configuration errors**: Validate your `config.json` file
 - **Server connection errors**: Ensure all MCP servers are running
 - **API key errors**: Set the `TOGETHER_API_KEY` environment variable
+- **Virtual environment**: Activate your virtual environment before running tests
+- **Cache issues**: Clear Python cache with `find . -name "__pycache__" -delete`
 
 ## Test Reports
 

@@ -1,3 +1,5 @@
+"""Sample data processing application demonstrating various programming patterns and security vulnerabilities."""
+
 import csv
 import glob
 import json
@@ -12,6 +14,7 @@ CACHE = {}
 
 
 def process_data_file(filename):
+    """Process a CSV data file and return the data as a list of rows."""
     data = []
     # No file existence check
     with open(filename, "r") as f:
@@ -179,6 +182,7 @@ def calculate_correlation(data1, data2):
 
 
 def main():
+    """Main function to run the data processor application."""
     if len(sys.argv) < 2:
         print("Usage: python data_processor.py <input_file>")
         return

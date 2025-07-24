@@ -1,1 +1,1 @@
-# Code Retriever Server Package
+"""Code Retriever Server Package for MCP Demo."""

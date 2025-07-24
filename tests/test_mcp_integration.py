@@ -61,7 +61,7 @@ class TestMCPIntegration(unittest.TestCase):
                     f"✅ Connected to {server_config['name']} ({len(tools)} tools)"
                 )
 
-            except Exception as e:
+            except (ConnectionError, OSError, ValueError) as e:
                 print(f"❌ Failed to connect to {server_config['name']}: {e}")
                 cls.mcp_clients[server_key] = None
                 cls.tool_agents[server_key] = None
@@ -460,7 +460,7 @@ def vulnerable_query(user_input):
                 time.sleep(index * 0.5)
                 response = agent.run(f"Analyze this code: {code}")
                 results.put((index, response, None))
-            except Exception as e:
+            except (ValueError, RuntimeError, AttributeError) as e:
                 results.put((index, None, e))
 
         # Start concurrent threads
@@ -841,7 +841,7 @@ class TestIntegrationScenarios(unittest.TestCase):
                 agent = ToolCallingAgent(tools=tools, model=model)
                 cls.tool_agents[server_key] = agent
 
-            except Exception as e:
+            except (requests.exceptions.RequestException, OSError) as e:
                 print(f"Failed to connect to {server_config['name']}: {e}")
                 cls.mcp_clients[server_key] = None
                 cls.tool_agents[server_key] = None

@@ -1,3 +1,5 @@
+"""Sample calculator application demonstrating various programming patterns and security vulnerabilities."""
+
 import json
 import math
 import os
@@ -7,7 +9,10 @@ import sys
 
 
 class Calculator:
+    """A calculator class with various mathematical operations and security vulnerabilities for testing purposes."""
+    
     def __init__(self):
+        """Initialize the calculator with empty history, zero memory, and default configuration."""
         self.history = []
         self.memory = 0
         self.config = {"precision": 2, "mode": "decimal"}
@@ -150,6 +155,7 @@ class Calculator:
 
 
 def evaluate_expression(expression):
+    """Evaluate a mathematical expression using eval (demonstrates security vulnerability)."""
     try:
         return eval(expression)
     except:
@@ -157,6 +163,7 @@ def evaluate_expression(expression):
 
 
 def main():
+    """Main function to run the calculator application."""
     calc = Calculator()
 
     print("Simple Calculator")

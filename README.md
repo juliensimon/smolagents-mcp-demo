@@ -66,6 +66,8 @@
 2. **Set up environment**:
    ```bash
    export TOGETHER_API_KEY="your-api-key-here"
+   python -m venv env
+   source env/bin/activate  # On Windows: env\Scripts\activate
    pip install -r requirements.txt
    ```
 
@@ -266,6 +268,9 @@ The project uses a **unified configuration system** (`config.json`):
 
 # Run quality checks
 pre-commit run --all-files
+
+# Run linting
+flake8 . --ignore=E501  # Ignore line length warnings
 ```
 
 ### Adding New Servers

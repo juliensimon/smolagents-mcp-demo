@@ -74,7 +74,7 @@ def setup_connections():
             mcp_clients[server_key] = mcp_client
             print(f"  ✅ {server_config['name']}: {len(tools)} tools")
 
-        except Exception as e:
+        except (ConnectionError, OSError, ValueError) as e:
             print(f"  ❌ Failed to connect to {server_config['name']}: {e}")
 
 
@@ -108,9 +108,10 @@ def setup_agents():
                 ),
                 name="code_analysis_agent",
                 description="Specialized in code analysis, metrics, and security.",
+                max_steps=3,
             )
             print(f"  ✅ Code Analysis Agent: {len(code_tools)} tools")
-        except Exception as e:
+        except (ValueError, RuntimeError, OSError) as e:
             print(f"  ❌ Failed to create Code Analysis Agent: {e}")
 
     # Research Agent
@@ -133,9 +134,10 @@ def setup_agents():
                 ),
                 name="research_agent",
                 description="Specialized in code retrieval and git operations.",
+                max_steps=3,
             )
             print(f"  ✅ Research Agent: {len(research_tools)} tools")
-        except Exception as e:
+        except (ValueError, RuntimeError, OSError) as e:
             print(f"  ❌ Failed to create Research Agent: {e}")
 
     # Web Search Agent
@@ -151,9 +153,10 @@ def setup_agents():
             ),
             name="web_search_agent",
             description="Specialized in finding additional information about problems, errors, and technical concepts. Use for researching error messages, understanding technical issues, finding best practices, and gathering context about problems. Do NOT use for fetching files or downloading code - focus on informational research only.",
+            max_steps=3,
         )
         print("  ✅ Web Search Agent ready")
-    except Exception as e:
+    except (ValueError, RuntimeError, OSError) as e:
         print(f"  ❌ Failed to create Web Search Agent: {e}")
 
 
@@ -184,7 +187,7 @@ def setup_manager():
             max_steps=5,
         )
         print(f"  ✅ Manager Agent: {len(agents)} managed agents")
-    except Exception as e:
+    except (ValueError, RuntimeError, OSError) as e:
         print(f"  ❌ Failed to create Manager Agent: {e}")
         manager = None
 
@@ -231,7 +234,7 @@ def disconnect():
         try:
             client.disconnect()
             print(f"Disconnected from {servers[server_key]['name']}")
-        except Exception as e:
+        except (ConnectionError, OSError) as e:
             print(
                 f"Error disconnecting from {servers[server_key]['name']}: {e}"
             )
@@ -263,7 +266,7 @@ def respond(message, chat_history):
                     if hasattr(result, "content")
                     else str(result)
                 )
-            except Exception as e:
+            except (ValueError, RuntimeError, AttributeError) as e:
                 response = f"❌ Error during analysis: {str(e)}"
 
         if not response or response.strip() == "":
@@ -273,7 +276,7 @@ def respond(message, chat_history):
 
         # Add assistant response with correct format
         chat_history.append({"role": "assistant", "content": response})
-    except Exception as e:
+    except (ValueError, RuntimeError, ConnectionError) as e:
         error_msg = str(e)
         print(f"❌ Response error: {error_msg}")
 
@@ -423,7 +426,7 @@ def create_interface():
 
         return demo
 
-    except Exception as e:
+    except (ValueError, RuntimeError, OSError) as e:
         print(f"Error initializing client: {e}")
         return None
 
@@ -443,11 +446,11 @@ def main():
                 share=gradio_config.get("share", False),
                 show_error=gradio_config.get("show_error", True),
             )
-        except Exception as e:
+        except (OSError, RuntimeError, ValueError) as e:
             print(f"Failed to launch interface: {e}")
             try:
                 demo.launch(share=False, show_error=True)
-            except Exception as e2:
+            except (OSError, RuntimeError, ValueError) as e2:
                 print(f"Failed to launch on any port: {e2}")
         finally:
             disconnect()

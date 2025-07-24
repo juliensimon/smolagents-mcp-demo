@@ -7,9 +7,12 @@ They should NOT be run in CI environments where servers are not available.
 """
 
 import os
+import subprocess
 import sys
 import time
 import unittest
+
+import requests
 
 # Add the parent directory to the path so we can import from tests
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -60,7 +63,7 @@ class TestMCPIntegrationOnline(unittest.TestCase):
                     f"✅ Connected to {server_config['name']} ({len(tools)} tools)"
                 )
 
-            except Exception as e:
+            except (ConnectionError, OSError, ValueError) as e:
                 print(f"❌ Failed to connect to {server_config['name']}: {e}")
                 cls.mcp_clients[server_key] = None
                 cls.tool_agents[server_key] = None
@@ -118,7 +121,7 @@ class TestServerHealthOnline(unittest.TestCase):
                         len(tools), 0, f"Server {server_key} has no tools"
                     )
                     client.disconnect()
-                except Exception as e:
+                except (ValueError, RuntimeError, AttributeError) as e:
                     self.fail(f"Server {server_key} health check failed: {e}")
 
     def test_mcp_endpoints_accessible(self):
@@ -132,7 +135,7 @@ class TestServerHealthOnline(unittest.TestCase):
                         len(tools), 0, f"No tools from {server_key}"
                     )
                     client.disconnect()
-                except Exception as e:
+                except (requests.exceptions.RequestException, OSError) as e:
                     self.fail(f"MCP endpoint {server_key} not accessible: {e}")
 
     def test_server_response_times(self):
@@ -156,7 +159,7 @@ class TestServerHealthOnline(unittest.TestCase):
                         len(tools), 0, f"Server {server_key} has no tools"
                     )
                     client.disconnect()
-                except Exception as e:
+                except (OSError, RuntimeError, ValueError) as e:
                     self.fail(
                         f"Server {server_key} response time test failed: {e}"
                     )
@@ -187,7 +190,7 @@ class TestBasicServerFunctionalityOnline(unittest.TestCase):
 
             cls.agent = ToolCallingAgent(tools=tools, model=model)
 
-        except Exception as e:
+        except (subprocess.SubprocessError, OSError) as e:
             print(f"Failed to connect to basic server: {e}")
             cls.mcp_client = None
             cls.agent = None
@@ -260,7 +263,7 @@ class TestCodeMetricsServerFunctionalityOnline(unittest.TestCase):
 
             cls.agent = ToolCallingAgent(tools=tools, model=model)
 
-        except Exception as e:
+        except (ConnectionError, OSError, ValueError) as e:
             print(f"Failed to connect to code metrics server: {e}")
             cls.mcp_client = None
             cls.agent = None
@@ -324,7 +327,7 @@ class TestCodeSecurityServerFunctionalityOnline(unittest.TestCase):
 
             cls.agent = ToolCallingAgent(tools=tools, model=model)
 
-        except Exception as e:
+        except (ValueError, TypeError, RuntimeError) as e:
             print(f"Failed to connect to code security server: {e}")
             cls.mcp_client = None
             cls.agent = None
@@ -393,7 +396,7 @@ class TestCodeRetrievalServerFunctionalityOnline(unittest.TestCase):
 
             cls.agent = ToolCallingAgent(tools=tools, model=model)
 
-        except Exception as e:
+        except (ConnectionError, OSError, ValueError) as e:
             print(f"Failed to connect to code retrieval server: {e}")
             cls.mcp_client = None
             cls.agent = None
@@ -456,7 +459,7 @@ class TestGitServerFunctionalityOnline(unittest.TestCase):
 
             cls.agent = ToolCallingAgent(tools=tools, model=model)
 
-        except Exception as e:
+        except (ConnectionError, OSError, ValueError) as e:
             print(f"Failed to connect to git server: {e}")
             cls.mcp_client = None
             cls.agent = None
@@ -536,7 +539,7 @@ class TestIntegrationScenariosOnline(unittest.TestCase):
                 agent = ToolCallingAgent(tools=tools, model=model)
                 cls.agents[server_key] = agent
 
-            except Exception as e:
+            except (ConnectionError, OSError, ValueError) as e:
                 print(f"Failed to connect to {server_config['name']}: {e}")
                 cls.agents[server_key] = None
 

@@ -43,8 +43,12 @@ server/
 
 ### Installation
 ```bash
+# Create virtual environment (recommended)
+python -m venv env
+source env/bin/activate  # On Windows: env\Scripts\activate
+
 # Install required packages
-pip install gradio textblob requests smolagents
+pip install -r requirements.txt
 
 # Navigate to the server directory
 cd server
@@ -218,6 +222,8 @@ Each server has comprehensive documentation in its `README.md` file:
 2. **Missing Dependencies**: Install required packages with `pip install -r requirements.txt`
 3. **Git Repository**: Ensure you're in a git repository for git server functionality
 4. **Network Issues**: Check connectivity for file retrieval operations
+5. **Virtual Environment**: Activate your virtual environment before running servers
+6. **Cache Issues**: Clear Python cache with `find . -name "__pycache__" -delete`
 
 ### Error Messages
 - **"Failed to create interface"**: Check dependencies and configuration

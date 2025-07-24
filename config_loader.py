@@ -222,7 +222,7 @@ class ConfigLoader:
 
             return True
 
-        except Exception as e:
+        except (ValueError, KeyError, TypeError) as e:
             print(f"Configuration validation failed: {e}")
             return False
 
@@ -283,6 +283,6 @@ if __name__ == "__main__":
         else:
             print("❌ Configuration validation failed")
             exit(1)
-    except Exception as e:
+    except (ValueError, FileNotFoundError, json.JSONDecodeError) as e:
         print(f"❌ Error loading configuration: {e}")
         exit(1)

@@ -65,7 +65,7 @@ class ServerManager:
                 print(f"❌ {server_config['name']} failed to start")
                 return False
 
-        except Exception as e:
+        except (subprocess.SubprocessError, OSError, ValueError) as e:
             print(f"❌ Error starting {server_config['name']}: {e}")
             return False
 
@@ -122,7 +122,7 @@ class ServerManager:
             except subprocess.TimeoutExpired:
                 self.processes[server_key].kill()
                 print(f"🛑 Force killed {self.servers[server_key]['name']}")
-            except Exception as e:
+            except (subprocess.SubprocessError, OSError) as e:
                 print(f"❌ Error stopping {server_key}: {e}")
 
     def stop_all_servers(self):
@@ -168,7 +168,7 @@ class IntegrationTester:
             print(f"✅ {server_key} server is responding")
             return True
 
-        except Exception as e:
+        except (subprocess.SubprocessError, OSError, ValueError) as e:
             print(f"❌ Error testing {server_key} server: {e}")
             return False
 
@@ -194,7 +194,7 @@ class IntegrationTester:
             print(f"✅ {server_key} server is responding")
             return True
 
-        except Exception as e:
+        except (requests.exceptions.RequestException, OSError) as e:
             print(f"❌ Error testing {server_key} server: {e}")
             return False
 
@@ -220,7 +220,7 @@ class IntegrationTester:
             print(f"✅ {server_key} server is responding")
             return True
 
-        except Exception as e:
+        except (ValueError, RuntimeError) as e:
             print(f"❌ Error testing {server_key} server: {e}")
             return False
 
@@ -246,7 +246,7 @@ class IntegrationTester:
             print(f"✅ {server_key} server is responding")
             return True
 
-        except Exception as e:
+        except (OSError, RuntimeError, ValueError) as e:
             print(f"❌ Error testing {server_key} server: {e}")
             return False
 
@@ -266,7 +266,7 @@ class IntegrationTester:
         for test_name, test_func in tests.items():
             try:
                 results[test_name] = test_func()
-            except Exception as e:
+            except (subprocess.SubprocessError, OSError) as e:
                 print(f"❌ Error running {test_name} test: {e}")
                 results[test_name] = False
 
@@ -313,7 +313,7 @@ def main():
         except KeyboardInterrupt:
             print("\n🛑 Interrupted by user")
 
-    except Exception as e:
+    except (ConnectionError, OSError, ValueError) as e:
         print(f"\n❌ Unexpected error: {e}")
         sys.exit(1)
     finally:

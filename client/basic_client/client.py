@@ -1,5 +1,10 @@
+"""MCP Basic Client providing a simple interface for sentiment analysis using MCP tools."""
+
 import os
 import sys
+
+import gradio as gr
+from smolagents import MCPClient, OpenAIServerModel, ToolCallingAgent
 
 # Add the project root to the path to import the unified config_loader
 sys.path.insert(
@@ -9,8 +14,6 @@ sys.path.insert(
     ),
 )
 
-import gradio as gr
-from smolagents import MCPClient, OpenAIServerModel, ToolCallingAgent
 
 from config_loader import get_config_loader
 

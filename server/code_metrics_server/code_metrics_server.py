@@ -1,8 +1,11 @@
+"""MCP Code Metrics Server providing comprehensive code analysis tools via Gradio interface."""
+
 import ast
 import json
 import logging
 import os
 import re
+import subprocess
 import sys
 from collections import Counter
 
@@ -233,9 +236,9 @@ def calculate_code_complexity(code: str) -> str:
             if "\t" in line and " " in line[: len(line) - len(line.lstrip())]:
                 syntax_issues.append(f"Mixed tabs and spaces at line {i}")
 
-    logger.info(f"Input code length: {len(code)} characters")
+    logger.info("Input code length: %d characters", len(code))
     if syntax_issues:
-        logger.warning(f"Syntax issues detected: {syntax_issues}")
+        logger.warning("Syntax issues detected: %s", syntax_issues)
 
     try:
         # Attempt to parse the code
@@ -311,7 +314,7 @@ def calculate_code_complexity(code: str) -> str:
         return json.dumps(result)
 
     except SyntaxError as e:
-        logger.error(f"Syntax error in calculate_code_complexity: {str(e)}")
+        logger.error("Syntax error in calculate_code_complexity: %s", str(e))
         error_result = {
             "error": "Invalid Python syntax",
             "details": str(e),
@@ -324,7 +327,7 @@ def calculate_code_complexity(code: str) -> str:
 
     except IndentationError as e:
         logger.error(
-            f"Indentation error in calculate_code_complexity: {str(e)}"
+            "Indentation error in calculate_code_complexity: %s", str(e)
         )
         error_result = {
             "error": "Indentation error",
@@ -337,14 +340,14 @@ def calculate_code_complexity(code: str) -> str:
         return json.dumps(error_result)
 
     except ValueError as e:
-        logger.error(f"Value error in calculate_code_complexity: {str(e)}")
+        logger.error("Value error in calculate_code_complexity: %s", str(e))
         error_result = {"error": "Value error", "details": str(e)}
         logger.info("calculate_code_complexity function completed with error")
         return json.dumps(error_result)
 
-    except Exception as e:
+    except (TypeError, AttributeError, RuntimeError) as e:
         logger.error(
-            f"Unexpected error in calculate_code_complexity: {str(e)}"
+            "Unexpected error in calculate_code_complexity: %s", str(e)
         )
         error_result = {
             "error": "Analysis failed",
@@ -427,7 +430,7 @@ def analyze_code_style(code: str) -> str:
         - Results are logged for monitoring and debugging purposes
     """
     logger.info("Starting analyze_code_style function")
-    logger.info(f"Input code length: {len(code)} characters")
+    logger.info("Input code length: %d characters", len(code))
 
     try:
         lines = code.split("\n")
@@ -470,8 +473,8 @@ def analyze_code_style(code: str) -> str:
         )
         logger.info("analyze_code_style function completed successfully")
         return json.dumps(result)
-    except Exception as e:
-        logger.error(f"Error in analyze_code_style: {str(e)}")
+    except (ValueError, TypeError, RuntimeError) as e:
+        logger.error("Error in analyze_code_style: %s", str(e))
         error_result = {"error": f"Style analysis failed: {str(e)}"}
         logger.info("analyze_code_style function completed with error")
         return json.dumps(error_result)
@@ -546,9 +549,9 @@ def measure_code_coverage_metrics(code: str) -> str:
         if single_quotes != 0 or double_quotes != 0:
             syntax_issues.append(f"Potential unmatched quotes at line {i}")
 
-    logger.info(f"Input code length: {len(code)} characters")
+    logger.info("Input code length: %s characters", len(code))
     if syntax_issues:
-        logger.warning(f"Syntax issues detected: {syntax_issues}")
+        logger.warning("Syntax issues detected: %s", syntax_issues)
 
     try:
         # Attempt to parse the code
@@ -641,7 +644,7 @@ def measure_code_coverage_metrics(code: str) -> str:
 
     except IndentationError as e:
         logger.error(
-            f"Indentation error in measure_code_coverage_metrics: {str(e)}"
+            "Indentation error in measure_code_coverage_metrics: %s", str(e)
         )
         error_result = {
             "error": "Indentation error",
@@ -655,9 +658,9 @@ def measure_code_coverage_metrics(code: str) -> str:
         )
         return json.dumps(error_result)
 
-    except Exception as e:
+    except (ValueError, TypeError, RuntimeError) as e:
         logger.error(
-            f"Unexpected error in measure_code_coverage_metrics: {str(e)}"
+            "Unexpected error in measure_code_coverage_metrics: %s", str(e)
         )
         error_result = {
             "error": "Coverage analysis failed",
@@ -739,9 +742,9 @@ def analyze_naming_conventions(code: str) -> str:
         if single_quotes != 0 or double_quotes != 0:
             syntax_issues.append(f"Potential unmatched quotes at line {i}")
 
-    logger.info(f"Input code length: {len(code)} characters")
+    logger.info("Input code length: %s characters", len(code))
     if syntax_issues:
-        logger.warning(f"Syntax issues detected: {syntax_issues}")
+        logger.warning("Syntax issues detected: %s", syntax_issues)
 
     try:
         # Attempt to parse the code
@@ -805,7 +808,7 @@ def analyze_naming_conventions(code: str) -> str:
         return json.dumps(result)
 
     except SyntaxError as e:
-        logger.error(f"Syntax error in analyze_naming_conventions: {str(e)}")
+        logger.error("Syntax error in analyze_naming_conventions: %s", str(e))
         error_result = {
             "error": "Invalid Python syntax",
             "details": str(e),
@@ -818,7 +821,7 @@ def analyze_naming_conventions(code: str) -> str:
 
     except IndentationError as e:
         logger.error(
-            f"Indentation error in analyze_naming_conventions: {str(e)}"
+            "Indentation error in analyze_naming_conventions: %s", str(e)
         )
         error_result = {
             "error": "Indentation error",
@@ -830,9 +833,9 @@ def analyze_naming_conventions(code: str) -> str:
         logger.info("analyze_naming_conventions function completed with error")
         return json.dumps(error_result)
 
-    except Exception as e:
+    except (OSError, IOError, ValueError) as e:
         logger.error(
-            f"Unexpected error in analyze_naming_conventions: {str(e)}"
+            "Unexpected error in analyze_naming_conventions: %s", str(e)
         )
         error_result = {
             "error": "Naming analysis failed",
@@ -912,9 +915,9 @@ def calculate_maintainability_index(code: str) -> str:
         if single_quotes != 0 or double_quotes != 0:
             syntax_issues.append(f"Potential unmatched quotes at line {i}")
 
-    logger.info(f"Input code length: {len(code)} characters")
+    logger.info("Input code length: %s characters", len(code))
     if syntax_issues:
-        logger.warning(f"Syntax issues detected: {syntax_issues}")
+        logger.warning("Syntax issues detected: %s", syntax_issues)
 
     try:
         # Attempt to parse the code
@@ -1025,7 +1028,7 @@ def calculate_maintainability_index(code: str) -> str:
 
     except IndentationError as e:
         logger.error(
-            f"Indentation error in calculate_maintainability_index: {str(e)}"
+            "Indentation error in calculate_maintainability_index: %s", str(e)
         )
         error_result = {
             "error": "Indentation error",
@@ -1039,9 +1042,9 @@ def calculate_maintainability_index(code: str) -> str:
         )
         return json.dumps(error_result)
 
-    except Exception as e:
+    except (subprocess.SubprocessError, OSError, ValueError) as e:
         logger.error(
-            f"Unexpected error in calculate_maintainability_index: {str(e)}"
+            "Unexpected error in calculate_maintainability_index: %s", str(e)
         )
         error_result = {
             "error": "Maintainability analysis failed",
@@ -1065,7 +1068,7 @@ def analyze_security_patterns(code: str) -> str:
         str: JSON string with security metrics
     """
     logger.info("Starting analyze_security_patterns function")
-    logger.info(f"Input code length: {len(code)} characters")
+    logger.info("Input code length: %s characters", len(code))
 
     try:
         security_issues = []
@@ -1136,8 +1139,8 @@ def analyze_security_patterns(code: str) -> str:
             "analyze_security_patterns function completed successfully"
         )
         return json.dumps(result)
-    except Exception as e:
-        logger.error(f"Error in analyze_security_patterns: {str(e)}")
+    except (OSError, RuntimeError, ValueError) as e:
+        logger.error("Error in analyze_security_patterns: %s", str(e))
         error_result = {"error": f"Security analysis failed: {str(e)}"}
         logger.info("analyze_security_patterns function completed with error")
         return json.dumps(error_result)
@@ -1154,7 +1157,7 @@ def calculate_performance_metrics(code: str) -> str:
         str: JSON string with performance metrics
     """
     logger.info("Starting calculate_performance_metrics function")
-    logger.info(f"Input code length: {len(code)} characters")
+    logger.info("Input code length: %s characters", len(code))
 
     try:
         performance_issues = []
@@ -1234,8 +1237,8 @@ def calculate_performance_metrics(code: str) -> str:
             "calculate_performance_metrics function completed successfully"
         )
         return json.dumps(result)
-    except Exception as e:
-        logger.error(f"Error in calculate_performance_metrics: {str(e)}")
+    except (ValueError, TypeError, RuntimeError) as e:
+        logger.error("Error in calculate_performance_metrics: %s", str(e))
         error_result = {"error": f"Performance analysis failed: {str(e)}"}
         logger.info(
             "calculate_performance_metrics function completed with error"
@@ -1254,7 +1257,7 @@ def analyze_documentation_quality(code: str) -> str:
         str: JSON string with documentation metrics
     """
     logger.info("Starting analyze_documentation_quality function")
-    logger.info(f"Input code length: {len(code)} characters")
+    logger.info("Input code length: %s characters", len(code))
 
     try:
         lines = code.split("\n")
@@ -1359,8 +1362,8 @@ def analyze_documentation_quality(code: str) -> str:
             "analyze_documentation_quality function completed successfully"
         )
         return json.dumps(result)
-    except Exception as e:
-        logger.error(f"Error in analyze_documentation_quality: {str(e)}")
+    except (OSError, RuntimeError, ValueError) as e:
+        logger.error("Error in analyze_documentation_quality: %s", str(e))
         error_result = {"error": f"Documentation analysis failed: {str(e)}"}
         logger.info(
             "analyze_documentation_quality function completed with error"
@@ -1379,7 +1382,7 @@ def calculate_code_duplication(code: str) -> str:
         str: JSON string with duplication metrics
     """
     logger.info("Starting calculate_code_duplication function")
-    logger.info(f"Input code length: {len(code)} characters")
+    logger.info("Input code length: %s characters", len(code))
 
     try:
         lines = code.split("\n")
@@ -1443,8 +1446,8 @@ def calculate_code_duplication(code: str) -> str:
             "calculate_code_duplication function completed successfully"
         )
         return json.dumps(result)
-    except Exception as e:
-        logger.error(f"Error in calculate_code_duplication: {str(e)}")
+    except (OSError, RuntimeError, ValueError) as e:
+        logger.error("Error in calculate_code_duplication: %s", str(e))
         error_result = {"error": f"Duplication analysis failed: {str(e)}"}
         logger.info("calculate_code_duplication function completed with error")
         return json.dumps(error_result)
@@ -1519,9 +1522,9 @@ def analyze_error_handling(code: str) -> str:
         if single_quotes != 0 or double_quotes != 0:
             syntax_issues.append(f"Potential unmatched quotes at line {i}")
 
-    logger.info(f"Input code length: {len(code)} characters")
+    logger.info("Input code length: %s characters", len(code))
     if syntax_issues:
-        logger.warning(f"Syntax issues detected: {syntax_issues}")
+        logger.warning("Syntax issues detected: %s", syntax_issues)
 
     try:
         # Attempt to parse the code
@@ -1601,7 +1604,7 @@ def analyze_error_handling(code: str) -> str:
         return json.dumps(result)
 
     except SyntaxError as e:
-        logger.error(f"Syntax error in analyze_error_handling: {str(e)}")
+        logger.error("Syntax error in analyze_error_handling: %s", str(e))
         error_result = {
             "error": "Invalid Python syntax",
             "details": str(e),
@@ -1613,7 +1616,7 @@ def analyze_error_handling(code: str) -> str:
         return json.dumps(error_result)
 
     except IndentationError as e:
-        logger.error(f"Indentation error in analyze_error_handling: {str(e)}")
+        logger.error("Indentation error in analyze_error_handling: %s", str(e))
         error_result = {
             "error": "Indentation error",
             "details": str(e),
@@ -1624,8 +1627,8 @@ def analyze_error_handling(code: str) -> str:
         logger.info("analyze_error_handling function completed with error")
         return json.dumps(error_result)
 
-    except Exception as e:
-        logger.error(f"Unexpected error in analyze_error_handling: {str(e)}")
+    except (subprocess.SubprocessError, OSError) as e:
+        logger.error("Unexpected error in analyze_error_handling: %s", str(e))
         error_result = {
             "error": "Error handling analysis failed",
             "details": str(e),
@@ -1788,11 +1791,11 @@ demo = gr.TabbedInterface(
 # Launch the interface
 if __name__ == "__main__":
     port = server_config["port"]
-    logger.info(f"Starting {server_config['name']}")
-    logger.info(f"Launching Gradio interface on port {port}")
+    logger.info("Starting %s", server_config["name"])
+    logger.info("Launching Gradio interface on port %s", port)
     try:
         demo.launch(server_port=port, mcp_server=True)
-        logger.info(f"{server_config['name']} started successfully")
-    except Exception as e:
-        logger.error(f"Failed to start {server_config['name']}: {str(e)}")
+        logger.info("%s started successfully", server_config["name"])
+    except (ConnectionError, OSError, ValueError) as e:
+        logger.error("Failed to start %s: %s", server_config["name"], str(e))
         raise

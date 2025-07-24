@@ -83,7 +83,7 @@ class MultiServerMCPClient:
                     f"  ✅ {server_config['name']}: {len(tools)} tools available"
                 )
 
-            except Exception as e:
+            except (ConnectionError, OSError, ValueError) as e:
                 print(
                     f"  ❌ Failed to connect to {server_config['name']}: {e}"
                 )
@@ -114,7 +114,7 @@ class MultiServerMCPClient:
                     print(
                         f"  ❌ Invalid tool format: {getattr(tool, 'name', 'unknown')}"
                     )
-            except Exception as e:
+            except (AttributeError, TypeError) as e:
                 print(f"  ❌ Tool validation failed: {e}")
 
         self.all_tools = valid_tools
@@ -147,12 +147,13 @@ class MultiServerMCPClient:
             self.agent = ToolCallingAgent(
                 tools=self.all_tools,
                 model=model,
+                max_steps=3,
             )
 
             # Print available tools for debugging
             print(f"🔧 Agent initialized with {len(self.all_tools)} tools:")
 
-        except Exception as e:
+        except (ValueError, RuntimeError, OSError) as e:
             print(f"❌ Failed to initialize agent: {e}")
             self.agent = None
 
@@ -184,7 +185,7 @@ class MultiServerMCPClient:
                         f"   - Description: {server_config['description']}"
                     )
                     status_lines.append("")
-                except Exception as e:
+                except (ConnectionError, OSError, ValueError) as e:
                     status_lines.append(
                         f"❌ **{server_config['name']}**: Connection Error - {str(e)}"
                     )
@@ -231,7 +232,7 @@ class MultiServerMCPClient:
                         "tools_count": len(tools),
                         "name": server_config["name"],
                     }
-                except Exception as e:
+                except (AttributeError, TypeError) as e:
                     results["server_status"][server_key] = {
                         "status": "error",
                         "error": str(e),
@@ -251,7 +252,7 @@ class MultiServerMCPClient:
             try:
                 client.disconnect()
                 print(f"Disconnected from {self.servers[server_key]['name']}")
-            except Exception as e:
+            except (ValueError, RuntimeError, OSError) as e:
                 print(
                     f"Error disconnecting from {self.servers[server_key]['name']}: {e}"
                 )
@@ -261,7 +262,7 @@ class MultiServerMCPClient:
         if server_key in self.mcp_clients:
             try:
                 return self.mcp_clients[server_key].get_tools()
-            except Exception as e:
+            except (ConnectionError, OSError) as e:
                 print(f"Error getting tools for {server_key}: {e}")
                 return []
         return []
@@ -289,7 +290,7 @@ class MultiServerMCPClient:
                     print(
                         f"🔧 Added {len(tools)} tools from {self.servers[server_key]['name']}"
                     )
-                except Exception as e:
+                except (OSError, RuntimeError, ValueError) as e:
                     print(f"Error getting tools from {server_key}: {e}")
 
         self.all_tools = enabled_tools
@@ -406,7 +407,7 @@ User request: {message}"""
                             }
 
                             return "", chat_history, ""
-                        except Exception as e:
+                        except (OSError, RuntimeError, ValueError) as e:
                             error_msg = str(e)
 
                             # Handle specific error types
@@ -916,7 +917,7 @@ class APIClient:
 
         return demo, client
 
-    except Exception as e:
+    except (ConnectionError, OSError) as e:
         print(f"Error initializing client: {e}")
         return None, None
 
@@ -938,12 +939,12 @@ def main():
                 share=gradio_config.get("share", False),
                 show_error=gradio_config.get("show_error", True),
             )
-        except Exception as e:
+        except (OSError, RuntimeError, ValueError) as e:
             print(f"Failed to launch interface: {e}")
             print("Trying to launch on any available port...")
             try:
                 demo.launch(share=False, show_error=True)
-            except Exception as e2:
+            except (OSError, RuntimeError, ValueError) as e2:
                 print(f"Failed to launch interface on any port: {e2}")
         finally:
             # Cleanup on exit

@@ -137,7 +137,7 @@ class UnifiedTestRunner:
                 )
                 print(f"{'':15}   Timeout: {scenario.get_timeout()}s")
                 print()
-            except Exception as e:
+            except (ConnectionError, OSError, ValueError) as e:
                 print(f"{scenario_name:15} - Error: {e}")
                 print()
 

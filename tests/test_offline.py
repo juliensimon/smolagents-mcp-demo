@@ -159,7 +159,7 @@ class TestEnvironmentOffline(unittest.TestCase):
             config = config_loader.get_config()
             self.assertIsInstance(config, dict)
             self.assertIn("servers", config)
-        except Exception as e:
+        except (ConnectionError, OSError, ValueError) as e:
             self.fail(f"Configuration validation failed: {e}")
 
     def test_python_version(self):
@@ -192,7 +192,7 @@ class TestConfigValidationOffline(unittest.TestCase):
         try:
             config = self.config_loader.get_config()
             self.assertIsInstance(config, dict)
-        except Exception as e:
+        except (ValueError, RuntimeError, AttributeError) as e:
             self.fail(f"config.json is not valid JSON: {e}")
 
     def test_server_configs_complete(self):
