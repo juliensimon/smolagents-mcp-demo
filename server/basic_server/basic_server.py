@@ -127,8 +127,8 @@ demo = gr.Interface(
         lines=5,
     ),
     outputs=gr.JSON(label="Sentiment Analysis Results"),
-    title="Text Sentiment Analysis",
-    description="Analyze the sentiment of text using TextBlob library",
+    title="MCP Server - Text Sentiment Analysis",
+    description="MCP-enabled server for analyzing text sentiment using TextBlob library",
     examples=[
         ["I love this product! It's absolutely amazing and works perfectly."],
         ["This is the worst experience I've ever had. Terrible service."],

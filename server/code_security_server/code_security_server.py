@@ -1001,7 +1001,8 @@ demo = gr.TabbedInterface(
         "Unsafe Deserialization",
         "Comprehensive",
     ],
-    title="Code Security Analysis Server",
+    title="MCP Server - Code Security Analysis",
+    description="MCP-enabled server for detecting security vulnerabilities including SQL injection, command injection, hardcoded secrets, and more.",
 )
 
 # Launch the interface

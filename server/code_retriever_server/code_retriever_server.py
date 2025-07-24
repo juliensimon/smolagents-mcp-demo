@@ -348,7 +348,8 @@ local_file_demo = gr.Interface(
 demo = gr.TabbedInterface(
     [url_retrieval_demo, local_file_demo],
     ["URL Retrieval", "Local File"],
-    title="Simple File Retriever Server",
+    title="MCP Server - Code & File Retrieval",
+    description="MCP-enabled server for retrieving content from URLs and loading local files for code analysis.",
 )
 
 # Launch the interface and MCP server

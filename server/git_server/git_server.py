@@ -796,7 +796,8 @@ demo = gr.TabbedInterface(
         git_log_demo,
     ],
     ["Git Status", "Git Add", "Git Commit", "Git Diff", "Git Log"],
-    title="Git Operations Server",
+    title="MCP Server - Git Repository Analysis",
+    description="MCP-enabled server for Git repository operations including status, add, commit, diff, and log analysis.",
 )
 
 # Launch the interface and MCP server
