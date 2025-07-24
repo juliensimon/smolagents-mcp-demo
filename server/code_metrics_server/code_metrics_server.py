@@ -1783,7 +1783,6 @@ demo = gr.TabbedInterface(
         "Error Handling",
     ],
     title="MCP Server - Code Metrics Analysis",
-    description="MCP-enabled server for comprehensive code analysis including complexity, style, security, and quality metrics.",
 )
 
 # Launch the interface
