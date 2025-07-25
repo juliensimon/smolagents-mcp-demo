@@ -1,42 +1,128 @@
-# 🤖 Smolagents MCP Demo
+# 🤖 MCP Multi-Agent Demo
+
+> **A comprehensive demonstration of Model Context Protocol (MCP) applications built with open source tools**
 
 [![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![CI](https://github.com/juliensimon/smolagents-mcp-demo/workflows/CI/badge.svg)](https://github.com/juliensimon/smolagents-mcp-demo/actions)
-[![Code Style](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
-[![Imports](https://img.shields.io/badge/imports-isort-%231674b1?style=flat&labelColor=ef8336)](https://pycqa.github.io/isort/)
-[![Pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
-[![Tests](https://img.shields.io/badge/tests-unittest-brightgreen)](https://docs.python.org/3/library/unittest.html)
 
-> **A comprehensive demonstration of Model Context Protocol (MCP) servers and clients, showcasing AI-powered tools and multi-agent systems for code analysis, security scanning, and intelligent automation.**
+## What is this?
 
-## 🌟 Features
+This is a **comprehensive demo** showing how to build **Model Context Protocol (MCP) applications** using open source tools. It demonstrates:
 
-- **🤖 Multi-Agent System**: Intelligent agents with specialized capabilities
-- **🔍 Code Analysis**: Metrics, complexity, and quality assessment
-- **🛡️ Security Scanning**: Vulnerability detection and security auditing
-- **📁 File Retrieval**: HTTP file processing, content analysis, and secure file operations
-- **📊 Git Operations**: Repository management and version control
-- **💬 Sentiment Analysis**: Text emotion and tone analysis
-- **🎯 Unified Interface**: Single platform for all AI-powered tools
-- **⚙️ Configurable**: Centralized configuration management
-- **🧪 Comprehensive Testing**: Full test suite with multiple scenarios
+- 🏗️ **MCP Server Development** - How to create specialized MCP servers
+- 🤖 **Multi-Agent Systems** - Building intelligent agent teams with Smolagents
+- 🔧 **Tool Integration** - Connecting agents to external APIs and services
+- 📊 **Real-world Use Cases** - Code analysis, security scanning, file operations
+- 🧪 **Testing & Validation** - Comprehensive testing strategies for MCP applications
 
-## 🏗️ Architecture
+**Perfect for developers** who want to:
+- Learn MCP fundamentals
+- Build their own MCP servers
+- Create multi-agent applications
+- Understand MCP best practices
+
+## 🚀 Progressive Quickstart
+
+Start simple and work your way up to advanced multi-agent systems:
+
+### Step 1: Basic Client (1 Tool, 1 Agent)
+**Perfect for understanding MCP fundamentals**
+
+```bash
+# Setup environment
+git clone https://github.com/juliensimon/smolagents-mcp-demo.git
+cd smolagents-mcp-demo
+export TOGETHER_API_KEY="your-api-key-here"
+python -m venv env
+source env/bin/activate  # On Windows: env\Scripts\activate
+pip install -r requirements.txt
+
+# Start one server
+python server/basic_server/basic_server.py
+
+# In another terminal, run basic client
+python client/basic_client/client.py
+```
+
+**What you'll learn:**
+- How MCP clients connect to servers
+- Basic tool usage with AI agents
+- Simple text analysis capabilities
+
+### Step 2: Single Agent Client (Many Tools, 1 Agent)
+**Learn to work with multiple MCP servers**
+
+```bash
+# Start all servers
+python start_all_servers.py
+
+# Run the unified client
+python client/code_client/client.py
+```
+
+**What you'll learn:**
+- Connecting to multiple MCP servers
+- Tool discovery and routing
+- Unified interface for different capabilities
+- Server status monitoring
+
+### Step 3: Multi-Agent Client (Many Tools, Many Agents)
+**Experience advanced multi-agent coordination**
+
+```bash
+# Start all servers (if not already running)
+python start_all_servers.py
+
+# Launch the multi-agent system
+python client/multi_agent_client/client.py
+```
+
+**What you'll learn:**
+- Agent specialization and delegation
+- Intelligent task routing
+- Multi-agent coordination patterns
+- Advanced MCP application architecture
+
+## 🎯 What You'll Learn
+
+### MCP Server Development
+- **Server Architecture** - How to structure MCP servers
+- **Tool Implementation** - Creating custom tools and functions
+- **Error Handling** - Robust error management in MCP servers
+- **Configuration** - Centralized configuration management
+- **Testing** - Comprehensive testing strategies
+
+### Multi-Agent Systems
+- **Agent Specialization** - Different agents for different tasks
+- **Task Delegation** - Intelligent routing between agents
+- **Tool Coordination** - Agents using MCP servers as tools
+- **Conversation Management** - Multi-turn agent interactions
+
+### Available MCP Servers (Learning Examples)
+
+| Server | Purpose | What You'll Learn |
+|--------|---------|-------------------|
+| **Code Metrics** | Code quality analysis | Implementing analysis tools, metrics calculation |
+| **Code Security** | Vulnerability detection | Security scanning, pattern recognition |
+| **Code Retrieval** | File operations | HTTP handling, file processing, error management |
+| **Git Server** | Repository management | Git operations, version control integration |
+| **Basic Server** | Text processing | Simple tool implementation, text analysis |
+
+## 🏗️ Architecture Overview
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                    Multi-Agent Client                       │
 │  ┌─────────────┐ ┌──────────────┐ ┌──────────────┐          │
 │  │ Code Agent  │ │Research Agent│ │Manager Agent │          │
-│  │(coder-large)│ │(AFM-4.5B)    │ │(AFM-4.5B)    │          │
+│  │(coder-large)│ │(coder-large) │ │(coder-large) │          │
 │  └─────────────┘ └──────────────┘ └──────────────┘          │
 └─────────────────────────────────────────────────────────────┘
                               │
                               ▼
 ┌────────────────────────────────────────────────────────────┐
 │                    MCP Servers                             │
-│  ┌─────────────┐ ┌─────────────┐ ┌──────────────           │
+│  ┌─────────────┐ ┌─────────────┐ ┌──────────────┐          │
 │  │ Code Metrics│ │Code Security│ │Code Retrieval│          │
 │  │   (7862)    │ │   (7865)    │ │   (7866)     │          │
 │  └─────────────┘ └─────────────┘ └──────────────┘          │
@@ -47,243 +133,98 @@
 └────────────────────────────────────────────────────────────┘
 ```
 
-## 🚀 Quick Start
+## 🧪 Try It Out
 
-### Prerequisites
+### Quick Examples
 
-- **Python 3.8+**
-- **Git**
-- **Together AI API Key**
+**Code Analysis:**
+```
+"Analyze the complexity of this Python function and suggest improvements"
+```
 
-### Installation
+**Security Scan:**
+```
+"Check this code for potential security vulnerabilities"
+```
 
-1. **Clone the repository**:
+**File Operations:**
+```
+"Download and analyze the README from this GitHub repository"
+```
+
+**Git Operations:**
+```
+"What's the current status of this repository and what changes are pending?"
+```
+
+## 🔧 Development & Customization
+
+### Building Your Own MCP Server
+
+1. **Study the examples** in `server/` directory
+2. **Create your server:**
    ```bash
-   git clone https://github.com/juliensimon/smolagents-mcp-demo.git
-   cd smolagents-mcp-demo
+   mkdir server/my_new_server
+   cp server/basic_server/basic_server.py server/my_new_server/my_new_server.py
    ```
 
-2. **Set up environment**:
-   ```bash
-   export TOGETHER_API_KEY="your-api-key-here"
-   python -m venv env
-   source env/bin/activate  # On Windows: env\Scripts\activate
-   pip install -r requirements.txt
+3. **Add to configuration:**
+   ```json
+   "my_new_server": {
+     "name": "My New Server",
+     "port": 7868,
+     "url": "http://127.0.0.1:7868/gradio_api/mcp/sse",
+     "description": "My custom functionality",
+     "path": "server/my_new_server/my_new_server.py"
+   }
    ```
 
-3. **Start all servers**:
-   ```bash
-   python start_all_servers.py
-   ```
+4. **Implement your tools** following the MCP specification
 
-4. **Launch the multi-agent client** (recommended):
-   ```bash
-   python client/multi_agent_client/client.py
-   ```
+### Testing Your MCP Application
 
-## 🎯 Multi-Agent System
-
-### Specialized Agents
-
-| Agent | Model | Specialization | Capabilities |
-|-------|-------|----------------|--------------|
-| **Code Agent** | [coder-large](https://api.together.ai/models/arcee-ai/coder-large) | Code Analysis | Metrics, complexity, style analysis |
-| **Research Agent** | [AFM-4.5B-Preview](https://api.together.ai/models/arcee-ai/AFM-4.5B-Preview) | Research & Retrieval | File retrieval, git ops, web search |
-| **Manager Agent** | [AFM-4.5B-Preview](https://api.together.ai/models/arcee-ai/AFM-4.5B-Preview) | Task Delegation | Intelligent routing, workflow management |
-
-### Intelligent Workflow
-
-1. **Task Analysis**: Manager agent analyzes user requests
-2. **Agent Selection**: Automatically routes to appropriate specialist
-3. **Execution**: Specialized agent performs the task
-4. **Integration**: Results are combined and presented
-
-## 🔧 Available Servers
-
-| Server | Port | Purpose | Key Features |
-|--------|------|---------|--------------|
-| **Basic Server** | 7860 | Text Analysis | Sentiment analysis, emotion detection |
-| **Code Metrics** | 7862 | Code Quality | Complexity, maintainability, style metrics |
-| **Code Security** | 7865 | Security Audit | Vulnerability detection, security scanning |
-| **Code Retrieval** | 7866 | File Processing | HTTP retrieval, content analysis |
-| **Git Server** | 7867 | Version Control | Repository operations, commit analysis |
-
-## 📊 Capabilities
-
-### 🔍 Code Analysis
-- **Complexity Metrics**: Cyclomatic complexity, cognitive complexity
-- **Style Analysis**: PEP 8 compliance, naming conventions
-- **Maintainability**: Maintainability index, technical debt assessment
-- **Documentation**: Docstring coverage, comment analysis
-
-### 🛡️ Security Scanning
-- **SQL Injection**: Detection of vulnerable database queries
-- **Command Injection**: Identification of unsafe system calls
-- **Hardcoded Secrets**: Detection of exposed credentials
-- **Path Traversal**: Identification of directory traversal vulnerabilities
-- **XSS Detection**: Cross-site scripting vulnerability analysis
-
-### 📁 File Operations
-- **HTTP Retrieval**: Secure file downloading and validation with error handling
-- **Content Analysis**: File type detection, metadata extraction, and content parsing
-- **Batch Processing**: Multiple file processing with progress tracking
-- **Search Integration**: Content search, filtering, and intelligent file discovery
-- **Security Validation**: URL validation, content type verification, and safe file handling
-
-### 📊 Git Integration
-- **Repository Status**: File status and change tracking
-- **Commit Operations**: Staging, committing, and diff analysis
-- **History Analysis**: Commit history and change patterns
-- **Branch Management**: Branch operations and comparison
-
-## 🧪 Testing
-
-The project includes a comprehensive test suite with multiple scenarios and categories, organized into offline and online tests:
-
-### Quick Start
 ```bash
-# Run from root directory (recommended)
+# Quick validation
 python run_tests.py validate
 
-# List available test categories
-python run_tests.py list
-
-# List available test scenarios
-python run_tests.py list-scenarios
-```
-
-### Test Organization
-
-The test suite is organized into two categories:
-
-**Offline Tests** (CI/CD Safe):
-- Configuration and environment validation
-- File structure and import checks
-- No external dependencies required
-
-**Online Tests** (Require Live Servers):
-- Real MCP server integration
-- Server functionality testing
-- External endpoint validation
-
-### Test Categories
-```bash
-# Quick validation (environment & configuration)
-python run_tests.py quick
-
-# Health checks (server connectivity)
-python run_tests.py health
-
-# Core functionality (integration & scenarios)
-python run_tests.py core
-
-# All server functionality tests
-python run_tests.py functionality
-
-# Complete test suite
+# Test all functionality
 python run_tests.py all
+
+# Health check servers
+python run_tests.py health
 ```
 
-### Test Scenarios
-```bash
-# Smoke tests (basic functionality)
-python run_tests.py smoke
+## 📚 Learning Resources
 
-# Integration tests (full server integration)
-python run_tests.py integration
+### MCP Fundamentals
+- **MCP Specification**: [Model Context Protocol](https://modelcontextprotocol.io/)
+- **MCP Tools**: Understanding tool definitions and implementations
+- **Server Communication**: How clients and servers interact
 
-# Performance tests (stress testing)
-python run_tests.py performance
+### Multi-Agent Development
+- **Smolagents**: Multi-agent framework documentation
+- **Agent Patterns**: Specialization, delegation, coordination
+- **Tool Integration**: Connecting agents to external services
 
-# Security tests (vulnerability scanning)
-python run_tests.py security
+### Advanced Topics
+- **Configuration Management**: See [CONFIGURATION.md](CONFIGURATION.md)
+- **Testing Strategies**: Comprehensive test suite examples
+- **Error Handling**: Robust error management patterns
+- **Performance Optimization**: Scaling MCP applications
 
-# Full test suite (all categories)
-python run_tests.py full
-```
-
-### Individual Categories
-```bash
-# Specific test categories
-python run_tests.py environment
-python run_tests.py configuration
-python run_tests.py basic_functionality
-python run_tests.py code_metrics_functionality
-python run_tests.py code_security_functionality
-python run_tests.py code_retrieval_functionality
-python run_tests.py git_functionality
-```
-
-### Dedicated Test Runners
-```bash
-# Offline tests only (CI/CD safe)
-python tests/run_offline_tests.py all
-
-# Online tests only (requires servers)
-python tests/run_online_tests.py all
-
-# User-friendly wrapper
-python tests/run_test_suite.py all
-```
-
-### Advanced Options
-```bash
-# Verbose output
-python run_tests.py all --verbose
-
-# Generate detailed report
-python run_tests.py all --report
-
-# Run from tests directory (alternative)
-python tests/run_tests.py all
-```
-
-## ⚙️ Configuration
-
-The project uses a **unified configuration system** (`config.json`):
-
-```json
-{
-  "servers": {
-    "basic": {"port": 7860, "name": "Basic Server"},
-    "code_metrics": {"port": 7862, "name": "Code Metrics"},
-    "code_security": {"port": 7865, "name": "Code Security"},
-    "code_retrieval": {"port": 7866, "name": "Code Retrieval"},
-    "git": {"port": 7867, "name": "Git Server"}
-  },
-  "model": {
-    "default": "togethercomputer/llama-2-70b-chat",
-    "api_base": "https://api.together.xyz/v1"
-  }
-}
-```
-
-## 🛠️ Development
+## 🛠️ Development Tools
 
 ### Code Quality
-
 ```bash
 # Install pre-commit hooks
 ./setup_precommit.sh
 
 # Run quality checks
 pre-commit run --all-files
-
-# Run linting
-flake8 . --ignore=E501  # Ignore line length warnings
 ```
 
-### Adding New Servers
-
-1. **Add configuration** to `config.json`
-2. **Implement server** in `server/new_server/`
-3. **Add tests** to test suite
-4. **Update documentation**
-
-## 📚 API Documentation
-
-Each server provides interactive API documentation:
-
+### API Documentation
+Each server provides interactive docs:
 - **Basic Server**: http://127.0.0.1:7860
 - **Code Metrics**: http://127.0.0.1:7862
 - **Code Security**: http://127.0.0.1:7865
@@ -292,29 +233,16 @@ Each server provides interactive API documentation:
 
 ## 🤝 Contributing
 
-1. **Fork** the repository
-2. **Create** a feature branch
-3. **Make** your changes
-4. **Test** thoroughly
-5. **Submit** a pull request
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Test thoroughly
+5. Submit a pull request
 
 ## 📄 License
 
-This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
-
-## 🆘 Support
-
-- **Documentation**: [CONFIGURATION.md](CONFIGURATION.md)
-- **Issues**: [GitHub Issues](https://github.com/juliensimon/smolagents-mcp-demo/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/juliensimon/smolagents-mcp-demo/discussions)
-
-## 🙏 Acknowledgments
-
-- **Smolagents**: Multi-agent framework
-- **Together AI**: Model hosting and inference
-- **Gradio**: Web interface framework
-- **MCP**: Model Context Protocol specification
+MIT License - see [LICENSE](LICENSE) for details.
 
 ---
 
-**Made with ❤️ for the AI community**
+**Built with ❤️ for the AI community**
