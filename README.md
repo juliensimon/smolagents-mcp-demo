@@ -83,6 +83,12 @@ python client/multi_agent_client/client.py
 - Multi-agent coordination patterns
 - Advanced MCP application architecture
 
+#### Multi-Agent Client Interface
+![Multi-Agent Client UI](images/mcp-multi-agent-client-ui-output.webp)
+
+#### Terminal Output Example
+![Terminal Output](images/mcp-multi-agent-clientterminal-output.webp)
+
 ## 🎯 What You'll Learn
 
 ### MCP Server Development
@@ -107,6 +113,9 @@ python client/multi_agent_client/client.py
 | **Code Retrieval** | File operations | HTTP handling, file processing, error management |
 | **Git Server** | Repository management | Git operations, version control integration |
 | **Basic Server** | Text processing | Simple tool implementation, text analysis |
+
+#### Code Security Analysis Interface
+![Code Security Analysis](images/mcp-server-code-security.webp)
 
 ## 🏗️ Architecture Overview
 
