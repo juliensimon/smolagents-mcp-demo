@@ -108,7 +108,7 @@ def setup_agents():
                 ),
                 name="code_analysis_agent",
                 description="Specialized in code analysis, metrics, and security.",
-                max_steps=3,
+                max_steps=10,
             )
             print(f"  ✅ Code Analysis Agent: {len(code_tools)} tools")
         except (ValueError, RuntimeError, OSError) as e:
@@ -123,18 +123,19 @@ def setup_agents():
 
     if research_tools:
         try:
-            model_params = get_model_params("arcee-ai/coder-large")
+            research_model_id = "arcee-ai/coder-large"
+            model_params = get_model_params(research_model_id)
             agents["research"] = ToolCallingAgent(
                 tools=research_tools,
                 model=OpenAIServerModel(
-                    model_id="arcee-ai/coder-large",
+                    model_id=research_model_id,
                     api_base=api_base,
                     api_key=api_key,
                     **model_params,
                 ),
                 name="research_agent",
                 description="Specialized in code retrieval and git operations.",
-                max_steps=3,
+                max_steps=10,
             )
             print(f"  ✅ Research Agent: {len(research_tools)} tools")
         except (ValueError, RuntimeError, OSError) as e:
@@ -142,18 +143,19 @@ def setup_agents():
 
     # Web Search Agent
     try:
-        model_params = get_model_params("arcee-ai/coder-large")
+        web_search_model_id = "arcee-ai/coder-large"
+        model_params = get_model_params(web_search_model_id)
         agents["web_search"] = ToolCallingAgent(
             tools=[WebSearchTool()],
             model=OpenAIServerModel(
-                model_id="arcee-ai/coder-large",
+                model_id=web_search_model_id,
                 api_base=api_base,
                 api_key=api_key,
                 **model_params,
             ),
             name="web_search_agent",
             description="Specialized in finding additional information about problems, errors, and technical concepts. Use for researching error messages, understanding technical issues, finding best practices, and gathering context about problems. Do NOT use for fetching files or downloading code - focus on informational research only.",
-            max_steps=3,
+            max_steps=10,
         )
         print("  ✅ Web Search Agent ready")
     except (ValueError, RuntimeError, OSError) as e:
@@ -175,16 +177,17 @@ def setup_manager():
         return
 
     try:
+        manager_model_id = "arcee-ai/coder-large"
         manager = ToolCallingAgent(
             tools=[],
             model=OpenAIServerModel(
-                model_id="arcee-ai/coder-large",
+                model_id=manager_model_id,
                 api_base=api_base,
                 api_key=api_key,
-                **get_model_params("arcee-ai/coder-large"),
+                **get_model_params(manager_model_id),
             ),
             managed_agents=list(agents.values()),
-            max_steps=5,
+            max_steps=10,
         )
         print(f"  ✅ Manager Agent: {len(agents)} managed agents")
     except (ValueError, RuntimeError, OSError) as e:

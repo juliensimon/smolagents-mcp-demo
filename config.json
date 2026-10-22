@@ -37,7 +37,7 @@
     }
   },
   "model": {
-    "default": "arcee-ai/coder-large",
+    "default": "arcee-ai/AFM-4.5B",
     "api_base": "https://api.together.xyz/v1",
     "configs": {
       "arcee-ai/coder-large": {
@@ -45,7 +45,7 @@
         "max_tokens": 16384,
         "top_p": 0.9
       },
-      "arcee-ai/AFM-4.5B-Preview": {
+      "arcee-ai/AFM-4.5B": {
         "temperature": 0.9,
         "max_tokens": 16384,
         "top_p": 0.9
